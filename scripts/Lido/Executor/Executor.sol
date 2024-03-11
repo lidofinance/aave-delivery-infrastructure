@@ -91,9 +91,9 @@ contract Executor is BridgeExecutorBase, IBaseReceiverPortal {
     if (originSender != DAO_AGENT) revert InvalidSenderAddress();
     if (originChainId != DAO_AGENT_CHAIN_ID) revert InvalidSenderChainId();
 
-    // _receiveCrossChainMessage(message);
-
     emit MessageReceived(originSender, originChainId, message);
+
+    _receiveCrossChainMessage(message);
   }
 
   function _receiveCrossChainMessage(bytes memory data) internal {
