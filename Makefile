@@ -250,7 +250,7 @@ fund-lido-crosschain:
 write-lido-json-addresses :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
 deploy-lido-testnet:
-	make deploy-lido-emergency-registry-test
+	#make deploy-lido-emergency-registry-test
 	make deploy-lido-proxy-factory-test
 	make deploy-lido-cross-chain-infra-test
 	make deploy-lido-ccip-bridge-adapters-test
