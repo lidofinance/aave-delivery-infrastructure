@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import '../../contract_extensions/MockDestination.sol';
+import '../contracts/MockDestination.sol';
 
 import '../BaseScript.sol';
 
 abstract contract BaseMockDestination is BaseScript {
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    addresses.mockDestination = address(new MockDestination(addresses.crossChainController));
+    addresses.mockDestination = address(new MockDestination(addresses.executor));
   }
 }
 

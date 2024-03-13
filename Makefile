@@ -18,7 +18,7 @@ BASE_KEY = --private-key ${PRIVATE_KEY}
 
 
 custom_ethereum := --with-gas-price 10000000000 # 53 gwei
-custom_polygon :=  --with-gas-price 10000000000 # 56 gwei
+custom_polygon :=  --with-gas-price 100000000000 # 560 gwei
 custom_avalanche := --with-gas-price 27000000000 # 27 gwei
 custom_metis-testnet := --legacy --verifier-url https://goerli.explorer.metisdevops.link/api/
 custom_metis := --verifier-url  https://api.routescan.io/v2/network/mainnet/evm/1088/etherscan
@@ -273,7 +273,7 @@ deploy-lido-testnet:
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------
 
 deploy-lido-mock-destination:
-	$(call deploy_fn,Lido/helpers/Deploy_Mock_destination,ethereum polygon binance)
+	$(call deploy_fn,Lido/helpers/Deploy_Mock_destination,binance)
 
 test-lido-send-message:
 	$(call deploy_fn,Lido/e2e/Send_Message,ethereum)

@@ -57,20 +57,18 @@ contract Ethereum_testnet is BaseSendMessageToExecutor {
     values[0] = uint256(0);
 
     string[] memory signatures = new string[](1);
-    signatures[0] = 'receiveCrossChainMessage(address,uint256,bytes)';
+    signatures[0] = 'test(string)';
 
     bytes[] memory calldatas = new bytes[](1);
-    calldatas[0] = abi.encode(
-      _getAddresses(TRANSACTION_NETWORK()).owner,
-      TRANSACTION_NETWORK(),
-      string.concat(
-        'This is an encoded message from ',
-        Strings.toString(TRANSACTION_NETWORK()),
-        ' to ',
-        Strings.toString(DESTINATION_NETWORK()),
-        '...'
-      )
+    string memory message = string.concat(
+      'This is an encoded message from ',
+      Strings.toString(TRANSACTION_NETWORK()),
+      ' to ',
+      Strings.toString(DESTINATION_NETWORK()),
+      '...'
     );
+
+    calldatas[0] = abi.encode(message);
 
     bool[] memory withDelegatecalls = new bool[](1);
     withDelegatecalls[0] = false;

@@ -109,7 +109,7 @@ library DeployerHelpers {
 }
 
 library Constants {
-  address public constant OWNER = 0x77d302662a84c0924a8290f72200e1F43D28430F; // Yuri T Deployer address
+  address public constant OWNER = 0x77d302662a84c0924a8290f72200e1F43D28430F; // Deployer address
   bytes32 public constant ADMIN_SALT = keccak256(bytes('Lido a.DI Proxy Admin on Testnet'));
   bytes32 public constant CCC_SALT = keccak256(bytes('Lido a.DI Cross Chain Controller on Testnet'));
   bytes32 public constant CREATE3_FACTORY_SALT = keccak256(bytes('Lido a.DI Create3 Factory on Testnet'));
