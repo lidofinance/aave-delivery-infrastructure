@@ -96,6 +96,10 @@ contract Executor is BridgeExecutorBase, IBaseReceiverPortal {
     _receiveCrossChainMessage(message);
   }
 
+  /**
+   * @notice method called by receiveCrossChainMessage to put the message into the queue
+   * @param data bytes containing the message to be queued
+   */
   function _receiveCrossChainMessage(bytes memory data) internal {
     address[] memory targets;
     uint256[] memory values;

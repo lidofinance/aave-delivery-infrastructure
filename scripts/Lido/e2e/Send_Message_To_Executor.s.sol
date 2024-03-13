@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+
 import {ICrossChainForwarder} from '../../../src/contracts/interfaces/ICrossChainForwarder.sol';
 
 import '../BaseScript.sol';
@@ -48,7 +50,32 @@ contract Ethereum is BaseSendMessageToExecutor {
 
 contract Ethereum_testnet is BaseSendMessageToExecutor {
   function getMessage() public view virtual override returns (bytes memory) {
-    return abi.encode('This is a test message from the Sepolia testnet to the Mumbai testnet...');
+    address[] memory addresses = new address[](1);
+    addresses[0] = _getAddresses(DESTINATION_NETWORK()).mockDestination;
+
+    uint256[] memory values = new uint256[](1);
+    values[0] = uint256(0);
+
+    string[] memory signatures = new string[](1);
+    signatures[0] = 'receiveCrossChainMessage(address,uint256,bytes)';
+
+    bytes[] memory calldatas = new bytes[](1);
+    calldatas[0] = abi.encode(
+      _getAddresses(TRANSACTION_NETWORK()).owner,
+      TRANSACTION_NETWORK(),
+      string.concat(
+        'This is an encoded message from ',
+        Strings.toString(TRANSACTION_NETWORK()),
+        ' to ',
+        Strings.toString(DESTINATION_NETWORK()),
+        '...'
+      )
+    );
+
+    bool[] memory withDelegatecalls = new bool[](1);
+    withDelegatecalls[0] = false;
+
+    return abi.encode(addresses, values, signatures, calldatas, withDelegatecalls);
   }
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
