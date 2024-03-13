@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IBaseReceiverPortal} from "../../../src/contracts/interfaces/IBaseReceiverPortal.sol";
 
-import {BridgeExecutorBase} from './BridgeExecutorBase.sol';
+import {BridgeExecutorBase} from "./BridgeExecutorBase.sol";
 
 /**
  * @title PolygonBridgeExecutor

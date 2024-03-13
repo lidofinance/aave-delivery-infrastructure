@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {Executor} from "../Executor/Executor.sol";
+import {Executor} from "../../../src/Lido/contracts/Executor.sol";
 
 import '../BaseScript.sol';
 
