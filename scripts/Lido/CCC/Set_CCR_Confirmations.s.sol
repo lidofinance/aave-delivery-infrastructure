@@ -86,7 +86,7 @@ contract Ethereum_testnet is Ethereum {
   }
 }
 
-// 2/3 consensus
+// 2/3 consensus: HL, LZ and CCIP
 contract Polygon_testnet is Polygon {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return TestNetChainIds.POLYGON_MUMBAI;
@@ -100,6 +100,7 @@ contract Polygon_testnet is Polygon {
   }
 }
 
+// 2/4 consensus: HL, LZ, CCIP and Wormhole
 contract Binance_testnet is Binance {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return TestNetChainIds.BNB_TESTNET;
@@ -107,7 +108,7 @@ contract Binance_testnet is Binance {
 
   function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
     ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
-    chainIds[0] = ConfirmationsByChain({chainId: TestNetChainIds.ETHEREUM_SEPOLIA, confirmations: 2});
+    chainIds[0] = ConfirmationsByChain({chainId: TestNetChainIds.ETHEREUM_SEPOLIA, confirmations: 3});
 
     return chainIds;
   }

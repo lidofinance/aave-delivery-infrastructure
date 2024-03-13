@@ -230,7 +230,10 @@ deploy-lido-polygon-adapters:
 	$(call deploy_fn,Lido/Adapters/DeployPolygon,ethereum poplygon)
 
 deploy-lido-wormhole-adapters:
-	$(call deploy_fn,Lido/Adapters/DeployWormholeAdapter,ethereum polygon binance)
+	$(call deploy_fn,Lido/Adapters/DeployWormholeAdapter,ethereum binance)
+
+deploy-lido-executor:
+	$(call deploy_fn,Lido/helpers/Deploy_Executor,polygon binance)
 
 set-lido-ccf-approved-senders:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
@@ -257,7 +260,8 @@ deploy-lido-testnet:
 	make deploy-lido-lz-bridge-adapters-test
 	make deploy-lido-hl-bridge-adapters
 	# make deploy-lido-polygon-adapters
-	# make deploy-lido-wormhole-adapters
+	make deploy-lido-wormhole-adapters
+	make deploy-lido-executor
 	make set-lido-ccf-approved-senders
 	make set-lido-ccf-sender-adapters
 	make set-lido-ccr-receiver-adapters
@@ -270,9 +274,6 @@ deploy-lido-testnet:
 
 deploy-lido-mock-destination:
 	$(call deploy_fn,Lido/helpers/Deploy_Mock_destination,ethereum polygon binance)
-
-deploy-lido-executor:
-	$(call deploy_fn,Lido/helpers/Deploy_Executor,polygon binance)
 
 test-lido-send-message:
 	$(call deploy_fn,Lido/e2e/Send_Message,ethereum)
