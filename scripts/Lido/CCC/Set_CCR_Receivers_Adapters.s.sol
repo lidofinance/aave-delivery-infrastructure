@@ -40,20 +40,13 @@ contract Ethereum is BaseSetCCRAdapters {
 
   function getChainIds() public pure virtual override returns (uint256[] memory) {
     uint256[] memory chainIds = new uint256[](2);
-    chainIds[0] = ChainIds.POLYGON;
-    chainIds[1] = ChainIds.BNB;
-
     return chainIds;
   }
 
   function getReceiverBridgeAdaptersToAllow(
     DeployerHelpers.Addresses memory addresses
   ) public pure virtual override returns (address[] memory) {
-    address[] memory receiverBridgeAdaptersToAllow = new address[](3);
-    receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
-    receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
-    receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
-
+    address[] memory receiverBridgeAdaptersToAllow = new address[](0);
     return receiverBridgeAdaptersToAllow;
   }
 }
@@ -97,10 +90,11 @@ contract Binance is BaseSetCCRAdapters {
   function getReceiverBridgeAdaptersToAllow(
     DeployerHelpers.Addresses memory addresses
   ) public pure virtual override returns (address[] memory) {
-    address[] memory receiverBridgeAdaptersToAllow = new address[](3);
+    address[] memory receiverBridgeAdaptersToAllow = new address[](4);
     receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
     receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
     receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
+    receiverBridgeAdaptersToAllow[3] = addresses.wormholeAdapter;
 
     return receiverBridgeAdaptersToAllow;
   }
@@ -113,8 +107,6 @@ contract Ethereum_testnet is Ethereum {
 
   function getChainIds() public pure override returns (uint256[] memory) {
     uint256[] memory chainIds = new uint256[](2);
-    chainIds[0] = TestNetChainIds.POLYGON_MUMBAI;
-    chainIds[1] = TestNetChainIds.BNB_TESTNET;
 
     return chainIds;
   }
@@ -122,10 +114,7 @@ contract Ethereum_testnet is Ethereum {
   function getReceiverBridgeAdaptersToAllow(
     DeployerHelpers.Addresses memory addresses
   ) public pure virtual override returns (address[] memory) {
-    address[] memory receiverBridgeAdaptersToAllow = new address[](3);
-    receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
-    receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
-    receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
+    address[] memory receiverBridgeAdaptersToAllow = new address[](0);
 
     return receiverBridgeAdaptersToAllow;
   }
@@ -170,10 +159,11 @@ contract Binance_testnet is Binance {
   function getReceiverBridgeAdaptersToAllow(
     DeployerHelpers.Addresses memory addresses
   ) public pure virtual override returns (address[] memory) {
-    address[] memory receiverBridgeAdaptersToAllow = new address[](3);
+    address[] memory receiverBridgeAdaptersToAllow = new address[](4);
     receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
     receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
     receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
+    receiverBridgeAdaptersToAllow[3] = addresses.wormholeAdapter;
 
     return receiverBridgeAdaptersToAllow;
   }

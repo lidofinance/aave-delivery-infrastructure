@@ -248,10 +248,7 @@ set-lido-ccr-confirmations:
 	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,ethereum polygon binance)
 
 fund-lido-crosschain:
-	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum polygon binance)
-
-fund-lido-executor:
-	$(call deploy_fn,Lido/Executor/Fund_Executor,polygon binance)
+	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum binance)
 
 write-lido-json-addresses :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
@@ -270,7 +267,6 @@ deploy-lido-testnet:
 	make set-lido-ccr-receiver-adapters
 	make set-lido-ccr-confirmations
 	make fund-lido-crosschain
-	make fund-lido-executor
 	make write-lido-json-addresses
 
 # ----------------------------------------------------------------------------------------------------------------------

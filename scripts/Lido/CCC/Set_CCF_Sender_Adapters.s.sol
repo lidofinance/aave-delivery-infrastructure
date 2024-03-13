@@ -26,7 +26,7 @@ contract Ethereum is BaseCCFSenderAdapters {
     DeployerHelpers.Addresses memory addresses
   ) public view override returns (ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[] memory) {
     ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[]
-      memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](6);
+      memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](7);
 
     // polygon path
     DeployerHelpers.Addresses memory addressesPolygon = _getAddresses(ChainIds.POLYGON);
@@ -63,22 +63,11 @@ contract Ethereum is BaseCCFSenderAdapters {
       destinationBridgeAdapter: addressesBNB.hlAdapter,
       destinationChainId: addressesBNB.chainId
     });
-
-    return bridgeAdaptersToEnable;
-  }
-}
-
-// no forwarding to ethereum
-contract Polygon is BaseCCFSenderAdapters {
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-
-  function getBridgeAdaptersToEnable(
-    DeployerHelpers.Addresses memory addresses
-  ) public view override returns (ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[] memory) {
-    ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[]
-      memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](0);
+    bridgeAdaptersToEnable[6] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
+      currentChainBridgeAdapter: addresses.wormholeAdapter,
+      destinationBridgeAdapter: addressesBNB.wormholeAdapter,
+      destinationChainId: addressesBNB.chainId
+    });
 
     return bridgeAdaptersToEnable;
   }
@@ -93,7 +82,7 @@ contract Ethereum_testnet is BaseCCFSenderAdapters {
     DeployerHelpers.Addresses memory addresses
   ) public view override returns (ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[] memory) {
     ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[]
-      memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](6);
+      memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](7);
 
     // polygon path
     DeployerHelpers.Addresses memory addressesPolygon = _getAddresses(TestNetChainIds.POLYGON_MUMBAI);
@@ -128,6 +117,11 @@ contract Ethereum_testnet is BaseCCFSenderAdapters {
     bridgeAdaptersToEnable[5] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
       currentChainBridgeAdapter: addresses.hlAdapter,
       destinationBridgeAdapter: addressesBNB.hlAdapter,
+      destinationChainId: addressesBNB.chainId
+    });
+    bridgeAdaptersToEnable[6] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
+      currentChainBridgeAdapter: addresses.wormholeAdapter,
+      destinationBridgeAdapter: addressesBNB.wormholeAdapter,
       destinationChainId: addressesBNB.chainId
     });
 

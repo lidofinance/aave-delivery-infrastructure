@@ -108,7 +108,7 @@ contract Binance_testnet is Binance {
 
   function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
     ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
-    chainIds[0] = ConfirmationsByChain({chainId: TestNetChainIds.ETHEREUM_SEPOLIA, confirmations: 3});
+    chainIds[0] = ConfirmationsByChain({chainId: TestNetChainIds.ETHEREUM_SEPOLIA, confirmations: 2});
 
     return chainIds;
   }

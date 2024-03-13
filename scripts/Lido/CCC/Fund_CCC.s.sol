@@ -5,7 +5,7 @@ import '../BaseScript.sol';
 
 abstract contract BaseFundCrossChainController is BaseScript {
   function getAmountToFund() public view virtual returns (uint256) {
-    return 100000000000000000;
+    return 500000000000000000;
   }
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
