@@ -223,34 +223,34 @@ deploy-lido-ccip-bridge-adapters-test:
 deploy-lido-lz-bridge-adapters-test:
 	$(call deploy_fn,Lido/Adapters/DeployLZ,ethereum binance)
 
-deploy-lido-hl-bridge-adapters:
+deploy-lido-hl-bridge-adapters-test:
 	$(call deploy_fn,Lido/Adapters/DeployHL,ethereum binance)
 
-#deploy-lido-polygon-adapters:
-	#$(call deploy_fn,Lido/Adapters/DeployPolygon,ethereum poplygon)
-
-deploy-lido-wormhole-adapters:
+deploy-lido-wormhole-adapters-test:
 	$(call deploy_fn,Lido/Adapters/DeployWormholeAdapter,ethereum binance)
 
-deploy-lido-executor:
+#deploy-lido-polygon-adapters-test:
+	#$(call deploy_fn,Lido/Adapters/DeployPolygon,ethereum poplygon)
+
+deploy-lido-executor-test:
 	$(call deploy_fn,Lido/helpers/Deploy_Executor,binance)
 
-set-lido-ccf-approved-senders:
+set-lido-ccf-approved-senders-test:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
 
-set-lido-ccf-sender-adapters:
+set-lido-ccf-sender-adapters-test:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Sender_Adapters,ethereum)
 
-set-lido-ccr-receiver-adapters:
+set-lido-ccr-receiver-adapters-test:
 	$(call deploy_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum binance)
 
-set-lido-ccr-confirmations:
+set-lido-ccr-confirmations-test:
 	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,ethereum binance)
 
-fund-lido-crosschain:
+fund-lido-crosschain-test:
 	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum binance)
 
-write-lido-json-addresses :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
+write-lido-json-addresses-test :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
 deploy-lido-testnet:
 	#make deploy-lido-emergency-registry-test
@@ -258,16 +258,16 @@ deploy-lido-testnet:
 	make deploy-lido-cross-chain-infra-test
 	make deploy-lido-ccip-bridge-adapters-test
 	make deploy-lido-lz-bridge-adapters-test
-	make deploy-lido-hl-bridge-adapters
-	# make deploy-lido-polygon-adapters
-	make deploy-lido-wormhole-adapters
-	make deploy-lido-executor
-	make set-lido-ccf-approved-senders
-	make set-lido-ccf-sender-adapters
-	make set-lido-ccr-receiver-adapters
-	make set-lido-ccr-confirmations
-	make fund-lido-crosschain
-	make write-lido-json-addresses
+	make deploy-lido-hl-bridge-adapters-test
+	make deploy-lido-wormhole-adapters-test
+  # make deploy-lido-polygon-adapters-test
+	make deploy-lido-executor-test
+	make set-lido-ccf-approved-senders-test
+	make set-lido-ccf-sender-adapters-test
+	make set-lido-ccr-receiver-adapters-test
+	make set-lido-ccr-confirmations-test
+	make fund-lido-crosschain-test
+	make write-lido-json-addresses-test
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------
