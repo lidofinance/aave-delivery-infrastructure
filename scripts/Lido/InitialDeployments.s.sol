@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import {TransparentProxyFactory} from 'solidity-utils/contracts/transparent-proxy/TransparentProxyFactory.sol';
-import {Create3Factory} from 'solidity-utils/contracts/create3/Create3Factory.sol';
 
 import {LidoAddressBook} from './LidoAddressBook.sol';
 
@@ -25,14 +24,7 @@ abstract contract BaseInitialDeployment is BaseScript {
     return address(0);
   }
 
-  function CREATE3_FACTORY() public pure virtual returns (address) {
-    return address(0);
-  }
-
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    addresses.create3Factory = CREATE3_FACTORY() == address(0)
-      ? address(new Create3Factory{salt: Constants.CREATE3_FACTORY_SALT}())
-      : CREATE3_FACTORY();
     addresses.proxyFactory = TRANSPARENT_PROXY_FACTORY() == address(0)
       ? address(new TransparentProxyFactory())
       : TRANSPARENT_PROXY_FACTORY();
@@ -49,10 +41,6 @@ abstract contract BaseInitialDeployment is BaseScript {
 }
 
 contract Ethereum is BaseInitialDeployment {
-  function CREATE3_FACTORY() public pure override returns (address) {
-    return LidoAddressBook.CREATE3_FACTORY_ETHEREUM;
-  }
-
   function TRANSPARENT_PROXY_FACTORY() public pure override returns (address) {
     return LidoAddressBook.TRANSPARENT_PROXY_FACTORY_ETHEREUM;
   }
@@ -71,10 +59,6 @@ contract Ethereum is BaseInitialDeployment {
 }
 
 contract Polygon is BaseInitialDeployment {
-  function CREATE3_FACTORY() public pure override returns (address) {
-    return LidoAddressBook.CREATE3_FACTORY_POLYGON;
-  }
-
   function TRANSPARENT_PROXY_FACTORY() public pure override returns (address) {
     return LidoAddressBook.TRANSPARENT_PROXY_FACTORY_POLYGON;
   }
@@ -93,10 +77,6 @@ contract Polygon is BaseInitialDeployment {
 }
 
 contract Binance is BaseInitialDeployment {
-  function CREATE3_FACTORY() public pure override returns (address) {
-    return LidoAddressBook.CREATE3_FACTORY_BINANCE;
-  }
-
   function TRANSPARENT_PROXY_FACTORY() public pure override returns (address) {
     return LidoAddressBook.TRANSPARENT_PROXY_FACTORY_BINANCE;
   }
@@ -115,10 +95,6 @@ contract Binance is BaseInitialDeployment {
 }
 
 contract Ethereum_testnet is BaseInitialDeployment {
-  function CREATE3_FACTORY() public pure override returns (address) {
-    return LidoAddressBook.CREATE3_FACTORY_ETHEREUM_TESTNET;
-  }
-
   function TRANSPARENT_PROXY_FACTORY() public pure override returns (address) {
     return LidoAddressBook.TRANSPARENT_PROXY_FACTORY_ETHEREUM_TESTNET;
   }
@@ -137,10 +113,6 @@ contract Ethereum_testnet is BaseInitialDeployment {
 }
 
 contract Polygon_testnet is BaseInitialDeployment {
-  function CREATE3_FACTORY() public pure override returns (address) {
-    return LidoAddressBook.CREATE3_FACTORY_POLYGON_TESTNET;
-  }
-
   function TRANSPARENT_PROXY_FACTORY() public pure override returns (address) {
     return LidoAddressBook.TRANSPARENT_PROXY_FACTORY_POLYGON_TESTNET;
   }
@@ -159,10 +131,6 @@ contract Polygon_testnet is BaseInitialDeployment {
 }
 
 contract Binance_testnet is BaseInitialDeployment {
-  function CREATE3_FACTORY() public pure override returns (address) {
-    return LidoAddressBook.CREATE3_FACTORY_BINANCE_TESTNET;
-  }
-
   function TRANSPARENT_PROXY_FACTORY() public pure override returns (address) {
     return LidoAddressBook.TRANSPARENT_PROXY_FACTORY_BINANCE_TESTNET;
   }

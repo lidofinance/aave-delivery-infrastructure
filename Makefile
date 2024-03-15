@@ -212,28 +212,28 @@ deploy-lido-emergency-registry-test:
 	$(call deploy_fn,Lido/Deploy_EmergencyRegistry,ethereum)
 
 deploy-lido-proxy-factory-test:
-	$(call deploy_fn,Lido/InitialDeployments,ethereum polygon binance)
+	$(call deploy_fn,Lido/InitialDeployments,ethereum binance)
 
 deploy-lido-cross-chain-infra-test:
-	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum polygon binance)
+	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)
 
 deploy-lido-ccip-bridge-adapters-test:
-	$(call deploy_fn,Lido/Adapters/DeployCCIP,ethereum polygon binance)
+	$(call deploy_fn,Lido/Adapters/DeployCCIP,ethereum binance)
 
 deploy-lido-lz-bridge-adapters-test:
-	$(call deploy_fn,Lido/Adapters/DeployLZ,ethereum polygon binance)
+	$(call deploy_fn,Lido/Adapters/DeployLZ,ethereum binance)
 
 deploy-lido-hl-bridge-adapters:
-	$(call deploy_fn,Lido/Adapters/DeployHL,ethereum polygon binance)
+	$(call deploy_fn,Lido/Adapters/DeployHL,ethereum binance)
 
-deploy-lido-polygon-adapters:
-	$(call deploy_fn,Lido/Adapters/DeployPolygon,ethereum poplygon)
+#deploy-lido-polygon-adapters:
+	#$(call deploy_fn,Lido/Adapters/DeployPolygon,ethereum poplygon)
 
 deploy-lido-wormhole-adapters:
 	$(call deploy_fn,Lido/Adapters/DeployWormholeAdapter,ethereum binance)
 
 deploy-lido-executor:
-	$(call deploy_fn,Lido/helpers/Deploy_Executor,polygon binance)
+	$(call deploy_fn,Lido/helpers/Deploy_Executor,binance)
 
 set-lido-ccf-approved-senders:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
@@ -242,10 +242,10 @@ set-lido-ccf-sender-adapters:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Sender_Adapters,ethereum)
 
 set-lido-ccr-receiver-adapters:
-	$(call deploy_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum polygon binance)
+	$(call deploy_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum binance)
 
 set-lido-ccr-confirmations:
-	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,ethereum polygon binance)
+	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,ethereum binance)
 
 fund-lido-crosschain:
 	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum binance)

@@ -45,7 +45,6 @@ contract WriteDeployedAddresses is Script {
       json.serialize('ccipAdapter', addresses.ccipAdapter);
       json.serialize('chainId', addresses.chainId);
       json.serialize('clEmergencyOracle', addresses.clEmergencyOracle);
-      json.serialize('create3Factory', addresses.create3Factory);
       json.serialize('crossChainController', addresses.crossChainController);
       json.serialize('crossChainControllerImpl', addresses.crossChainControllerImpl);
       json.serialize('emergencyRegistry', addresses.emergencyRegistry);
