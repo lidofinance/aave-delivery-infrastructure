@@ -273,7 +273,7 @@ deploy-lido-testnet:
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------
 
 deploy-lido-mock-destination:
-	$(call deploy_fn,Lido/helpers/Deploy_Mock_destination,binance)
+	$(call deploy_fn,Lido/helpers/Deploy_Mock_Destination,binance)
 
 test-lido-send-message:
 	$(call deploy_fn,Lido/e2e/Send_Message,ethereum)
