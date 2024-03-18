@@ -22,6 +22,16 @@ abstract contract BaseCCCNetworkDeployment is BaseScript {
     if (CL_EMERGENCY_ORACLE() == address(0)) {
       crossChainControllerImpl = new CrossChainController();
 
+      // Petrify the implementation
+      crossChainControllerImpl.initialize(
+        address(0),
+        address(0),
+        new ICrossChainController.ConfirmationInput[](0),
+        new ICrossChainController.ReceiverBridgeAdapterConfigInput[](0),
+        new ICrossChainController.ForwarderBridgeAdapterConfigInput[](0),
+        new address[](0)
+      );
+
       crossChainController = TransparentProxyFactory(addresses.proxyFactory).createDeterministic(
         address(crossChainControllerImpl),
         addresses.proxyAdmin,

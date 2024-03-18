@@ -2,14 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IOwnable} from "solidity-utils/contracts/transparent-proxy/interfaces/IOwnable.sol";
-import {TransparentProxyFactory} from "solidity-utils/contracts/transparent-proxy/TransparentProxyFactory.sol";
 
 import {BaseScript} from "../../BaseScript.sol";
-
-interface IProxyAdmin {
-  function changeProxyAdmin(address proxy, address newAdmin) external;
-  function transferOwnership(address newOwner) external;
-}
 
 abstract contract Seal_Contracts is BaseScript {
 
@@ -28,14 +22,8 @@ abstract contract Seal_Contracts is BaseScript {
     IOwnable memory CROSS_CHAIN_CONTROLLER = IOwnable(addresses.crossChainController);
     CROSS_CHAIN_CONTROLLER.transferOwnership(daoAgentAddress);
 
-    // Transfer TransparentProxy ownership to the DAO
-    IOwnable memory TRANSPARENT_PROXY_FACTORY = IOwnable(addresses.proxyFactory);
-    TRANSPARENT_PROXY_FACTORY.transferOwnership(daoAgentAddress);
-
     // Transfer proxy admin ownership to the DAO
-    IProxyAdmin memory PROXY_ADMIN = IProxyAdmin(addresses.proxyAdmin);
-
-    PROXY_ADMIN.changeProxyAdmin(addresses.crossChainController, daoAgentAddress);
+    IOwnable memory PROXY_ADMIN = IOwnable(addresses.proxyAdmin);
     PROXY_ADMIN.transferOwnership(daoAgentAddress);
   }
 }
