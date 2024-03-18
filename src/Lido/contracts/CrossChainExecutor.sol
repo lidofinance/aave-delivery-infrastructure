@@ -12,7 +12,7 @@ import {BridgeExecutorBase} from "./BridgeExecutorBase.sol";
  * @dev Queuing an ActionsSet into this Executor can only be done by the FxChild and after passing the EthereumGovernanceExecutor check
  * as the FxRoot sender
  */
-contract Executor is BridgeExecutorBase, IBaseReceiverPortal {
+contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
 
   /**
    * @dev Address of the CrossChainController contract on the current chain.

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {Executor} from "../../../src/Lido/contracts/Executor.sol";
+import {CrossChainExecutor} from "../../../src/Lido/contracts/CrossChainExecutor.sol";
 
 import '../BaseScript.sol';
 
@@ -15,7 +15,7 @@ abstract contract BaseExecutor is BaseScript {
   }
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    addresses.executor = address(new Executor(
+    addresses.executor = address(new CrossChainExecutor(
       addresses.crossChainController,
       getDaoAgentAddress(),
       getDaoAgentChainId(),
