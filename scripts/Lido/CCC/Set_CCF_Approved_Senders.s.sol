@@ -23,7 +23,10 @@ contract Ethereum is BaseSetCCFApprovedSenders {
 
   function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public pure override returns (address[] memory) {
     address[] memory senders = new address[](1);
-    senders[0] = addresses.owner;
+
+    // https://docs.lido.fi/deployed-contracts/#dao-contracts - Aragon Agent
+    senders[0] = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+
     return senders;
   }
 }
@@ -35,7 +38,10 @@ contract Ethereum_testnet is BaseSetCCFApprovedSenders {
 
   function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public pure override returns (address[] memory) {
     address[] memory senders = new address[](1);
-    senders[0] = addresses.owner;
+
+    // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts - Aragon Agent
+    senders[0] = 0x32A0E5828B62AAb932362a4816ae03b860b65e83;
+
     return senders;
   }
 }

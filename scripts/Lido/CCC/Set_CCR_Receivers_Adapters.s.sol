@@ -39,7 +39,7 @@ contract Ethereum is BaseSetCCRAdapters {
   }
 
   function getChainIds() public pure virtual override returns (uint256[] memory) {
-    uint256[] memory chainIds = new uint256[](2);
+    uint256[] memory chainIds = new uint256[](0);
     return chainIds;
   }
 
