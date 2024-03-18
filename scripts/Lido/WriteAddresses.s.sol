@@ -64,6 +64,6 @@ contract WriteDeployedAddresses is Script {
       }
     }
 
-    vm.writeJson(deployedJson, './deployments/multiChainCCAddresses.json');
+    vm.writeJson(deployedJson, './deployments/addresses.json');
   }
 }
