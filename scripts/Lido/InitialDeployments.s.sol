@@ -13,7 +13,7 @@ abstract contract BaseInitialDeployment is BaseScript {
   }
 
   function GUARDIAN() public virtual returns (address) {
-    return address(msg.sender);
+    return address(0);
   }
 
   function TRANSPARENT_PROXY_FACTORY() public pure virtual returns (address) {
@@ -49,10 +49,6 @@ contract Ethereum is BaseInitialDeployment {
     return LidoAddressBook.PROXY_ADMIN_ETHEREUM;
   }
 
-  function GUARDIAN() public pure override returns (address) {
-    return LidoAddressBook.GUARDIAN_ETHEREUM;
-  }
-
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return ChainIds.ETHEREUM;
   }
@@ -65,10 +61,6 @@ contract Polygon is BaseInitialDeployment {
 
   function PROXY_ADMIN() public pure override returns (address) {
     return LidoAddressBook.PROXY_ADMIN_POLYGON;
-  }
-
-  function GUARDIAN() public pure override returns (address) {
-    return LidoAddressBook.GUARDIAN_POLYGON;
   }
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
@@ -85,10 +77,6 @@ contract Binance is BaseInitialDeployment {
     return LidoAddressBook.PROXY_ADMIN_BINANCE;
   }
 
-  function GUARDIAN() public pure override returns (address) {
-    return LidoAddressBook.GUARDIAN_BINANCE;
-  }
-
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return ChainIds.BNB;
   }
@@ -101,10 +89,6 @@ contract Ethereum_testnet is BaseInitialDeployment {
 
   function PROXY_ADMIN() public pure override returns (address) {
     return LidoAddressBook.PROXY_ADMIN_ETHEREUM_TESTNET;
-  }
-
-  function GUARDIAN() public pure override returns (address) {
-    return LidoAddressBook.GUARDIAN_ETHEREUM_TESTNET;
   }
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
@@ -121,10 +105,6 @@ contract Polygon_testnet is BaseInitialDeployment {
     return LidoAddressBook.PROXY_ADMIN_POLYGON_TESTNET;
   }
 
-  function GUARDIAN() public pure override returns (address) {
-    return LidoAddressBook.GUARDIAN_POLYGON_TESTNET;
-  }
-
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return TestNetChainIds.POLYGON_MUMBAI;
   }
@@ -137,10 +117,6 @@ contract Binance_testnet is BaseInitialDeployment {
 
   function PROXY_ADMIN() public pure override returns (address) {
     return LidoAddressBook.PROXY_ADMIN_BINANCE_TESTNET;
-  }
-
-  function GUARDIAN() public pure override returns (address) {
-    return LidoAddressBook.GUARDIAN_BINANCE_TESTNET;
   }
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {

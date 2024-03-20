@@ -208,9 +208,6 @@ deploy-full-test:
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
 
-deploy-lido-emergency-registry-test:
-	$(call deploy_fn,Lido/Deploy_EmergencyRegistry,ethereum)
-
 deploy-lido-proxy-factory-test:
 	$(call deploy_fn,Lido/InitialDeployments,ethereum binance)
 
@@ -253,7 +250,6 @@ fund-lido-crosschain-test:
 write-lido-json-addresses-test :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
 deploy-lido-testnet:
-	#make deploy-lido-emergency-registry-test
 	make deploy-lido-proxy-factory-test
 	make deploy-lido-cross-chain-infra-test
 	make deploy-lido-ccip-bridge-adapters-test

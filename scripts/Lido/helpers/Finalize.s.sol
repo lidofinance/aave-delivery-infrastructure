@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import {IOwnable} from "solidity-utils/contracts/transparent-proxy/interfaces/IOwnable.sol";
 
-import {BaseScript} from "../../BaseScript.sol";
+import "../BaseScript.sol";
 
-abstract contract Seal_Contracts is BaseScript {
+abstract contract Finalize is BaseScript {
 
   function DAO_AGENT() public view virtual returns (address) {
     return address(0);
@@ -19,16 +19,16 @@ abstract contract Seal_Contracts is BaseScript {
       : DAO_AGENT();
 
     // Transfer CrossChainController ownership to the DAO
-    IOwnable memory CROSS_CHAIN_CONTROLLER = IOwnable(addresses.crossChainController);
+    IOwnable CROSS_CHAIN_CONTROLLER = IOwnable(addresses.crossChainController);
     CROSS_CHAIN_CONTROLLER.transferOwnership(daoAgentAddress);
 
     // Transfer proxy admin ownership to the DAO
-    IOwnable memory PROXY_ADMIN = IOwnable(addresses.proxyAdmin);
+    IOwnable PROXY_ADMIN = IOwnable(addresses.proxyAdmin);
     PROXY_ADMIN.transferOwnership(daoAgentAddress);
   }
 }
 
-contract Ethereum is Seal_Contracts {
+contract Ethereum is Finalize {
   // https://docs.lido.fi/deployed-contracts/#dao-contracts Aragon Agent
   function DAO_AGENT() public view virtual override returns (address) {
     return 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
@@ -39,7 +39,7 @@ contract Ethereum is Seal_Contracts {
   }
 }
 
-contract Ethereum_testnet is Seal_Contracts {
+contract Ethereum_testnet is Finalize {
   // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts Aragon Agent
   function DAO_AGENT() public view virtual override returns (address) {
     return 0x32A0E5828B62AAb932362a4816ae03b860b65e83;
@@ -50,13 +50,13 @@ contract Ethereum_testnet is Seal_Contracts {
   }
 }
 
-contract Binance is Seal_Contracts {
+contract Binance is Finalize {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return ChainIds.BNB;
   }
 }
 
-contract Binance_testnet is Seal_Contracts {
+contract Binance_testnet is Finalize {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return TestNetChainIds.BNB_TESTNET;
   }
