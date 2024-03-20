@@ -208,9 +208,6 @@ deploy-full-test:
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
 
-deploy-lido-proxy-factory-test:
-	$(call deploy_fn,Lido/InitialDeployments,ethereum binance)
-
 deploy-lido-cross-chain-infra-test:
 	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)
 
@@ -249,14 +246,16 @@ fund-lido-crosschain-test:
 
 write-lido-json-addresses-test :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
-deploy-lido-testnet:
-	make deploy-lido-proxy-factory-test
-	make deploy-lido-cross-chain-infra-test
+deploy-lido-bridge-adapters-test:
 	make deploy-lido-ccip-bridge-adapters-test
 	make deploy-lido-lz-bridge-adapters-test
 	make deploy-lido-hl-bridge-adapters-test
 	make deploy-lido-wormhole-adapters-test
-  # make deploy-lido-polygon-adapters-test
+	# make deploy-lido-polygon-adapters-test
+
+deploy-lido-testnet:
+	make deploy-lido-cross-chain-infra-test
+	make deploy-lido-bridge-adapters-test
 	make deploy-lido-cross-chain-executor-test
 	make set-lido-ccf-approved-senders-test
 	make set-lido-ccf-sender-adapters-test
@@ -264,6 +263,7 @@ deploy-lido-testnet:
 	make set-lido-ccr-confirmations-test
 	make fund-lido-crosschain-test
 	make write-lido-json-addresses-test
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------

@@ -108,8 +108,7 @@ library DeployerHelpers {
 library Constants {
   // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts - Aragon Agent
   address public constant OWNER = 0x32A0E5828B62AAb932362a4816ae03b860b65e83;
-  bytes32 public constant ADMIN_SALT = keccak256(bytes('Lido a.DI Proxy Admin Testnet'));
-  bytes32 public constant CCC_SALT = keccak256(bytes('Lido a.DI Cross Chain Controller Testnet'));
+  address public constant DEAD = 0x000000000000000000000000000000000000dEaD;
 }
 
 abstract contract BaseScript is Script {
