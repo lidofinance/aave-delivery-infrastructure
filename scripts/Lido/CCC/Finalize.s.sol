@@ -19,12 +19,10 @@ abstract contract Finalize is BaseScript {
       : DAO_AGENT();
 
     // Transfer CrossChainController ownership to the DAO
-    IOwnable CROSS_CHAIN_CONTROLLER = IOwnable(addresses.crossChainController);
-    CROSS_CHAIN_CONTROLLER.transferOwnership(daoAgentAddress);
+    IOwnable(addresses.crossChainController).transferOwnership(daoAgentAddress);
 
     // Transfer proxy admin ownership to the DAO
-    IOwnable PROXY_ADMIN = IOwnable(addresses.proxyAdmin);
-    PROXY_ADMIN.transferOwnership(daoAgentAddress);
+    IOwnable(addresses.proxyAdmin).transferOwnership(daoAgentAddress);
   }
 }
 

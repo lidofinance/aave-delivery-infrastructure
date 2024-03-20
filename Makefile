@@ -244,6 +244,9 @@ set-lido-ccr-confirmations-test:
 fund-lido-crosschain-test:
 	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum binance)
 
+finalize-lido-testnet:
+	$(call deploy_fn,Lido/CCC/Finalize,ethereum binance)
+
 write-lido-json-addresses-test :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
 deploy-lido-bridge-adapters-test:
@@ -263,6 +266,7 @@ deploy-lido-testnet:
 	make set-lido-ccr-confirmations-test
 	make fund-lido-crosschain-test
 	make write-lido-json-addresses-test
+	make finalize-lido-testnet
 
 
 # ----------------------------------------------------------------------------------------------------------------------
