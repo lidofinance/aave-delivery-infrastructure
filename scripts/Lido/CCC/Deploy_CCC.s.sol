@@ -1,68 +1,62 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {TransparentUpgradeableProxy} from 'solidity-utils/contracts/transparent-proxy/TransparentUpgradeableProxy.sol';
-import {Create3Factory, ICreate3Factory} from 'solidity-utils/contracts/create3/Create3Factory.sol';
-import {TransparentProxyFactory} from 'solidity-utils/contracts/transparent-proxy/TransparentProxyFactory.sol';
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {ProxyAdmin} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
+import {TransparentUpgradeableProxy} from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
 
 import {CrossChainController, ICrossChainController} from '../../../src/contracts/CrossChainController.sol';
-import {CrossChainControllerWithEmergencyMode, ICrossChainControllerWithEmergencyMode} from '../../../src/contracts/CrossChainControllerWithEmergencyMode.sol';
 
 import '../BaseScript.sol';
 
 abstract contract BaseCCCNetworkDeployment is BaseScript {
-  function CL_EMERGENCY_ORACLE() public view virtual returns (address) {
-    return address(0);
-  }
+
+  event ProxyCreated(address proxy, address indexed logic, address indexed admin);
+  event ProxyAdminCreated(address proxyAdmin, address indexed adminOwner);
+
+  event CCCCreated(address indexed ccc);
+  event CCCImplementationPetrified(address indexed cccImpl);
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    ICrossChainController crossChainControllerImpl;
-    address crossChainController;
+    // Create a new ProxyAdmin for the CrossChainController proxy
 
-    // if address is 0 means that ccc will not be emergency consumer
-    if (CL_EMERGENCY_ORACLE() == address(0)) {
-      crossChainControllerImpl = new CrossChainController();
+    address proxyAdmin = address(new ProxyAdmin());
 
-      crossChainController = TransparentProxyFactory(addresses.proxyFactory).createDeterministic(
-        address(crossChainControllerImpl),
-        addresses.proxyAdmin,
-        abi.encodeWithSelector(
-          CrossChainController.initialize.selector,
-          addresses.owner,
-          addresses.guardian,
-          new ICrossChainController.ConfirmationInput[](0),
-          new ICrossChainController.ReceiverBridgeAdapterConfigInput[](0),
-          new ICrossChainController.ForwarderBridgeAdapterConfigInput[](0),
-          new address[](0)
-        ),
-        Constants.CCC_SALT
-      );
-    } else {
-      crossChainControllerImpl = ICrossChainController(
-        address(new CrossChainControllerWithEmergencyMode(CL_EMERGENCY_ORACLE()))
-      );
+    emit ProxyAdminCreated(proxyAdmin, addresses.owner);
 
-      crossChainController = TransparentProxyFactory(addresses.proxyFactory).createDeterministic(
-        address(crossChainControllerImpl),
-        addresses.proxyAdmin,
-        abi.encodeWithSelector(
-          ICrossChainControllerWithEmergencyMode.initialize.selector,
-          addresses.owner,
-          addresses.guardian,
-          CL_EMERGENCY_ORACLE(),
-          new ICrossChainController.ConfirmationInput[](0),
-          new ICrossChainController.ReceiverBridgeAdapterConfigInput[](0),
-          new ICrossChainController.ForwarderBridgeAdapterConfigInput[](0),
-          new address[](0)
-        ),
-        Constants.CCC_SALT
-      );
+    addresses.proxyAdmin = proxyAdmin;
 
-      addresses.clEmergencyOracle = CL_EMERGENCY_ORACLE();
-    }
+    // Create a new CrossChainController implementation
 
-    addresses.crossChainController = crossChainController;
+    ICrossChainController crossChainControllerImpl = new CrossChainController();
+
     addresses.crossChainControllerImpl = address(crossChainControllerImpl);
+
+    emit CCCCreated(address(crossChainControllerImpl));
+
+    // Create a new TransparentUpgradeableProxy for the CrossChainController implementation
+    address proxy = address(new TransparentUpgradeableProxy(
+      addresses.crossChainControllerImpl,
+      addresses.proxyAdmin,
+      abi.encodeWithSelector(
+        CrossChainController.initialize.selector,
+        addresses.owner,
+        address(0),
+        new ICrossChainController.ConfirmationInput[](0),
+        new ICrossChainController.ReceiverBridgeAdapterConfigInput[](0),
+        new ICrossChainController.ForwarderBridgeAdapterConfigInput[](0),
+        new address[](0)
+      )
+    ));
+
+    emit ProxyCreated(proxy, address(crossChainControllerImpl), proxyAdmin);
+
+    // Petrify the implementation
+    Ownable(addresses.crossChainControllerImpl).transferOwnership(Constants.DEAD);
+
+    emit CCCImplementationPetrified(addresses.crossChainControllerImpl);
+
+    addresses.crossChainController = proxy;
   }
 }
 

@@ -85,9 +85,9 @@ contract Ethereum_testnet is BaseCCIPAdapter {
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](2);
-    remoteNetworks[0] = TestNetChainIds.POLYGON_MUMBAI;
-    remoteNetworks[1] = TestNetChainIds.BNB_TESTNET;
+    uint256[] memory remoteNetworks = new uint256[](1);
+    remoteNetworks[0] = TestNetChainIds.BNB_TESTNET;
+    // remoteNetworks[1] = TestNetChainIds.POLYGON_MUMBAI;
 
     return remoteNetworks;
   }

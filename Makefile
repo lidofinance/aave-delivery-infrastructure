@@ -208,72 +208,72 @@ deploy-full-test:
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
 
-deploy-lido-emergency-registry-test:
-	$(call deploy_fn,Lido/Deploy_EmergencyRegistry,ethereum)
-
-deploy-lido-proxy-factory-test:
-	$(call deploy_fn,Lido/InitialDeployments,ethereum polygon binance)
-
 deploy-lido-cross-chain-infra-test:
-	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum polygon binance)
+	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)
 
 deploy-lido-ccip-bridge-adapters-test:
-	$(call deploy_fn,Lido/Adapters/DeployCCIP,ethereum polygon binance)
+	$(call deploy_fn,Lido/Adapters/Deploy_CCIP,ethereum binance)
 
 deploy-lido-lz-bridge-adapters-test:
-	$(call deploy_fn,Lido/Adapters/DeployLZ,ethereum polygon binance)
+	$(call deploy_fn,Lido/Adapters/Deploy_LZ,ethereum binance)
 
-deploy-lido-hl-bridge-adapters:
-	$(call deploy_fn,Lido/Adapters/DeployHL,ethereum polygon binance)
+deploy-lido-hl-bridge-adapters-test:
+	$(call deploy_fn,Lido/Adapters/Deploy_HL,ethereum binance)
 
-deploy-lido-polygon-adapters:
-	$(call deploy_fn,Lido/Adapters/DeployPolygon,ethereum poplygon)
+deploy-lido-wormhole-adapters-test:
+	$(call deploy_fn,Lido/Adapters/Deploy_Wormhole,ethereum binance)
 
-deploy-lido-wormhole-adapters:
-	$(call deploy_fn,Lido/Adapters/DeployWormholeAdapter,ethereum binance)
+#deploy-lido-polygon-adapters-test:
+	#$(call deploy_fn,Lido/Adapters/Deploy_Polygon,ethereum poplygon)
 
-deploy-lido-executor:
-	$(call deploy_fn,Lido/helpers/Deploy_Executor,polygon binance)
+deploy-lido-cross-chain-executor-test:
+	$(call deploy_fn,Lido/CCC/Deploy_CCE,binance)
 
-set-lido-ccf-approved-senders:
+set-lido-ccf-approved-senders-test:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
 
-set-lido-ccf-sender-adapters:
+set-lido-ccf-sender-adapters-test:
 	$(call deploy_fn,Lido/CCC/Set_CCF_Sender_Adapters,ethereum)
 
-set-lido-ccr-receiver-adapters:
-	$(call deploy_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum polygon binance)
+set-lido-ccr-receiver-adapters-test:
+	$(call deploy_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum binance)
 
-set-lido-ccr-confirmations:
-	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,ethereum polygon binance)
+set-lido-ccr-confirmations-test:
+	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,ethereum binance)
 
-fund-lido-crosschain:
+fund-lido-crosschain-test:
 	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum binance)
 
-write-lido-json-addresses :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
+finalize-lido-testnet:
+	$(call deploy_fn,Lido/CCC/Finalize,ethereum binance)
 
-deploy-lido-testnet:
-	#make deploy-lido-emergency-registry-test
-	make deploy-lido-proxy-factory-test
-	make deploy-lido-cross-chain-infra-test
+write-lido-json-addresses-test :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
+
+deploy-lido-bridge-adapters-test:
 	make deploy-lido-ccip-bridge-adapters-test
 	make deploy-lido-lz-bridge-adapters-test
-	make deploy-lido-hl-bridge-adapters
-	# make deploy-lido-polygon-adapters
-	make deploy-lido-wormhole-adapters
-	make deploy-lido-executor
-	make set-lido-ccf-approved-senders
-	make set-lido-ccf-sender-adapters
-	make set-lido-ccr-receiver-adapters
-	make set-lido-ccr-confirmations
-	make fund-lido-crosschain
-	make write-lido-json-addresses
+	make deploy-lido-hl-bridge-adapters-test
+	make deploy-lido-wormhole-adapters-test
+	# make deploy-lido-polygon-adapters-test
+
+deploy-lido-testnet:
+	make deploy-lido-cross-chain-infra-test
+	make deploy-lido-bridge-adapters-test
+	make deploy-lido-cross-chain-executor-test
+	make set-lido-ccf-approved-senders-test
+	make set-lido-ccf-sender-adapters-test
+	make set-lido-ccr-receiver-adapters-test
+	make set-lido-ccr-confirmations-test
+	make fund-lido-crosschain-test
+	make write-lido-json-addresses-test
+	make finalize-lido-testnet
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------
 
 deploy-lido-mock-destination:
-	$(call deploy_fn,Lido/helpers/Deploy_Mock_destination,binance)
+	$(call deploy_fn,Lido/helpers/Deploy_Mock_Destination,binance)
 
 test-lido-send-message:
 	$(call deploy_fn,Lido/e2e/Send_Message,ethereum)
