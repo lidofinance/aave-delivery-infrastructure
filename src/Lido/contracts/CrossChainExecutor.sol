@@ -1,33 +1,33 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {IBaseReceiverPortal} from "../../../src/contracts/interfaces/IBaseReceiverPortal.sol";
+import {IBaseReceiverPortal} from '../../contracts/interfaces/IBaseReceiverPortal.sol';
 
-import {BridgeExecutorBase} from "./BridgeExecutorBase.sol";
+import {BridgeExecutorBase} from './BridgeExecutorBase.sol';
 
 /**
- * @title PolygonBridgeExecutor
- * @author Aave
- * @notice Implementation of the Polygon Bridge Executor, able to receive cross-chain transactions from Ethereum
- * @dev Queuing an ActionsSet into this Executor can only be done by the FxChild and after passing the EthereumGovernanceExecutor check
- * as the FxRoot sender
+ * @title CrossChainExecutor
+ * @author Lido
+ * @notice Contract that implements receiver portal role along with the ability to execute actions sets.
+ * @dev Queuing an ActionsSet into this Executor can only be done by sending a message from Ethereum Governance Agent
+ * via a.DI CrossChainController contract on the Ethereum mainnet using this contract as a destination.
  */
 contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
 
   /**
    * @dev Address of the CrossChainController contract on the current chain.
    */
-  address private immutable _crossChainController;
+  address private immutable CROSS_CHAIN_CONTROLLER;
 
   /**
    * @dev Address of the DAO Agent contract on the root chain.
    */
-  address private immutable _ethereumGovernanceExecutor;
+  address private immutable GOVERNANCE_EXECUTOR;
 
   /**
    * @dev Root Chain ID of the DAO Agent contract, must be 1 for Ethereum.
    */
-  uint256 private immutable _ethereumGovernanceChainId;
+  uint256 private immutable GOVERNANCE_CHAIN_ID;
 
   error InvalidCrossChainController();
   error InvalidEthereumGovernanceExecutor();
@@ -42,7 +42,7 @@ contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
    * @dev Only allows the CrossChainController to call the function
    */
   modifier onlyCrossChainController() {
-    if (msg.sender != _crossChainController) revert InvalidCaller();
+    if (msg.sender != CROSS_CHAIN_CONTROLLER) revert InvalidCaller();
     _;
   }
 
@@ -72,9 +72,9 @@ contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
     if (ethereumGovernanceExecutor == address(0)) revert InvalidEthereumGovernanceExecutor();
     if (ethereumGovernanceChainId == 0) revert InvalidEthereumGovernanceChainId();
 
-    _crossChainController = crossChainController;
-    _ethereumGovernanceExecutor = ethereumGovernanceExecutor;
-    _ethereumGovernanceChainId = ethereumGovernanceChainId;
+    CROSS_CHAIN_CONTROLLER = crossChainController;
+    GOVERNANCE_EXECUTOR = ethereumGovernanceExecutor;
+    GOVERNANCE_CHAIN_ID = ethereumGovernanceChainId;
   }
 
   /**
@@ -88,8 +88,8 @@ contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
     uint256 originChainId,
     bytes memory message
   ) external override onlyCrossChainController {
-    if (originSender != _ethereumGovernanceExecutor) revert InvalidSenderAddress();
-    if (originChainId != _ethereumGovernanceChainId) revert InvalidSenderChainId();
+    if (originSender != GOVERNANCE_EXECUTOR) revert InvalidSenderAddress();
+    if (originChainId != GOVERNANCE_CHAIN_ID) revert InvalidSenderChainId();
 
     emit MessageReceived(originSender, originChainId, message);
 
@@ -120,7 +120,7 @@ contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
    * @return The address of the EthereumGovernanceExecutor
    **/
   function getEthereumGovernanceExecutor() external view returns (address) {
-    return _ethereumGovernanceExecutor;
+    return GOVERNANCE_EXECUTOR;
   }
 
   /**
@@ -128,7 +128,7 @@ contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
    * @return The chain ID of the EthereumGovernanceExecutor
    **/
   function getEthereumGovernanceChainId() external view returns (uint256) {
-    return _ethereumGovernanceChainId;
+    return GOVERNANCE_CHAIN_ID;
   }
 
   /**
@@ -136,6 +136,6 @@ contract CrossChainExecutor is BridgeExecutorBase, IBaseReceiverPortal {
    * @return The address of the CrossChainController
    **/
   function getCrossChainController() external view returns (address) {
-    return _crossChainController;
+    return CROSS_CHAIN_CONTROLLER;
   }
 }
