@@ -43,7 +43,7 @@ abstract contract BaseLZAdapter is BaseAdapterScript {
   }
 }
 
-// https://docs.layerzero.network/contracts/endpoint-addresses#ethereum
+// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#ethereum
 contract Ethereum is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
     return 0x1a44076050125825900e736c501f859c50fE728c;
@@ -62,7 +62,7 @@ contract Ethereum is BaseLZAdapter {
   }
 }
 
-// https://docs.layerzero.network/contracts/endpoint-addresses#sepolia-testnet
+// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#sepolia-testnet
 contract Ethereum_testnet is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
     return 0x6EDCE65403992e310A62460808c4b910D972f10f;
@@ -85,7 +85,7 @@ contract Ethereum_testnet is BaseLZAdapter {
   }
 }
 
-// https://docs.layerzero.network/contracts/endpoint-addresses#polygon
+// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#polygon
 contract Polygon is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
     return 0x1a44076050125825900e736c501f859c50fE728c;
@@ -103,7 +103,7 @@ contract Polygon is BaseLZAdapter {
   }
 }
 
-// https://docs.layerzero.network/contracts/endpoint-addresses#mumbai-polygon-testnet
+// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#mumbai-polygon-testnet
 contract Polygon_testnet is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
     return 0x6EDCE65403992e310A62460808c4b910D972f10f;
@@ -125,7 +125,7 @@ contract Polygon_testnet is BaseLZAdapter {
   }
 }
 
-// https://docs.layerzero.network/contracts/endpoint-addresses#bnb-chain
+// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#bnb-chain
 contract Binance is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
     return 0x1a44076050125825900e736c501f859c50fE728c;
@@ -143,7 +143,7 @@ contract Binance is BaseLZAdapter {
   }
 }
 
-// https://docs.layerzero.network/contracts/endpoint-addresses#bnb-chain-testnet
+// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#bnb-chain-testnet
 contract Binance_testnet is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
     return 0x6EDCE65403992e310A62460808c4b910D972f10f;
