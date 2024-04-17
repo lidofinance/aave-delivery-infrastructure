@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import {GasEstimationType, GasInfo} from '../libs/IGasEstimationTypes.sol';
+import {GasEstimationType, GasInfo} from '../libs/GasEstimationTypes.sol';
 
 /**
  * @title IInterchainGasEstimation Interface
