@@ -7,11 +7,11 @@ import {IAxelarGMPGateway} from './interfaces/IAxelarGMPGateway.sol';
 import {Errors} from '../../libs/Errors.sol';
 import {ChainIds} from '../../libs/ChainIds.sol';
 
-contract AxelarAdapter is BaseAdapter, IAxelarAdapter {
+contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
   IAxelarGMPGateway public gateway;
   IAxelarGasService public gasService;
 
-  constructor(address gateway, address gasService) {
+  constructor(address gateway, address gasService) AxelarGMPExecutable(gateway) {
     require(gateway != address(0), Errors.INVALID_AXELAR_GATEWAY);
     require(gasService != address(0), Errors.INVALID_AXELAR_GAS_SERVICE);
     gateway = IAxelarGMPGateway(gateway);
@@ -72,5 +72,17 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter {
 
     // 3. forward message
     gateway.callContract{value: gasEstimate}(destinationChain, receiver, message);
+  }
+
+  // @inheritdoc AxelarGMPExecutable
+  // @dev This function is called by the Axelar Executor service after validating the command.
+  function _execute(
+    bytes32 commandId,
+    string calldata sourceChain,
+    string calldata sourceAddress,
+    bytes calldata payload
+  ) internal override {
+    uint256 originChainId = nativeToInfraChainId(sourceChain);
+    _registerReceivedMessage(_message, originChainId);
   }
 }
