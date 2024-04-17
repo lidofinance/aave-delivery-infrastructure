@@ -72,7 +72,7 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
     require(bytes(destinationChain).length > 0, Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED);
 
     // 2. estimate on-chain gas
-    uint256 gasEstimate = gasService.estimateGasFee(
+    uint256 gasFee = gasService.estimateGasFee(
       destinationChain,
       receiver,
       message,
@@ -80,8 +80,17 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
       '0x'
     );
 
+    // 3. pay for gas
+    gasService.payNativeGasForContractCall{value: gasFee}(
+      msg.sender,
+      destinationChain,
+      receiver,
+      message,
+      msg.sender
+    );
+
     // 3. forward message
-    gateway.callContract{value: gasEstimate}(destinationChain, receiver, message);
+    gateway.callContract(destinationChain, receiver, message);
 
     return (address(gateway), 0);
   }
