@@ -19,6 +19,7 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
   }
 
   /// @inheritdoc IAxelarAdapter
+  // @dev this function is used to convert the axelar chain id to the infra chain id
   function nativeToInfraChainId(string calldata nativeChainId) public view returns (string) {
     if (nativeChainId == 'fantom') return ChainIds.FANTOM;
     if (nativeChainId == 'polygon') return ChainIds.POLYGON;
@@ -35,6 +36,7 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
   }
 
   /// @inheritdoc IAxelarAdapter
+  // @dev this function is used to convert the infra chain id to the axelar chain id
   function infraToNativeChainId(uint256 infraChainId) public view returns (string) {
     if (infraChainId == ChainIds.FANTOM) return 'fantom';
     if (infraChainId == ChainIds.POLYGON) return 'polygon';
@@ -51,6 +53,14 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
   }
 
   /// @inheritdoc IBaseAdapter
+  /**
+   * @dev
+   * @param receiver - destination adapter contract address
+   * @param executionGasLimit -
+   * @param destinationChainId
+   * @param message
+   * @return
+   */
   function forwardMessage(
     address receiver,
     uint256 executionGasLimit,
@@ -72,6 +82,8 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
 
     // 3. forward message
     gateway.callContract{value: gasEstimate}(destinationChain, receiver, message);
+
+    return (address(gateway), 0);
   }
 
   // @inheritdoc AxelarGMPExecutable
