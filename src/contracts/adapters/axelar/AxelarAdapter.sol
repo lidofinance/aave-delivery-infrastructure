@@ -2,42 +2,53 @@
 pragma solidity ^0.8.0;
 
 import {BaseAdapter, IBaseAdapter} from '../BaseAdapter.sol';
+import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
+import {AxelarGMPExecutable} from './libs/AxelarGMPExecutable.sol';
+import {BaseAxelarAdapter} from './libs/BaseAxelarAdapter.sol';
 import {IAxelarGasService} from './interfaces/IAxelarGasService.sol';
 import {IAxelarGMPGateway} from './interfaces/IAxelarGMPGateway.sol';
 import {Errors} from '../../libs/Errors.sol';
 import {ChainIds} from '../../libs/ChainIds.sol';
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {StringToAddress, AddressToString} from './libs/AddressString.sol';
 
-contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
-  IAxelarGMPGateway public gateway;
+contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   IAxelarGasService public gasService;
 
-  constructor(address gateway, address gasService) AxelarGMPExecutable(gateway) {
-    require(gateway != address(0), Errors.INVALID_AXELAR_GATEWAY);
-    require(gasService != address(0), Errors.INVALID_AXELAR_GAS_SERVICE);
-    gateway = IAxelarGMPGateway(gateway);
-    gasService = IAxelarGasService(gasService);
+  constructor(
+    address _gateway,
+    address _gasService
+  )
+    AxelarGMPExecutable(_gateway)
+    BaseAdapter(_gateway, 0, 'Axelar adapter', new TrustedRemotesConfig[](0))
+  {
+    require(_gateway != address(0), Errors.INVALID_AXELAR_GATEWAY);
+    require(_gasService != address(0), Errors.INVALID_AXELAR_GAS_SERVICE);
+    gasService = IAxelarGasService(_gasService);
   }
 
-  /// @inheritdoc IAxelarAdapter
+  /// @inheritdoc BaseAxelarAdapter
   // @dev this function is used to convert the axelar chain id to the infra chain id
-  function nativeToInfraChainId(string calldata nativeChainId) public view returns (string) {
-    if (nativeChainId == 'fantom') return ChainIds.FANTOM;
-    if (nativeChainId == 'polygon') return ChainIds.POLYGON;
-    if (nativeChainId == 'avalanche') return ChainIds.AVALANCHE;
-    if (nativeChainId == 'arbitrum') return ChainIds.ARBITRUM;
-    if (nativeChainId == 'optimism') return ChainIds.OPTIMISM;
-    if (nativeChainId == 'ethereum') return ChainIds.ETHEREUM;
-    if (nativeChainId == 'celo') return ChainIds.CELO;
-    if (nativeChainId == 'binance') return ChainIds.BNB;
-    if (nativeChainId == 'base') return ChainIds.BASE;
-    if (nativeChainId == 'scroll') return ChainIds.SCROLL;
+  function axelarToInfraChainId(
+    string calldata axelarChainId
+  ) public pure override returns (uint256) {
+    if (Strings.equal(axelarChainId, 'fantom')) return ChainIds.FANTOM;
+    if (Strings.equal(axelarChainId, 'polygon')) return ChainIds.POLYGON;
+    if (Strings.equal(axelarChainId, 'avalanche')) return ChainIds.AVALANCHE;
+    if (Strings.equal(axelarChainId, 'arbitrum')) return ChainIds.ARBITRUM;
+    if (Strings.equal(axelarChainId, 'optimism')) return ChainIds.OPTIMISM;
+    if (Strings.equal(axelarChainId, 'ethereum')) return ChainIds.ETHEREUM;
+    if (Strings.equal(axelarChainId, 'celo')) return ChainIds.CELO;
+    if (Strings.equal(axelarChainId, 'binance')) return ChainIds.BNB;
+    if (Strings.equal(axelarChainId, 'base')) return ChainIds.BASE;
+    if (Strings.equal(axelarChainId, 'scroll')) return ChainIds.SCROLL;
 
     return 0;
   }
 
-  /// @inheritdoc IAxelarAdapter
+  /// @inheritdoc BaseAxelarAdapter
   // @dev this function is used to convert the infra chain id to the axelar chain id
-  function infraToNativeChainId(uint256 infraChainId) public view returns (string) {
+  function infraToAxelarChainId(uint256 infraChainId) public pure override returns (string memory) {
     if (infraChainId == ChainIds.FANTOM) return 'fantom';
     if (infraChainId == ChainIds.POLYGON) return 'polygon';
     if (infraChainId == ChainIds.AVALANCHE) return 'avalanche';
@@ -54,12 +65,12 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
 
   /// @inheritdoc IBaseAdapter
   /**
-   * @dev
+   * @dev This function is used to forward a message to the destination chain
    * @param receiver - destination adapter contract address
-   * @param executionGasLimit -
-   * @param destinationChainId
-   * @param message
-   * @return
+   * @param executionGasLimit - gas limit for the contract call at the destination chain
+   * @param destinationChainId - destination chain id
+   * @param message - message to be sent to the destination chain
+   * @return (address, uint256) - address of the gateway contract and message id
    */
   function forwardMessage(
     address receiver,
@@ -68,13 +79,15 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
     bytes calldata message
   ) external override returns (address, uint256) {
     // 1. retrieve axelar-compatible chain id
-    string memory destinationChain = infraToNativeChainId(destinationChainId);
+    string memory destinationChain = infraToAxelarChainId(destinationChainId);
     require(bytes(destinationChain).length > 0, Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED);
+
+    string memory stringReceiver = AddressToString.toString(receiver);
 
     // 2. estimate on-chain gas
     uint256 gasFee = gasService.estimateGasFee(
       destinationChain,
-      receiver,
+      stringReceiver,
       message,
       executionGasLimit,
       '0x'
@@ -84,26 +97,30 @@ contract AxelarAdapter is BaseAdapter, IAxelarAdapter, AxelarGMPExecutable {
     gasService.payNativeGasForContractCall{value: gasFee}(
       msg.sender,
       destinationChain,
-      receiver,
+      stringReceiver,
       message,
       msg.sender
     );
 
     // 3. forward message
-    gateway.callContract(destinationChain, receiver, message);
+    IAxelarGMPGateway(gatewayAddress).callContract(destinationChain, stringReceiver, message);
 
-    return (address(gateway), 0);
+    return (gatewayAddress, 0);
   }
 
   // @inheritdoc AxelarGMPExecutable
   // @dev This function is called by the Axelar Executor service after validating the command.
   function _execute(
-    bytes32 commandId,
+    bytes32,
     string calldata sourceChain,
     string calldata sourceAddress,
-    bytes calldata payload
+    bytes calldata message
   ) internal override {
-    uint256 originChainId = nativeToInfraChainId(sourceChain);
-    _registerReceivedMessage(_message, originChainId);
+    uint256 originChainId = axelarToInfraChainId(sourceChain);
+    address trustedSourceAddress = this.getTrustedRemoteByChainId(originChainId);
+    if (StringToAddress.toAddress(sourceAddress) != trustedSourceAddress) {
+      revert(Errors.REMOTE_NOT_TRUSTED);
+    }
+    _registerReceivedMessage(message, originChainId);
   }
 }
