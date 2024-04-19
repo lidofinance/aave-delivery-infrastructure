@@ -270,6 +270,35 @@ deploy-lido-testnet:
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------- LIDO TEST SCRIPTS ----------------------------------------------------------
+
+define deploy_local_single_fn
+forge script \
+ scripts/$(1).s.sol:$(if $(3),$(3),$(shell UP=$(2)_local; echo $${UP} | perl -nE 'say ucfirst')) \
+ --rpc-url $(2)-local --broadcast --verify --slow -vvvv
+endef
+
+define deploy_local_fn
+ $(foreach network,$(2),$(call deploy_local_single_fn,$(1),$(network),$(3)))
+endef
+
+start-local-blockchain-forks:
+	anvil --fork-url fork-source-mainnet --chain-id 1 -p 8545 & \
+	anvil --fork-url fork-source-polygon --chain-id 137 -p 8546 & \
+	anvil --fork-url fork-source-binance --chain-id 56 -p 8547 &
+
+stop-local-blockchain-forks:
+	killall anvil
+
+deploy-lido-cross-chain-infra-local:
+	$(call deploy_local_fn,Lido/CCC/Deploy_CCC,ethereum polygon binance)
+
+deploy-lido-local:
+	make start-local-blockchain-forks
+	make deploy-lido-cross-chain-infra-local
+	make stop-local-blockchain-forks
+
+# ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------
 
 deploy-lido-mock-destination:
