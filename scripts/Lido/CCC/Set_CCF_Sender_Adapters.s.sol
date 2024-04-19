@@ -26,7 +26,7 @@ contract Ethereum is BaseCCFSenderAdapters {
     DeployerHelpers.Addresses memory addresses
   ) public view override returns (ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[] memory) {
     ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[]
-      memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](4);
+    memory bridgeAdaptersToEnable = new ICrossChainForwarder.ForwarderBridgeAdapterConfigInput[](8);
 
     // binance path
     DeployerHelpers.Addresses memory addressesBNB = _getAddresses(ChainIds.BNB);
@@ -52,22 +52,27 @@ contract Ethereum is BaseCCFSenderAdapters {
     });
 
     // polygon path
-//    DeployerHelpers.Addresses memory addressesPolygon = _getAddresses(ChainIds.POLYGON);
-//    bridgeAdaptersToEnable[4] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
-//      currentChainBridgeAdapter: addresses.ccipAdapter,
-//      destinationBridgeAdapter: addressesPolygon.ccipAdapter,
-//      destinationChainId: addressesPolygon.chainId
-//    });
-//    bridgeAdaptersToEnable[5] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
-//      currentChainBridgeAdapter: addresses.lzAdapter,
-//      destinationBridgeAdapter: addressesPolygon.lzAdapter,
-//      destinationChainId: addressesPolygon.chainId
-//    });
-//    bridgeAdaptersToEnable[6] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
-//      currentChainBridgeAdapter: addresses.hlAdapter,
-//      destinationBridgeAdapter: addressesPolygon.hlAdapter,
-//      destinationChainId: addressesPolygon.chainId
-//    });
+    DeployerHelpers.Addresses memory addressesPolygon = _getAddresses(ChainIds.POLYGON);
+    bridgeAdaptersToEnable[4] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
+      currentChainBridgeAdapter: addresses.ccipAdapter,
+      destinationBridgeAdapter: addressesPolygon.ccipAdapter,
+      destinationChainId: addressesPolygon.chainId
+    });
+    bridgeAdaptersToEnable[5] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
+      currentChainBridgeAdapter: addresses.lzAdapter,
+      destinationBridgeAdapter: addressesPolygon.lzAdapter,
+      destinationChainId: addressesPolygon.chainId
+    });
+    bridgeAdaptersToEnable[6] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
+      currentChainBridgeAdapter: addresses.hlAdapter,
+      destinationBridgeAdapter: addressesPolygon.hlAdapter,
+      destinationChainId: addressesPolygon.chainId
+    });
+    bridgeAdaptersToEnable[7] = ICrossChainForwarder.ForwarderBridgeAdapterConfigInput({
+      currentChainBridgeAdapter: addresses.polAdapter,
+      destinationBridgeAdapter: addressesPolygon.polAdapter,
+      destinationChainId: addressesPolygon.chainId
+    });
 
     return bridgeAdaptersToEnable;
   }
@@ -126,5 +131,11 @@ contract Ethereum_testnet is BaseCCFSenderAdapters {
 //    });
 
     return bridgeAdaptersToEnable;
+  }
+}
+
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
   }
 }

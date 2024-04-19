@@ -94,6 +94,12 @@ contract Ethereum_testnet is BaseWormholeAdapter {
   }
 }
 
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 contract Binance is BaseWormholeAdapter {
   function WORMHOLE_RELAYER() public pure override returns (address) {
     return 0x27428DD2d3DD32A4D7f7C497eAaa23130d894911;
@@ -137,5 +143,11 @@ contract Binance_testnet is BaseWormholeAdapter {
     remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
 
     return remoteNetworks;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
   }
 }

@@ -85,6 +85,13 @@ contract Ethereum_testnet is BaseLZAdapter {
   }
 }
 
+// Copy of Ethereum mainnet
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 // https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#polygon
 contract Polygon is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
@@ -125,6 +132,13 @@ contract Polygon_testnet is BaseLZAdapter {
   }
 }
 
+// Copy of Polygon mainnet
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 // https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#bnb-chain
 contract Binance is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
@@ -162,5 +176,12 @@ contract Binance_testnet is BaseLZAdapter {
     remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
 
     return remoteNetworks;
+  }
+}
+
+// Copy of Binance mainnet
+contract Binance_local is Binance {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
   }
 }

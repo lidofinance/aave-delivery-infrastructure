@@ -14,8 +14,7 @@ test   :; forge test -vvv
 
 BASE_LEDGER = --legacy --mnemonics foo --ledger --mnemonic-indexes $(MNEMONIC_INDEX) --sender $(LEDGER_SENDER)
 BASE_KEY = --private-key ${PRIVATE_KEY}
-
-
+BASE_KEY_LOCAL = --private-key ${PRIVATE_KEY_LOCAL}
 
 custom_ethereum := --with-gas-price 10000000000 # 53 gwei
 custom_polygon :=  --with-gas-price 100000000000 # 560 gwei
@@ -275,7 +274,8 @@ deploy-lido-testnet:
 define deploy_local_single_fn
 forge script \
  scripts/$(1).s.sol:$(if $(3),$(3),$(shell UP=$(2)_local; echo $${UP} | perl -nE 'say ucfirst')) \
- --rpc-url $(2)-local --broadcast --verify --slow -vvvv
+ --rpc-url $(2)-local --broadcast --slow -vvvv $(BASE_KEY_LOCAL)
+ $(custom_$(if $(PROD),$(2),$(2)-local))
 endef
 
 define deploy_local_fn
@@ -288,15 +288,71 @@ start-local-blockchain-forks:
 	anvil --fork-url fork-source-binance --chain-id 56 -p 8547 &
 
 stop-local-blockchain-forks:
-	killall anvil
+	killall anvil || true
 
 deploy-lido-cross-chain-infra-local:
 	$(call deploy_local_fn,Lido/CCC/Deploy_CCC,ethereum polygon binance)
 
-deploy-lido-local:
-	make start-local-blockchain-forks
-	make deploy-lido-cross-chain-infra-local
+deploy-lido-ccip-bridge-adapters-local:
+	$(call deploy_local_fn,Lido/Adapters/Deploy_CCIP,ethereum polygon binance)
+
+deploy-lido-lz-bridge-adapters-local:
+	$(call deploy_local_fn,Lido/Adapters/Deploy_LZ,ethereum polygon binance)
+
+deploy-lido-hl-bridge-adapters-local:
+	$(call deploy_local_fn,Lido/Adapters/Deploy_HL,ethereum polygon binance)
+
+deploy-lido-wormhole-adapters-local:
+	$(call deploy_local_fn,Lido/Adapters/Deploy_Wormhole,ethereum binance)
+
+deploy-lido-polygon-adapters-local:
+	$(call deploy_local_fn,Lido/Adapters/Deploy_Polygon,ethereum polygon)
+
+deploy-lido-cross-chain-executor-local:
+	$(call deploy_local_fn,Lido/CCC/Deploy_CCE,polygon binance)
+
+set-lido-ccf-approved-senders-local:
+	$(call deploy_local_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
+
+set-lido-ccf-sender-adapters-local:
+	$(call deploy_local_fn,Lido/CCC/Set_CCF_Sender_Adapters,ethereum)
+
+set-lido-ccr-receiver-adapters-local:
+	$(call deploy_local_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum polygon binance)
+
+set-lido-ccr-confirmations-local:
+	$(call deploy_local_fn,Lido/CCC/Set_CCR_Confirmations,ethereum polygon binance)
+
+fund-lido-crosschain-local:
+	$(call deploy_local_fn,Lido/CCC/Fund_CCC,ethereum)
+
+finalize-lido-local:
+	$(call deploy_local_fn,Lido/CCC/Finalize,ethereum polygon binance)
+
+deploy-lido-bridge-adapters-local:
+	make deploy-lido-ccip-bridge-adapters-local
+	make deploy-lido-lz-bridge-adapters-local
+	make deploy-lido-hl-bridge-adapters-local
+	make deploy-lido-wormhole-adapters-local
+	make deploy-lido-polygon-adapters-local
+
+restart-local-blockchain-forks:
 	make stop-local-blockchain-forks
+	make start-local-blockchain-forks
+
+deploy-lido-local:
+	make deploy-lido-cross-chain-infra-local
+	make deploy-lido-bridge-adapters-local
+	make deploy-lido-cross-chain-executor-local
+	make set-lido-ccf-approved-senders-local
+	make set-lido-ccf-sender-adapters-local
+	make set-lido-ccr-receiver-adapters-local
+	make set-lido-ccr-confirmations-local
+	make fund-lido-crosschain-local
+	make finalize-lido-local
+
+test-lido-local:
+	ENV=local forge test --fork-url ethereum-local -vvv --match-path "tests/Lido/integration/**/*.sol"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------

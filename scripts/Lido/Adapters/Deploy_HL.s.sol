@@ -62,6 +62,12 @@ contract Ethereum_testnet is BaseHLAdapter {
   }
 }
 
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 contract Polygon is BaseHLAdapter {
   function HL_MAIL_BOX() public pure override returns (address) {
     return 0x5d934f4e2f797775e53561bB72aca21ba36B96BB;
@@ -98,6 +104,12 @@ contract Polygon_testnet is BaseHLAdapter {
   }
 }
 
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 contract Binance is BaseHLAdapter {
   function HL_MAIL_BOX() public pure override returns (address) {
     return 0x2971b9Aec44bE4eb673DF1B88cDB57b96eefe8a4;
@@ -131,5 +143,11 @@ contract Binance_testnet is BaseHLAdapter {
     remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
 
     return remoteNetworks;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
   }
 }

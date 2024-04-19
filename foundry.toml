@@ -44,6 +44,9 @@ celo-testnet="${RPC_CELO_ALFAJORES}"
 fork-source-mainnet="${RPC_FORK_SOURCE_MAINNET}"
 fork-source-polygon="${RPC_FORK_SOURCE_POLYGON}"
 fork-source-binance="${RPC_FORK_SOURCE_BINANCE}"
+ethereum-local="http://localhost:8545"
+polygon-local="http://localhost:8546"
+binance-local="http://localhost:8547"
 
 [etherscan]
 ethereum={key="${ETHERSCAN_API_KEY_MAINNET}", chain=1 }

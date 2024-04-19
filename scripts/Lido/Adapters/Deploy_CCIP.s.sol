@@ -93,6 +93,13 @@ contract Ethereum_testnet is BaseCCIPAdapter {
   }
 }
 
+// Copy of Ethereum mainnet
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 // https://docs.chain.link/ccip/supported-networks/v1_2_0/mainnet#polygon-mainnet
 contract Polygon is BaseCCIPAdapter {
   function CCIP_ROUTER() public pure override returns (address) {
@@ -141,6 +148,13 @@ contract Polygon_testnet is BaseCCIPAdapter {
   }
 }
 
+// Copy of Polygon mainnet
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
 // https://docs.chain.link/ccip/supported-networks/v1_2_0/mainnet#bnb-mainnet
 contract Binance is BaseCCIPAdapter {
   function CCIP_ROUTER() public pure override returns (address) {
@@ -186,5 +200,12 @@ contract Binance_testnet is BaseCCIPAdapter {
     remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
 
     return remoteNetworks;
+  }
+}
+
+// Copy of Binance mainnet
+contract Binance_local is Binance {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
   }
 }

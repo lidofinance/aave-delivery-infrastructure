@@ -73,3 +73,15 @@ contract Binance_testnet is TestnetExecutor {
     return TestNetChainIds.BNB_TESTNET;
   }
 }
+
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}

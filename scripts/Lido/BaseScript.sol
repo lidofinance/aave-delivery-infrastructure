@@ -8,10 +8,10 @@ import 'forge-std/StdJson.sol';
 import {TestNetChainIds} from '../contract_extensions/TestNetChainIds.sol';
 import {ChainIds} from '../../src/contracts/libs/ChainIds.sol';
 
-struct Network {
-  string path;
-  string name;
-}
+  struct Network {
+    string path;
+    string name;
+  }
 
 library DeployerHelpers {
   using stdJson for string;
@@ -35,13 +35,14 @@ library DeployerHelpers {
     address executor;
   }
 
-  function getPathByChainId(uint256 chainId) internal pure returns (string memory) {
+  function getPathByChainId(uint256 chainId, bool isLocalFork) internal pure returns (string memory) {
+    string memory prefix = isLocalFork ? './deployments/cc/local/' : 'deployments/cc/mainnet/';
     if (chainId == ChainIds.ETHEREUM) {
-      return './deployments/cc/mainnet/eth.json';
+      return string.concat(prefix, 'eth.json');
     } else if (chainId == ChainIds.POLYGON) {
-      return './deployments/cc/mainnet/pol.json';
+      return string.concat(prefix, 'pol.json');
     } else if (chainId == ChainIds.BNB) {
-      return './deployments/cc/mainnet/bnb.json';
+      return string.concat(prefix, 'bnb.json');
     }
 
     if (chainId == TestNetChainIds.ETHEREUM_SEPOLIA) {
@@ -114,10 +115,17 @@ library Constants {
 abstract contract BaseScript is Script {
   function TRANSACTION_NETWORK() public view virtual returns (uint256);
 
+  function isLocalFork() public view virtual returns (bool) {
+    return false;
+  }
+
   function getAddresses(
     uint256 networkId
   ) external view returns (DeployerHelpers.Addresses memory) {
-    return DeployerHelpers.decodeJson(DeployerHelpers.getPathByChainId(networkId), vm);
+    return DeployerHelpers.decodeJson(
+      DeployerHelpers.getPathByChainId(networkId, isLocalFork()),
+      vm
+    );
   }
 
   function _getAddresses(
@@ -132,7 +140,7 @@ abstract contract BaseScript is Script {
   }
 
   function _setAddresses(uint256 networkId, DeployerHelpers.Addresses memory addresses) internal {
-    DeployerHelpers.encodeJson(DeployerHelpers.getPathByChainId(networkId), addresses, vm);
+    DeployerHelpers.encodeJson(DeployerHelpers.getPathByChainId(networkId, isLocalFork()), addresses, vm);
   }
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal virtual;

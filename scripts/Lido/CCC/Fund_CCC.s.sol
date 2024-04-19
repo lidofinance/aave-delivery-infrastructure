@@ -20,21 +20,21 @@ contract Ethereum is BaseFundCrossChainController {
   }
 }
 
-contract Polygon is BaseFundCrossChainController {
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-}
-
-contract Binance is BaseFundCrossChainController {
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return ChainIds.BNB;
-  }
-}
-
 contract Ethereum_testnet is BaseFundCrossChainController {
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return TestNetChainIds.ETHEREUM_SEPOLIA;
+  }
+}
+
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
+contract Polygon is BaseFundCrossChainController {
+  function TRANSACTION_NETWORK() public pure override returns (uint256) {
+    return ChainIds.POLYGON;
   }
 }
 
@@ -44,8 +44,26 @@ contract Polygon_testnet is BaseFundCrossChainController {
   }
 }
 
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
+  }
+}
+
+contract Binance is BaseFundCrossChainController {
+  function TRANSACTION_NETWORK() public pure override returns (uint256) {
+    return ChainIds.BNB;
+  }
+}
+
 contract Binance_testnet is BaseFundCrossChainController {
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return TestNetChainIds.BNB_TESTNET;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure override returns (bool) {
+    return true;
   }
 }

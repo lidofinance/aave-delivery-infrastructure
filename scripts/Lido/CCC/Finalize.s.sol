@@ -5,7 +5,7 @@ import {IOwnable} from "solidity-utils/contracts/transparent-proxy/interfaces/IO
 
 import "../BaseScript.sol";
 
-abstract contract Finalize is BaseScript {
+abstract contract FinalizeScript is BaseScript {
 
   function DAO_AGENT() public view virtual returns (address) {
     return address(0);
@@ -26,7 +26,7 @@ abstract contract Finalize is BaseScript {
   }
 }
 
-contract Ethereum is Finalize {
+contract Ethereum is FinalizeScript {
   // https://docs.lido.fi/deployed-contracts/#dao-contracts Aragon Agent
   function DAO_AGENT() public view virtual override returns (address) {
     return 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
@@ -37,7 +37,7 @@ contract Ethereum is Finalize {
   }
 }
 
-contract Ethereum_testnet is Finalize {
+contract Ethereum_testnet is FinalizeScript {
   // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts Aragon Agent
   function DAO_AGENT() public view virtual override returns (address) {
     return 0x32A0E5828B62AAb932362a4816ae03b860b65e83;
@@ -48,14 +48,44 @@ contract Ethereum_testnet is Finalize {
   }
 }
 
-contract Binance is Finalize {
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
+contract Polygon is FinalizeScript {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return ChainIds.POLYGON;
+  }
+}
+
+contract Polygon_testnet is FinalizeScript {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return TestNetChainIds.POLYGON_MUMBAI;
+  }
+}
+
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
+contract Binance is FinalizeScript {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return ChainIds.BNB;
   }
 }
 
-contract Binance_testnet is Finalize {
+contract Binance_testnet is FinalizeScript {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return TestNetChainIds.BNB_TESTNET;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
   }
 }

@@ -51,6 +51,48 @@ contract Ethereum is BaseSetCCRAdapters {
   }
 }
 
+contract Ethereum_testnet is Ethereum {
+  function TRANSACTION_NETWORK() public pure override returns (uint256) {
+    return TestNetChainIds.ETHEREUM_SEPOLIA;
+  }
+
+  function getChainIds() public pure override returns (uint256[] memory) {
+    uint256[] memory chainIds = new uint256[](2);
+
+    return chainIds;
+  }
+
+  function getReceiverBridgeAdaptersToAllow(
+    DeployerHelpers.Addresses memory addresses
+  ) public pure virtual override returns (address[] memory) {
+    address[] memory receiverBridgeAdaptersToAllow = new address[](0);
+
+    return receiverBridgeAdaptersToAllow;
+  }
+}
+
+contract Ethereum_local is BaseSetCCRAdapters {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return ChainIds.ETHEREUM;
+  }
+
+  function getChainIds() public pure virtual override returns (uint256[] memory) {
+    uint256[] memory chainIds = new uint256[](0);
+    return chainIds;
+  }
+
+  function getReceiverBridgeAdaptersToAllow(
+    DeployerHelpers.Addresses memory addresses
+  ) public pure virtual override returns (address[] memory) {
+    address[] memory receiverBridgeAdaptersToAllow = new address[](0);
+    return receiverBridgeAdaptersToAllow;
+  }
+
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
 contract Polygon is BaseSetCCRAdapters {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return ChainIds.POLYGON;
@@ -70,51 +112,6 @@ contract Polygon is BaseSetCCRAdapters {
     receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
     receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
     receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
-
-    return receiverBridgeAdaptersToAllow;
-  }
-}
-
-contract Binance is BaseSetCCRAdapters {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return ChainIds.BNB;
-  }
-
-  function getChainIds() public pure virtual override returns (uint256[] memory) {
-    uint256[] memory chainIds = new uint256[](1);
-    chainIds[0] = ChainIds.ETHEREUM;
-
-    return chainIds;
-  }
-
-  function getReceiverBridgeAdaptersToAllow(
-    DeployerHelpers.Addresses memory addresses
-  ) public pure virtual override returns (address[] memory) {
-    address[] memory receiverBridgeAdaptersToAllow = new address[](4);
-    receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
-    receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
-    receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
-    receiverBridgeAdaptersToAllow[3] = addresses.wormholeAdapter;
-
-    return receiverBridgeAdaptersToAllow;
-  }
-}
-
-contract Ethereum_testnet is Ethereum {
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return TestNetChainIds.ETHEREUM_SEPOLIA;
-  }
-
-  function getChainIds() public pure override returns (uint256[] memory) {
-    uint256[] memory chainIds = new uint256[](2);
-
-    return chainIds;
-  }
-
-  function getReceiverBridgeAdaptersToAllow(
-    DeployerHelpers.Addresses memory addresses
-  ) public pure virtual override returns (address[] memory) {
-    address[] memory receiverBridgeAdaptersToAllow = new address[](0);
 
     return receiverBridgeAdaptersToAllow;
   }
@@ -144,6 +141,60 @@ contract Polygon_testnet is Polygon {
   }
 }
 
+contract Polygon_local is BaseSetCCRAdapters {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return ChainIds.POLYGON;
+  }
+
+  function getChainIds() public pure virtual override returns (uint256[] memory) {
+    uint256[] memory chainIds = new uint256[](1);
+    chainIds[0] = ChainIds.ETHEREUM;
+
+    return chainIds;
+  }
+
+  function getReceiverBridgeAdaptersToAllow(
+    DeployerHelpers.Addresses memory addresses
+  ) public pure virtual override returns (address[] memory) {
+    address[] memory receiverBridgeAdaptersToAllow = new address[](4);
+    receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
+    receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
+    receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
+    receiverBridgeAdaptersToAllow[3] = addresses.polAdapter;
+
+    return receiverBridgeAdaptersToAllow;
+  }
+
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
+contract Binance is BaseSetCCRAdapters {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return ChainIds.BNB;
+  }
+
+  function getChainIds() public pure virtual override returns (uint256[] memory) {
+    uint256[] memory chainIds = new uint256[](1);
+    chainIds[0] = ChainIds.ETHEREUM;
+
+    return chainIds;
+  }
+
+  function getReceiverBridgeAdaptersToAllow(
+    DeployerHelpers.Addresses memory addresses
+  ) public pure virtual override returns (address[] memory) {
+    address[] memory receiverBridgeAdaptersToAllow = new address[](4);
+    receiverBridgeAdaptersToAllow[0] = addresses.ccipAdapter;
+    receiverBridgeAdaptersToAllow[1] = addresses.lzAdapter;
+    receiverBridgeAdaptersToAllow[2] = addresses.hlAdapter;
+    receiverBridgeAdaptersToAllow[3] = addresses.wormholeAdapter;
+
+    return receiverBridgeAdaptersToAllow;
+  }
+}
+
 contract Binance_testnet is Binance {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return TestNetChainIds.BNB_TESTNET;
@@ -166,5 +217,11 @@ contract Binance_testnet is Binance {
     receiverBridgeAdaptersToAllow[3] = addresses.wormholeAdapter;
 
     return receiverBridgeAdaptersToAllow;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
   }
 }

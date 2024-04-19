@@ -45,3 +45,9 @@ contract Ethereum_testnet is BaseSetCCFApprovedSenders {
     return senders;
   }
 }
+
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public view override returns (bool) {
+    return true;
+  }
+}

@@ -24,16 +24,30 @@ contract WriteDeployedAddresses is Script {
 
     // testnets
     networks[0] = Network({
-      path: DeployerHelpers.getPathByChainId(TestNetChainIds.ETHEREUM_SEPOLIA),
+      path: DeployerHelpers.getPathByChainId(TestNetChainIds.ETHEREUM_SEPOLIA, false),
       name: 'sepolia'
     });
     networks[1] = Network({
-      path: DeployerHelpers.getPathByChainId(TestNetChainIds.POLYGON_MUMBAI),
+      path: DeployerHelpers.getPathByChainId(TestNetChainIds.POLYGON_MUMBAI, false),
       name: 'mumbai'
     });
     networks[2] = Network({
-      path: DeployerHelpers.getPathByChainId(TestNetChainIds.BNB_TESTNET),
+      path: DeployerHelpers.getPathByChainId(TestNetChainIds.BNB_TESTNET, false),
       name: 'bnbTestnet'
+    });
+
+    // local forks
+    networks[3] = Network({
+      path: DeployerHelpers.getPathByChainId(ChainIds.ETHEREUM, true),
+      name: 'mainnet-fork'
+    });
+    networks[4] = Network({
+      path: DeployerHelpers.getPathByChainId(ChainIds.POLYGON, true),
+      name: 'polygon-fork'
+    });
+    networks[5] = Network({
+      path: DeployerHelpers.getPathByChainId(ChainIds.BNB, true),
+      name: 'binance-fork'
     });
 
     string memory deployedJson = 'deployments';

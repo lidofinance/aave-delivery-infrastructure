@@ -45,6 +45,26 @@ contract Ethereum is BaseSetCCRConfirmations {
   }
 }
 
+// nothing to receive
+contract Ethereum_testnet is Ethereum {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return TestNetChainIds.ETHEREUM_SEPOLIA;
+  }
+
+  function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
+    ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](0);
+
+    return chainIds;
+  }
+}
+
+// nothing to receive
+contract Ethereum_local is Ethereum {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
 // 3/4 consensus
 contract Polygon is BaseSetCCRConfirmations {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
@@ -54,33 +74,6 @@ contract Polygon is BaseSetCCRConfirmations {
   function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
     ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
     chainIds[0] = ConfirmationsByChain({chainId: ChainIds.ETHEREUM, confirmations: 3});
-
-    return chainIds;
-  }
-}
-
-// 3/4 consensus
-contract Binance is BaseSetCCRConfirmations {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return ChainIds.BNB;
-  }
-
-  function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
-    ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
-    chainIds[0] = ConfirmationsByChain({chainId: ChainIds.ETHEREUM, confirmations: 3});
-
-    return chainIds;
-  }
-}
-
-// nothing to receive
-contract Ethereum_testnet is Ethereum {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return TestNetChainIds.ETHEREUM_SEPOLIA;
-  }
-
-  function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
-    ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](0);
 
     return chainIds;
   }
@@ -100,6 +93,26 @@ contract Polygon_testnet is Polygon {
   }
 }
 
+contract Polygon_local is Polygon {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
+  }
+}
+
+// 3/4 consensus
+contract Binance is BaseSetCCRConfirmations {
+  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
+    return ChainIds.BNB;
+  }
+
+  function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
+    ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
+    chainIds[0] = ConfirmationsByChain({chainId: ChainIds.ETHEREUM, confirmations: 3});
+
+    return chainIds;
+  }
+}
+
 // 3/4 consensus: HL, LZ, CCIP and Wormhole
 contract Binance_testnet is Binance {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
@@ -111,5 +124,11 @@ contract Binance_testnet is Binance {
     chainIds[0] = ConfirmationsByChain({chainId: TestNetChainIds.ETHEREUM_SEPOLIA, confirmations: 3});
 
     return chainIds;
+  }
+}
+
+contract Binance_local is Binance {
+  function isLocalFork() public pure virtual override returns (bool) {
+    return true;
   }
 }
