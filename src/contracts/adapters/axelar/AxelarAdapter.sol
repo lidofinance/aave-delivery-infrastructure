@@ -14,17 +14,29 @@ import {StringToAddress, AddressToString} from './libs/AddressString.sol';
 
 contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   IAxelarGasService public gasService;
+  address public refundAddress;
 
+  /**
+   * @param crossChainController address of the cross chain controller that will use this bridge adapter
+   * @param _gateway address of the axelar gateway contract
+   * @param _gasService address of the gas service contract
+   */
   constructor(
+    address crossChainController,
     address _gateway,
-    address _gasService
+    address _gasService,
+    address _refundAddress,
+    TrustedRemotesConfig[] memory trustedRemotes
   )
     AxelarGMPExecutable(_gateway)
-    BaseAdapter(_gateway, 0, 'Axelar adapter', new TrustedRemotesConfig[](0))
+    BaseAdapter(crossChainController, 0, 'Axelar adapter', trustedRemotes)
   {
     require(_gateway != address(0), Errors.INVALID_AXELAR_GATEWAY);
     require(_gasService != address(0), Errors.INVALID_AXELAR_GAS_SERVICE);
+    require(_refundAddress != address(0), Errors.INVALID_AXELAR_REFUND_ADDRESS);
+
     gasService = IAxelarGasService(_gasService);
+    refundAddress = _refundAddress;
   }
 
   /// @inheritdoc BaseAxelarAdapter
@@ -99,7 +111,7 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
       destinationChain,
       stringReceiver,
       message,
-      msg.sender
+      refundAddress
     );
 
     // 3. forward message

@@ -11,6 +11,8 @@ abstract contract BaseAxelarAdapter is BaseAdapterScript {
 
   function isTestNet() public view virtual returns (bool);
 
+  function REFUND_ADDRESS() public view virtual returns (address);
+
   function AXELAR_GAS_SERVICE() public view returns (address) {
     if (isTestNet()) {
       return 0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6;
@@ -25,9 +27,25 @@ abstract contract BaseAxelarAdapter is BaseAdapterScript {
   ) internal override {
     address axelarAdapter;
     if (isTestNet()) {
-      axelarAdapter = address(new AxelarAdapterTestnet(AXELAR_GATEWAY(), AXELAR_GAS_SERVICE()));
+      axelarAdapter = address(
+        new AxelarAdapterTestnet(
+          addresses.crossChainController,
+          AXELAR_GATEWAY(),
+          AXELAR_GAS_SERVICE(),
+          REFUND_ADDRESS(),
+          trustedRemotes
+        )
+      );
     } else {
-      axelarAdapter = address(new AxelarAdapter(AXELAR_GATEWAY(), AXELAR_GAS_SERVICE()));
+      axelarAdapter = address(
+        new AxelarAdapter(
+          addresses.crossChainController,
+          AXELAR_GATEWAY(),
+          AXELAR_GAS_SERVICE(),
+          REFUND_ADDRESS(),
+          trustedRemotes
+        )
+      );
     }
     addresses.axelarAdapter = axelarAdapter;
   }
@@ -40,6 +58,11 @@ contract Ethereum is BaseAxelarAdapter {
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return ChainIds.ETHEREUM;
+  }
+
+  function REFUND_ADDRESS() public view override returns (address) {
+    DeployerHelpers.Addresses memory destinationAddresses = _getAddresses(ChainIds.BNB);
+    return destinationAddresses.crossChainController;
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
@@ -62,6 +85,13 @@ contract Ethereum_testnet is BaseAxelarAdapter {
     return TestNetChainIds.ETHEREUM_SEPOLIA;
   }
 
+  function REFUND_ADDRESS() public view override returns (address) {
+    DeployerHelpers.Addresses memory destinationAddresses = _getAddresses(
+      TestNetChainIds.BNB_TESTNET
+    );
+    return destinationAddresses.crossChainController;
+  }
+
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
     uint256[] memory remoteNetworks = new uint256[](0);
 
@@ -80,6 +110,10 @@ contract Binance is BaseAxelarAdapter {
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return ChainIds.BNB;
+  }
+
+  function REFUND_ADDRESS() public view override returns (address) {
+    return address(0);
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
@@ -101,6 +135,10 @@ contract Binance_testnet is BaseAxelarAdapter {
 
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return ChainIds.BNB;
+  }
+
+  function REFUND_ADDRESS() public view override returns (address) {
+    return address(0);
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {

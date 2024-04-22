@@ -7,7 +7,13 @@ import {TestNetChainIds} from './TestNetChainIds.sol';
 import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 
 contract AxelarAdapterTestnet is AxelarAdapter {
-  constructor(address gateway, address gasService) AxelarAdapter(gateway, gasService) {}
+  constructor(
+    address crossChainController,
+    address gateway,
+    address gasService,
+    address refundAddress,
+    TrustedRemotesConfig[] memory trustedRemotes
+  ) AxelarAdapter(crossChainController, gateway, gasService, refundAddress, trustedRemotes) {}
 
   /// @inheritdoc BaseAxelarAdapter
   // @dev this function is used to convert the axelar chain id to the infra chain id
