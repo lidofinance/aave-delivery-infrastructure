@@ -26,6 +26,7 @@ library DeployerHelpers {
     address guardian;
     address hlAdapter;
     address lzAdapter;
+    address axelarAdapter;
     address mockDestination;
     address owner;
     address polAdapter;
@@ -73,6 +74,7 @@ library DeployerHelpers {
       chainId: abi.decode(persistedJson.parseRaw('.chainId'), (uint256)),
       emergencyRegistry: abi.decode(persistedJson.parseRaw('.emergencyRegistry'), (address)),
       hlAdapter: abi.decode(persistedJson.parseRaw('.hlAdapter'), (address)),
+      axelarAdapter: abi.decode(persistedJson.parseRaw('.axelarAdapter'), (address)),
       lzAdapter: abi.decode(persistedJson.parseRaw('.lzAdapter'), (address)),
       polAdapter: abi.decode(persistedJson.parseRaw('.polAdapter'), (address)),
       wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
@@ -94,6 +96,7 @@ library DeployerHelpers {
     json.serialize('guardian', addresses.guardian);
     json.serialize('hlAdapter', addresses.hlAdapter);
     json.serialize('lzAdapter', addresses.lzAdapter);
+    json.serialize('axelarAdapter', addresses.axelarAdapter);
     json.serialize('mockDestination', addresses.mockDestination);
     json.serialize('owner', addresses.owner);
     json.serialize('polAdapter', addresses.polAdapter);
