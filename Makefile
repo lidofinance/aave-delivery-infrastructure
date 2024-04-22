@@ -81,6 +81,9 @@ deploy-optimism-adapters:
 deploy-arbitrum-adapters:
 	$(call deploy_fn,Adapters/DeployArbAdapter,ethereum arbitrum)
 
+deploy-axelar-adapters:
+  $(call deploy_fn,Adapters/DeployAxelarAdapter,ethereum binance)
+
 deploy-metis-adapters:
 	$(call deploy_fn,Adapters/DeployMetisAdapter,ethereum metis)
 
@@ -174,6 +177,9 @@ deploy-scroll-adapters-test:
 
 deploy-wormhole-adapters-test:
 	$(call deploy_fn,Adapters/DeployWormholeAdapter,ethereum celo)
+
+deploy-axelar-adapters-test:
+  $(call deploy_fn,Adapters/DeployAxelarAdapter,ethereum binance)
 
 ## Set sender bridge dapters. Only eth pol avax are needed as other networks will only receive
 set-ccf-sender-adapters-test:
