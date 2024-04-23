@@ -20,8 +20,4 @@ abstract contract BaseAxelarAdapter is BaseAdapter {
   function nativeToInfraChainId(uint256) public pure override returns (uint256) {
     return 0;
   }
-
-  // function getTrustedRemoteByChainId(uint256 chainId) public view override returns (address) {
-  //   return this.getTrustedRemoteByChainId(chainId);
-  // }
 }
