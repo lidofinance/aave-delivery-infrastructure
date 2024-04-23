@@ -112,7 +112,7 @@ contract Binance is BaseAxelarAdapter {
     return ChainIds.BNB;
   }
 
-  function REFUND_ADDRESS() public view override returns (address) {
+  function REFUND_ADDRESS() public pure override returns (address) {
     return address(0);
   }
 
@@ -137,7 +137,7 @@ contract Binance_testnet is BaseAxelarAdapter {
     return ChainIds.BNB;
   }
 
-  function REFUND_ADDRESS() public view override returns (address) {
+  function REFUND_ADDRESS() public pure override returns (address) {
     return address(0);
   }
 

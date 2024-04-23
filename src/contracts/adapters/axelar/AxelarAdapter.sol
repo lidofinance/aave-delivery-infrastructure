@@ -31,7 +31,6 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
     AxelarGMPExecutable(_gateway)
     BaseAdapter(crossChainController, 0, 'Axelar adapter', trustedRemotes)
   {
-    require(_gateway != address(0), Errors.INVALID_AXELAR_GATEWAY);
     require(_gasService != address(0), Errors.INVALID_AXELAR_GAS_SERVICE);
     require(_refundAddress != address(0), Errors.INVALID_AXELAR_REFUND_ADDRESS);
 
@@ -43,7 +42,7 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   // @dev this function is used to convert the axelar chain id to the infra chain id
   function axelarToInfraChainId(
     string calldata axelarChainId
-  ) public pure override returns (uint256) {
+  ) public pure virtual override returns (uint256) {
     if (Strings.equal(axelarChainId, 'fantom')) return ChainIds.FANTOM;
     if (Strings.equal(axelarChainId, 'polygon')) return ChainIds.POLYGON;
     if (Strings.equal(axelarChainId, 'avalanche')) return ChainIds.AVALANCHE;
@@ -60,7 +59,9 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
 
   /// @inheritdoc BaseAxelarAdapter
   // @dev this function is used to convert the infra chain id to the axelar chain id
-  function infraToAxelarChainId(uint256 infraChainId) public pure override returns (string memory) {
+  function infraToAxelarChainId(
+    uint256 infraChainId
+  ) public pure virtual override returns (string memory) {
     if (infraChainId == ChainIds.FANTOM) return 'fantom';
     if (infraChainId == ChainIds.POLYGON) return 'polygon';
     if (infraChainId == ChainIds.AVALANCHE) return 'avalanche';
