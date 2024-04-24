@@ -5,6 +5,8 @@ import {AxelarAdapter} from '../../src/contracts/adapters/axelar/AxelarAdapter.s
 import {ChainIds} from '../../src/contracts/libs/ChainIds.sol';
 import {Errors} from '../../src/contracts/libs/Errors.sol';
 import {IAxelarGMPExecutable} from '../../src/contracts/adapters/axelar/interfaces/IAxelarGMPExecutable.sol';
+import {IAxelarGasService} from '../../src/contracts/adapters/axelar/interfaces/IAxelarGasService.sol';
+import {IInterchainGasEstimation} from '../../src/contracts/adapters/axelar/interfaces/IInterchainGasEstimation.sol';
 import {AddressToString} from '../../src/contracts/adapters/axelar/libs/AddressString.sol';
 import {IAxelarGMPGateway} from '../../src/contracts/adapters/axelar/interfaces/IAxelarGMPGateway.sol';
 import {AxelarGMPExecutable} from '../../src/contracts/adapters/axelar/libs/AxelarGMPExecutable.sol';
@@ -141,7 +143,7 @@ contract AxelarAdapterTest is BaseAdapterTest {
     assertEq(axelarAdapter.infraToAxelarChainId(ChainIds.BNB), 'binance');
   }
 
-  function testAxelarMsgReceive(
+  function testReceiveMsg(
     address crossChainController,
     address axelarGateway,
     address axelarGasService,
@@ -191,5 +193,148 @@ contract AxelarAdapterTest is BaseAdapterTest {
       AddressToString.toString(originForwarder),
       payload
     );
+  }
+
+  function testReceiveMsgWhenSourceNotTrusted(
+    address crossChainController,
+    address axelarGateway,
+    address axelarGasService,
+    address originForwarder,
+    uint256 originChainId,
+    address sourceAddress
+  )
+    public
+    setAxelarAdapter(
+      crossChainController,
+      axelarGateway,
+      axelarGasService,
+      originForwarder,
+      originChainId
+    )
+  {
+    vm.assume(originChainId == 1);
+    vm.assume(originForwarder != address(0) && sourceAddress != originForwarder);
+
+    bytes memory payload = abi.encode('test msg');
+    string memory axelarChainId = axelarAdapter.infraToAxelarChainId(originChainId);
+
+    vm.mockCall(
+      axelarGateway,
+      abi.encodeWithSelector(IAxelarGMPGateway.validateContractCall.selector),
+      abi.encode(true)
+    );
+
+    vm.expectRevert(bytes(Errors.REMOTE_NOT_TRUSTED));
+
+    AxelarGMPExecutable(axelarAdapter).execute(
+      keccak256(abi.encode('commandId')),
+      axelarChainId,
+      AddressToString.toString(sourceAddress),
+      payload
+    );
+  }
+
+  function testAxelarForwardPayload(
+    address crossChainController,
+    address axelarGateway,
+    address axelarGasService,
+    address originForwarder,
+    uint256 originChainId,
+    uint256 gasLimit,
+    address receiver
+  )
+    public
+    setAxelarAdapter(
+      crossChainController,
+      axelarGateway,
+      axelarGasService,
+      originForwarder,
+      originChainId
+    )
+  {
+    vm.assume(originChainId == ChainIds.ETHEREUM);
+    vm.assume(originForwarder != address(0));
+    vm.assume(gasLimit > 0);
+
+    bytes memory payload = abi.encode('test msg');
+
+    vm.expectCall(
+      axelarGateway,
+      0,
+      abi.encodeWithSelector(
+        IAxelarGMPGateway.callContract.selector,
+        axelarAdapter.infraToAxelarChainId(ChainIds.BNB),
+        AddressToString.toString(receiver),
+        payload
+      )
+    );
+
+    _testForwardMsg(axelarGateway, axelarGasService, receiver, ChainIds.BNB, gasLimit, payload);
+  }
+
+  function testAxelarForwardPayloadUnsupportedChain(
+    address crossChainController,
+    address axelarGateway,
+    address axelarGasService,
+    address originForwarder,
+    uint256 originChainId,
+    uint256 gasLimit,
+    address receiver
+  )
+    public
+    setAxelarAdapter(
+      crossChainController,
+      axelarGateway,
+      axelarGasService,
+      originForwarder,
+      originChainId
+    )
+  {
+    vm.assume(originChainId == ChainIds.ETHEREUM);
+    vm.assume(originForwarder != address(0));
+    vm.assume(gasLimit > 0);
+
+    bytes memory payload = abi.encode('test msg');
+
+    vm.expectRevert(bytes(Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED));
+
+    _testForwardMsg(axelarGateway, axelarGasService, receiver, 123456789, gasLimit, payload);
+  }
+
+  function _testForwardMsg(
+    address axelarGateway,
+    address axelarGasService,
+    address receiver,
+    uint256 dstChain,
+    uint256 gasLimit,
+    bytes memory payload
+  ) internal returns (address, uint256) {
+    vm.mockCall(
+      axelarGasService,
+      abi.encodeWithSelector(IInterchainGasEstimation.estimateGasFee.selector),
+      abi.encode(0.01 ether)
+    );
+
+    vm.mockCall(
+      axelarGasService,
+      0.01 ether,
+      abi.encodeWithSelector(IAxelarGasService.payNativeGasForContractCall.selector),
+      abi.encode()
+    );
+
+    vm.mockCall(
+      axelarGateway,
+      abi.encodeWithSelector(IAxelarGMPGateway.callContract.selector),
+      abi.encode()
+    );
+
+    (address gateway, uint nonce) = axelarAdapter.forwardMessage(
+      receiver,
+      gasLimit,
+      dstChain,
+      payload
+    );
+
+    return (gateway, nonce);
   }
 }

@@ -94,6 +94,7 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
     // 1. retrieve axelar-compatible chain id
     string memory destinationChain = infraToAxelarChainId(destinationChainId);
     require(bytes(destinationChain).length > 0, Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED);
+    require(receiver != address(0), Errors.RECEIVER_NOT_SET);
 
     string memory stringReceiver = AddressToString.toString(receiver);
 
