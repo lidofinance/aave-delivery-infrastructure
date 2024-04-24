@@ -91,14 +91,14 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
     uint256 destinationChainId,
     bytes calldata message
   ) external override returns (address, uint256) {
-    // 1. retrieve axelar-compatible chain id
+    // Retrieve axelar-compatible chain id
     string memory destinationChain = infraToAxelarChainId(destinationChainId);
     require(bytes(destinationChain).length > 0, Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED);
     require(receiver != address(0), Errors.RECEIVER_NOT_SET);
 
     string memory stringReceiver = AddressToString.toString(receiver);
 
-    // 2. estimate on-chain gas
+    // Get estimated gas fee from AxelarGasService contract
     uint256 gasFee = gasService.estimateGasFee(
       destinationChain,
       stringReceiver,
@@ -107,7 +107,7 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
       '0x'
     );
 
-    // 3. pay for gas
+    // Pay gas to AxelarGasService contract
     gasService.payNativeGasForContractCall{value: gasFee}(
       msg.sender,
       destinationChain,
@@ -116,7 +116,7 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
       refundAddress
     );
 
-    // 3. forward message
+    // Forward message to AxelarGateway contract
     IAxelarGMPGateway(gatewayAddress).callContract(destinationChain, stringReceiver, message);
 
     return (gatewayAddress, 0);
