@@ -3,9 +3,9 @@ pragma solidity ^0.8.8;
 
 import {ILayerZeroReceiver} from './interfaces/ILayerZeroReceiver.sol';
 import {MessagingParams, Origin, MessagingFee, MessagingReceipt} from './interfaces/ILayerZeroEndpointV2.sol';
+import {SafeCast} from 'openzeppelin-contracts/contracts/utils/math/SafeCast.sol';
 import {OptionsBuilder} from './libs/OptionsBuilder.sol';
 import {BaseAdapter, IBaseAdapter} from '../BaseAdapter.sol';
-import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {ILayerZeroAdapter, ILayerZeroEndpointV2} from './ILayerZeroAdapter.sol';
 import {ChainIds} from '../../libs/ChainIds.sol';
 import {Errors} from '../../libs/Errors.sol';
