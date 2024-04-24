@@ -122,7 +122,7 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   }
 
   // @inheritdoc AxelarGMPExecutable
-  // @dev This function is called by the Axelar Executor service after validating the command.
+  // @dev the cross-chain message receiver for Axelar GMP call
   function _execute(
     bytes32,
     string calldata sourceChain,
@@ -131,9 +131,14 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   ) internal override {
     uint256 originChainId = axelarToInfraChainId(sourceChain);
     address trustedSourceAddress = this.getTrustedRemoteByChainId(originChainId);
-    if (StringToAddress.toAddress(sourceAddress) != trustedSourceAddress) {
+
+    if (
+      StringToAddress.toAddress(sourceAddress) != trustedSourceAddress &&
+      trustedSourceAddress != address(0)
+    ) {
       revert(Errors.REMOTE_NOT_TRUSTED);
     }
+
     _registerReceivedMessage(message, originChainId);
   }
 }

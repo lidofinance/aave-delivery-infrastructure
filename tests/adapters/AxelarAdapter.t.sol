@@ -5,10 +5,14 @@ import {AxelarAdapter} from '../../src/contracts/adapters/axelar/AxelarAdapter.s
 import {ChainIds} from '../../src/contracts/libs/ChainIds.sol';
 import {Errors} from '../../src/contracts/libs/Errors.sol';
 import {IAxelarGMPExecutable} from '../../src/contracts/adapters/axelar/interfaces/IAxelarGMPExecutable.sol';
+import {AddressToString} from '../../src/contracts/adapters/axelar/libs/AddressString.sol';
+import {IAxelarGMPGateway} from '../../src/contracts/adapters/axelar/interfaces/IAxelarGMPGateway.sol';
 import {AxelarGMPExecutable} from '../../src/contracts/adapters/axelar/libs/AxelarGMPExecutable.sol';
+import {ICrossChainReceiver} from '../../src/contracts/interfaces/ICrossChainReceiver.sol';
 import {IBaseAdapter} from '../../src/contracts/adapters/IBaseAdapter.sol';
 import {BaseAdapter} from '../../src/contracts/adapters/BaseAdapter.sol';
 import {BaseAdapterTest} from './BaseAdapterTest.sol';
+import 'forge-std/Test.sol';
 
 contract AxelarAdapterTest is BaseAdapterTest {
   AxelarAdapter axelarAdapter;
@@ -135,5 +139,57 @@ contract AxelarAdapterTest is BaseAdapterTest {
   {
     assertEq(axelarAdapter.infraToAxelarChainId(ChainIds.ETHEREUM), 'ethereum');
     assertEq(axelarAdapter.infraToAxelarChainId(ChainIds.BNB), 'binance');
+  }
+
+  function testAxelarMsgReceive(
+    address crossChainController,
+    address axelarGateway,
+    address axelarGasService,
+    address originForwarder,
+    uint256 originChainId
+  )
+    public
+    setAxelarAdapter(
+      crossChainController,
+      axelarGateway,
+      axelarGasService,
+      originForwarder,
+      originChainId
+    )
+  {
+    vm.assume(originChainId == 1);
+    vm.assume(originForwarder != address(0));
+
+    bytes memory payload = abi.encode('test msg');
+    string memory axelarChainId = axelarAdapter.infraToAxelarChainId(originChainId);
+
+    vm.mockCall(
+      axelarGateway,
+      abi.encodeWithSelector(IAxelarGMPGateway.validateContractCall.selector),
+      abi.encode(true)
+    );
+
+    vm.mockCall(
+      crossChainController,
+      abi.encodeWithSelector(ICrossChainReceiver.receiveCrossChainMessage.selector),
+      abi.encode()
+    );
+
+    vm.expectCall(
+      crossChainController,
+      0,
+      abi.encodeWithSelector(
+        ICrossChainReceiver.receiveCrossChainMessage.selector,
+        payload,
+        originChainId
+      )
+    );
+
+    AxelarGMPExecutable(axelarAdapter).execute(
+      keccak256(abi.encode('commandId')),
+      axelarChainId,
+      AddressToString.toString(originForwarder),
+      payload
+    );
   }
 }
