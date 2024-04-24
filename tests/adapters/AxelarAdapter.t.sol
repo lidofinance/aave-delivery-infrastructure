@@ -234,7 +234,7 @@ contract AxelarAdapterTest is BaseAdapterTest {
     );
   }
 
-  function testAxelarForwardPayload(
+  function testForwardPayload(
     address crossChainController,
     address axelarGateway,
     address axelarGasService,
@@ -272,7 +272,7 @@ contract AxelarAdapterTest is BaseAdapterTest {
     _testForwardMsg(axelarGateway, axelarGasService, receiver, ChainIds.BNB, gasLimit, payload);
   }
 
-  function testAxelarForwardPayloadUnsupportedChain(
+  function testForwardPayloadUnsupportedChain(
     address crossChainController,
     address axelarGateway,
     address axelarGasService,
@@ -299,6 +299,34 @@ contract AxelarAdapterTest is BaseAdapterTest {
     vm.expectRevert(bytes(Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED));
 
     _testForwardMsg(axelarGateway, axelarGasService, receiver, 123456789, gasLimit, payload);
+  }
+
+  function testForwardPayloadWhenInvalidReceiver(
+    address crossChainController,
+    address axelarGateway,
+    address axelarGasService,
+    address originForwarder,
+    uint256 originChainId,
+    uint256 gasLimit
+  )
+    public
+    setAxelarAdapter(
+      crossChainController,
+      axelarGateway,
+      axelarGasService,
+      originForwarder,
+      originChainId
+    )
+  {
+    vm.assume(originChainId == ChainIds.ETHEREUM);
+    vm.assume(originForwarder != address(0));
+    vm.assume(gasLimit > 0);
+
+    bytes memory payload = abi.encode('test msg');
+
+    vm.expectRevert(bytes(Errors.RECEIVER_NOT_SET));
+
+    _testForwardMsg(axelarGateway, axelarGasService, address(0), ChainIds.BNB, gasLimit, payload);
   }
 
   function _testForwardMsg(
