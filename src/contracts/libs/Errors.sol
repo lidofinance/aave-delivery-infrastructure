@@ -51,6 +51,5 @@ library Errors {
   string public constant CALLER_NOT_WORMHOLE_RELAYER = '42'; // caller must be the Wormhole relayer
   string public constant INVALID_AXELAR_GATEWAY = '43'; // axelar gateway can not be address 0
   string public constant INVALID_AXELAR_GAS_SERVICE = '44'; // axelar gas service can not be address 0
-  string public constant CALLER_NOT_AXELAR_ADAPTER_SIBLING = '45'; // caller must be the sibling axelar adapter
-  string public constant INVALID_AXELAR_REFUND_ADDRESS = '46'; // axelar refund address can not be address 0
+  string public constant INVALID_AXELAR_REFUND_ADDRESS = '45'; // axelar refund address can not be address 0
 }
