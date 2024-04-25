@@ -15,9 +15,9 @@ contract BaseIntegrationTest is BaseTest {
   uint256 public polFork;
   uint256 public bnbFork;
 
-  address constant LIDO_DAO = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
-  address constant DEAD = 0x000000000000000000000000000000000000dEaD;
-  address constant ZERO = 0x0000000000000000000000000000000000000000;
+  address constant LIDO_DAO_AGENT = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+  address constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
+  address constant ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
 
   struct Addresses {
     address ccipAdapter;
@@ -100,7 +100,7 @@ contract BaseIntegrationTest is BaseTest {
     return addresses;
   }
 
-  function setUp() public {
+  function setUp() virtual public {
     CrossChainAddressFiles memory files = _getDeploymentFiles();
     crossChainAddresses.eth = _decodeJson(files.eth, vm);
     crossChainAddresses.pol = _decodeJson(files.pol, vm);

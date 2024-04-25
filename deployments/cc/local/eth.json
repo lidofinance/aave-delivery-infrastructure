@@ -1,6 +1,6 @@
 {
   "ccipAdapter": "0x7A5EC257391817ef241ef8451642cC6b222d4f8C",
-  "chainId": 0,
+  "chainId": 1,
   "clEmergencyOracle": "0x0000000000000000000000000000000000000000",
   "crossChainController": "0x29023DE63D7075B4cC2CE30B55f050f9c67548d4",
   "crossChainControllerImpl": "0x8CeA85eC7f3D314c4d144e34F2206C8Ac0bbadA1",

@@ -1,8 +1,9 @@
 pragma solidity ^0.8.19;
 
 import 'forge-std/console2.sol';
+import 'forge-std/Vm.sol';
 
-import {BaseIntegrationTest} from "./BaseIntegrationTest.sol";
+import {BaseIntegrationTest} from "../BaseIntegrationTest.sol";
 
 import {Ownable} from "solidity-utils/contracts/oz-common/Ownable.sol";
 import {OwnableWithGuardian} from "solidity-utils/contracts/access-control/OwnableWithGuardian.sol";
@@ -26,21 +27,21 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     console2.log("ProxyAdmin address: %s", proxyAdmin);
     console2.log("ProxyAdmin owner: %s", proxyAdminOwner);
 
-    assertEq(proxyAdminOwner, LIDO_DAO, "ProxyAdmin owner should be LIDO_DAO");
+    assertEq(proxyAdminOwner, LIDO_DAO_AGENT, "ProxyAdmin owner should be LIDO_DAO");
 
     console2.log("CrossChainController address: %s", ccc);
     console2.log("CrossChainController owner: %s", cccOwner);
     console2.log("CrossChainController guardian: %s", cccGuardian);
 
-    assertEq(cccOwner, LIDO_DAO, "CrossChainController owner should be LIDO_DAO");
-    assertEq(cccGuardian, ZERO, "CrossChainController guardian should be ZERO");
+    assertEq(cccOwner, LIDO_DAO_AGENT, "CrossChainController owner should be LIDO_DAO");
+    assertEq(cccGuardian, ZERO_ADDRESS, "CrossChainController guardian should be ZERO");
 
     console2.log("CrossChainControllerImpl address: %s", cccImplAddress);
     console2.log("CrossChainControllerImpl owner: %s", cccImplOwner);
     console2.log("CrossChainControllerImpl guardian: %s", cccImplGuardian);
 
-    assertEq(cccImplOwner, DEAD, "CrossChainControllerImpl owner should be DEAD");
-    assertEq(cccImplGuardian, ZERO, "CrossChainControllerImpl guardian should be ZERO");
+    assertEq(cccImplOwner, DEAD_ADDRESS, "CrossChainControllerImpl owner should be DEAD");
+    assertEq(cccImplGuardian, ZERO_ADDRESS, "CrossChainControllerImpl guardian should be ZERO");
   }
 
   function test_CrossChainController_PolygonState() public {
@@ -70,14 +71,14 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     console2.log("CrossChainController guardian: %s", cccGuardian);
 
     assertEq(cccOwner, EXECUTOR, "CrossChainController owner should be CrossChainExecutor on Polygon");
-    assertEq(cccGuardian, ZERO, "CrossChainController guardian should be ZERO");
+    assertEq(cccGuardian, ZERO_ADDRESS, "CrossChainController guardian should be ZERO");
 
     console2.log("CrossChainControllerImpl address: %s", cccImplAddress);
     console2.log("CrossChainControllerImpl owner: %s", cccImplOwner);
     console2.log("CrossChainControllerImpl guardian: %s", cccImplGuardian);
 
-    assertEq(cccImplOwner, DEAD, "CrossChainControllerImpl owner should be DEAD");
-    assertEq(cccImplGuardian, ZERO, "CrossChainControllerImpl guardian should be ZERO");
+    assertEq(cccImplOwner, DEAD_ADDRESS, "CrossChainControllerImpl owner should be DEAD");
+    assertEq(cccImplGuardian, ZERO_ADDRESS, "CrossChainControllerImpl guardian should be ZERO");
   }
 
   function test_CrossChainController_BinanceState() public {
@@ -107,13 +108,13 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     console2.log("CrossChainController guardian: %s", cccGuardian);
 
     assertEq(cccOwner, EXECUTOR, "CrossChainController owner should be CrossChainExecutor on Binance");
-    assertEq(cccGuardian, ZERO, "CrossChainController guardian should be ZERO");
+    assertEq(cccGuardian, ZERO_ADDRESS, "CrossChainController guardian should be ZERO");
 
     console2.log("CrossChainControllerImpl address: %s", cccImplAddress);
     console2.log("CrossChainControllerImpl owner: %s", cccImplOwner);
     console2.log("CrossChainControllerImpl guardian: %s", cccImplGuardian);
 
-    assertEq(cccImplOwner, DEAD, "CrossChainControllerImpl owner should be DEAD");
-    assertEq(cccImplGuardian, ZERO, "CrossChainControllerImpl guardian should be ZERO");
+    assertEq(cccImplOwner, DEAD_ADDRESS, "CrossChainControllerImpl owner should be DEAD");
+    assertEq(cccImplGuardian, ZERO_ADDRESS, "CrossChainControllerImpl guardian should be ZERO");
   }
 }
