@@ -134,8 +134,8 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
     address trustedSourceAddress = this.getTrustedRemoteByChainId(originChainId);
 
     if (
-      StringToAddress.toAddress(sourceAddress) != trustedSourceAddress &&
-      trustedSourceAddress != address(0)
+      StringToAddress.toAddress(sourceAddress) != trustedSourceAddress ||
+      trustedSourceAddress == address(0)
     ) {
       revert(Errors.REMOTE_NOT_TRUSTED);
     }
