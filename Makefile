@@ -352,7 +352,7 @@ deploy-lido-local:
 	make finalize-lido-local
 
 test-lido-local:
-	ENV=local forge test --fork-url ethereum-local -vvv --match-path "tests/Lido/integration/**/*.sol"
+	ENV=local forge test -vvv --match-path "tests/Lido/integration/**/*.sol"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------

@@ -9,6 +9,10 @@ import {CrossChainController, ICrossChainController} from '../../../src/contract
 
 import '../BaseScript.sol';
 
+interface OwnableWithGuardian {
+  function updateGuardian(address guardian) external;
+}
+
 abstract contract BaseCCCNetworkDeployment is BaseScript {
 
   event ProxyCreated(address proxy, address indexed logic, address indexed admin);
@@ -53,6 +57,7 @@ abstract contract BaseCCCNetworkDeployment is BaseScript {
 
     // Petrify the implementation
     Ownable(addresses.crossChainControllerImpl).transferOwnership(Constants.DEAD);
+    OwnableWithGuardian(addresses.crossChainControllerImpl).updateGuardian(Constants.ZERO);
 
     emit CCCImplementationPetrified(addresses.crossChainControllerImpl);
 

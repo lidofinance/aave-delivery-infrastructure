@@ -11,6 +11,14 @@ contract BaseIntegrationTest is BaseTest {
 
   string ENV = vm.envString('ENV');
 
+  uint256 public ethFork;
+  uint256 public polFork;
+  uint256 public bnbFork;
+
+  address constant LIDO_DAO = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+  address constant DEAD = 0x000000000000000000000000000000000000dEaD;
+  address constant ZERO = 0x0000000000000000000000000000000000000000;
+
   struct Addresses {
     address ccipAdapter;
     uint256 chainId;
@@ -25,6 +33,7 @@ contract BaseIntegrationTest is BaseTest {
     address proxyAdmin;
     address proxyFactory;
     address wormholeAdapter;
+    address executor;
   }
 
   struct CrossChainAddresses {
@@ -84,7 +93,8 @@ contract BaseIntegrationTest is BaseTest {
       hlAdapter: abi.decode(persistedJson.parseRaw('.hlAdapter'), (address)),
       polAdapter: abi.decode(persistedJson.parseRaw('.polAdapter'), (address)),
       mockDestination: abi.decode(persistedJson.parseRaw('.mockDestination'), (address)),
-      wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address))
+      wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
+      executor: abi.decode(persistedJson.parseRaw('.executor'), (address))
     });
 
     return addresses;
@@ -95,5 +105,9 @@ contract BaseIntegrationTest is BaseTest {
     crossChainAddresses.eth = _decodeJson(files.eth, vm);
     crossChainAddresses.pol = _decodeJson(files.pol, vm);
     crossChainAddresses.bnb = _decodeJson(files.bnb, vm);
+
+    ethFork = vm.createFork('ethereum-local');
+    polFork = vm.createFork('polygon-local');
+    bnbFork = vm.createFork('binance-local');
   }
 }
