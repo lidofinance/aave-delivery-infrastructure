@@ -21,8 +21,7 @@ contract Ethereum is BasePolygonAdapter {
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](1);
-    remoteNetworks[0] = ChainIds.POLYGON;
+    uint256[] memory remoteNetworks = new uint256[](0);
     return remoteNetworks;
   }
 
@@ -51,7 +50,6 @@ contract Ethereum_testnet is BasePolygonAdapter {
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
     uint256[] memory remoteNetworks = new uint256[](1);
-    remoteNetworks[0] = TestNetChainIds.POLYGON_MUMBAI;
     return remoteNetworks;
   }
 

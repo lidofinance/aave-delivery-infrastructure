@@ -87,4 +87,89 @@ contract EthereumStateTest is BaseStateTest {
   function test_CrossChainControllerImplState() public {
     _test_ccc_impl(cccImplAddress);
   }
+
+  function test_ccipAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](2);
+
+    trustedRemotes[0].chainId = ChainIds.POLYGON;
+    trustedRemotes[0].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    trustedRemotes[1].chainId = ChainIds.BNB;
+    trustedRemotes[1].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    _test_adapter(
+      address(crossChainAddresses.eth.ccipAdapter),
+      'CCIP adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_lzAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](2);
+
+    trustedRemotes[0].chainId = ChainIds.POLYGON;
+    trustedRemotes[0].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    trustedRemotes[1].chainId = ChainIds.BNB;
+    trustedRemotes[1].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    _test_adapter(
+      address(crossChainAddresses.eth.lzAdapter),
+      'LayerZero adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_hlAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](2);
+
+    trustedRemotes[0].chainId = ChainIds.POLYGON;
+    trustedRemotes[0].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    trustedRemotes[1].chainId = ChainIds.BNB;
+    trustedRemotes[1].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    _test_adapter(
+      address(crossChainAddresses.eth.hlAdapter),
+      'Hyperlane adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_polAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](2);
+
+    trustedRemotes[0].chainId = ChainIds.POLYGON;
+    trustedRemotes[0].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    trustedRemotes[1].chainId = ChainIds.BNB;
+    trustedRemotes[1].remoteCrossChainControllerAddress = ZERO_ADDRESS; // no connection to BNB
+
+    _test_adapter(
+      address(crossChainAddresses.eth.polAdapter),
+      'Polygon native adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_wormholeAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](2);
+
+    trustedRemotes[0].chainId = ChainIds.POLYGON;
+    trustedRemotes[0].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    trustedRemotes[1].chainId = ChainIds.BNB;
+    trustedRemotes[1].remoteCrossChainControllerAddress = ZERO_ADDRESS;
+
+    _test_adapter(
+      address(crossChainAddresses.eth.wormholeAdapter),
+      'Wormhole adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
 }

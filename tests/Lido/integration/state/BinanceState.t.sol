@@ -84,4 +84,60 @@ contract CrossChainControllerStateTest is BaseStateTest {
   function test_CrossChainControllerImplState() public {
     _test_ccc_impl(cccImplAddress);
   }
+
+  function test_ccipAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.bnb.ccipAdapter),
+      'CCIP adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_lzAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.bnb.lzAdapter),
+      'LayerZero adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_hlAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.bnb.hlAdapter),
+      'Hyperlane adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_wormholeAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.bnb.wormholeAdapter),
+      'Wormhole adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
 }

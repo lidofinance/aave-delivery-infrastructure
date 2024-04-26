@@ -58,10 +58,7 @@ contract Ethereum is BaseCCIPAdapter {
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](2);
-    remoteNetworks[0] = ChainIds.POLYGON;
-    remoteNetworks[1] = ChainIds.BNB;
-
+    uint256[] memory remoteNetworks = new uint256[](0);
     return remoteNetworks;
   }
 }

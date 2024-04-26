@@ -10,8 +10,10 @@ import {Ownable} from "solidity-utils/contracts/oz-common/Ownable.sol";
 import {OwnableWithGuardian} from "solidity-utils/contracts/access-control/OwnableWithGuardian.sol";
 import {IRescuable} from "solidity-utils/contracts/utils/interfaces/IRescuable.sol";
 
+import {IBaseCrossChainController} from "../../../../src/contracts/interfaces/IBaseCrossChainController.sol";
 import {ICrossChainForwarder} from "../../../../src/contracts/interfaces/ICrossChainForwarder.sol";
 import {ICrossChainReceiver} from "../../../../src/contracts/interfaces/ICrossChainReceiver.sol";
+import {IBaseAdapter} from "../../../../src/contracts/adapters/IBaseAdapter.sol";
 
 import {BaseIntegrationTest} from "../BaseIntegrationTest.sol";
 
@@ -25,6 +27,11 @@ contract BaseStateTest is BaseIntegrationTest {
   struct AdaptersConfig {
     uint256 chainId;
     AdapterLink[] adapters;
+  }
+
+  struct TrustedRemotesConfig {
+    uint256 chainId;
+    address remoteCrossChainControllerAddress;
   }
 
   function _test_fork(
@@ -167,6 +174,32 @@ contract BaseStateTest is BaseIntegrationTest {
       }
 
       console2.log("CrossChainReceiver adapters are correct for chainId: %s", chainId);
+    }
+  }
+
+  function _test_adapter(
+    address _adapterAddress,
+    string memory _expectedAdapterName,
+    address _expectedCrossChainController,
+    TrustedRemotesConfig[] memory _trustedRemotes
+  ) internal {
+    IBaseAdapter adapter = IBaseAdapter(_adapterAddress);
+
+    assertEq(adapter.adapterName(), _expectedAdapterName, "Adapter name should match expected value");
+    console2.log("Adapter name is correct");
+
+    IBaseCrossChainController ccc = adapter.CROSS_CHAIN_CONTROLLER();
+    assertEq(address(ccc), _expectedCrossChainController, "CrossChainController address should match expected value");
+    console2.log("CrossChainController address is correct");
+
+    for (uint256 i = 0; i < _trustedRemotes.length; i++) {
+      uint256 chainId = _trustedRemotes[i].chainId;
+
+      address remote = adapter.getTrustedRemoteByChainId(chainId);
+
+      assertEq(remote, _trustedRemotes[i].remoteCrossChainControllerAddress, "Trusted remote address should match expected value");
+      console2.log("Trusted remote: %s", remote);
+      console2.log("Trusted remote address is correct for chainId: %s", _trustedRemotes[i].chainId);
     }
   }
 }

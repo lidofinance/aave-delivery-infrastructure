@@ -84,4 +84,61 @@ contract CrossChainControllerStateTest is BaseStateTest {
   function test_CrossChainControllerImplState() public {
     _test_ccc_impl(cccImplAddress);
   }
+
+  function test_ccipAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.pol.ccipAdapter),
+      'CCIP adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_lzAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.pol.lzAdapter),
+      'LayerZero adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_hlAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.pol.hlAdapter),
+      'Hyperlane adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
+  function test_polAdapter() public {
+    TrustedRemotesConfig[] memory trustedRemotes = new TrustedRemotesConfig[](1);
+
+    trustedRemotes[0].chainId = ChainIds.ETHEREUM;
+    trustedRemotes[0].remoteCrossChainControllerAddress = address(crossChainAddresses.eth.crossChainController);
+
+    _test_adapter(
+      address(crossChainAddresses.pol.polAdapter),
+      'Polygon native adapter',
+      cccAddress,
+      trustedRemotes
+    );
+  }
+
 }
