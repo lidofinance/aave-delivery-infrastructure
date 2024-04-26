@@ -6,6 +6,8 @@ import 'forge-std/StdJson.sol';
 
 import {BaseTest} from "../../BaseTest.sol";
 
+import {Envelope, EncodedEnvelope} from '../../../src/contracts/libs/EncodingUtils.sol';
+
 contract BaseIntegrationTest is BaseTest {
   using stdJson for string;
 
@@ -109,5 +111,27 @@ contract BaseIntegrationTest is BaseTest {
     ethFork = vm.createFork('ethereum-local');
     polFork = vm.createFork('polygon-local');
     bnbFork = vm.createFork('binance-local');
+  }
+
+  function _registerEnvelope(
+    uint256 _nonce,
+    address _origin,
+    uint256 _originChainId,
+    address _destination,
+    uint256 _destinationChainId,
+    bytes memory _message
+  ) internal pure returns (Envelope memory, EncodedEnvelope memory) {
+    Envelope memory envelope = Envelope({
+      nonce: _nonce,
+      origin: _origin,
+      destination: _destination,
+      originChainId: _originChainId,
+      destinationChainId: _destinationChainId,
+      message: _message
+    });
+
+    EncodedEnvelope memory encodedEnvelope = envelope.encode();
+
+    return (envelope, encodedEnvelope);
   }
 }

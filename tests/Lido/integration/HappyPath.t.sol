@@ -7,6 +7,7 @@ import {BaseIntegrationTest} from "./BaseIntegrationTest.sol";
 import {MockDestination} from "./utils/MockDestination.sol";
 
 import {ICrossChainController} from "../../../src/contracts/interfaces/ICrossChainController.sol";
+import {Envelope, EncodedEnvelope} from '../../../src/contracts/libs/EncodingUtils.sol';
 
 interface IERC20 {
   function transfer(address recipient, uint256 amount) external returns (bool);
@@ -23,18 +24,16 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
   address private immutable LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
   address private immutable LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
 
+  event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
+
   function setUp() override public {
     super.setUp();
 
-    mockPolDestination = address(
-      new MockDestination(crossChainAddresses.pol.executor)
-    );
-
-    mockBscDestination = address(
-      new MockDestination(crossChainAddresses.bnb.executor)
-    );
+    mockPolDestination = address(new MockDestination(crossChainAddresses.pol.executor));
+    mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
 
     vm.selectFork(ethFork);
+
     getLinkTokens();
   }
 
@@ -75,8 +74,20 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
     assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT), true);
 
-    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.expectEmit(true, true, false, false);
 
+    (Envelope memory envelope, EncodedEnvelope memory encodedEnvelope) = _registerEnvelope(
+      crossChainController.getCurrentEnvelopeNonce(),
+      LIDO_DAO_AGENT,
+      crossChainAddresses.eth.chainId,
+      _destination,
+      _destinationChainId,
+      _message
+    );
+
+    emit EnvelopeRegistered(encodedEnvelope.id, envelope);
+
+    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
     crossChainController.forwardMessage(
       _destinationChainId,
       _destination,
@@ -84,6 +95,8 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
       _message
     );
   }
+
+  // Helpers
 
   function getGasLimit() public view virtual returns (uint256) {
     return 300_000;

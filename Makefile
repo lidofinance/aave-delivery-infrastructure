@@ -351,8 +351,15 @@ deploy-lido-local:
 	make fund-lido-crosschain-local
 	make finalize-lido-local
 
+test-lido-state-local:
+	ENV=local forge test -vv --match-path "tests/Lido/integration/state/**/*.sol"
+
+test-lido-scenarios-local:
+	ENV=local forge test -vvv --match-path "tests/Lido/integration/*.sol"
+
 test-lido-local:
-	ENV=local forge test -vvvv --match-path "tests/Lido/integration/**/*.sol"
+	make test-lido-state-local
+	make test-lido-scenarios-local
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO HELPER SCRIPTS --------------------------------------------------------
