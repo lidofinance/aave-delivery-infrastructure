@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 import 'forge-std/console2.sol';
 import 'forge-std/Vm.sol';
 
-import {ChainIds} from "../../../../src/contracts/libs/ChainIds.sol";
+import {ChainIds} from "../../../src/contracts/libs/ChainIds.sol";
 
 import {BaseStateTest} from "./BaseStateTest.sol";
 

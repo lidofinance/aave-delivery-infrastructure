@@ -6,12 +6,19 @@ import 'forge-std/StdJson.sol';
 
 import {BaseTest} from "../BaseTest.sol";
 
-import {Envelope, EncodedEnvelope} from '../../src/contracts/libs/EncodingUtils.sol';
+import {Envelope, EncodedEnvelope, Transaction, EncodedTransaction} from '../../src/contracts/libs/EncodingUtils.sol';
+import {ICrossChainController} from "../../src/contracts/interfaces/ICrossChainController.sol";
 
 contract BaseIntegrationTest is BaseTest {
   using stdJson for string;
 
   string ENV = vm.envString('ENV');
+
+  uint256 internal immutable ETHEREUM_CHAIN_ID = 1;
+  uint256 internal immutable BINANCE_CHAIN_ID = 56;
+
+  address internal immutable ETH_LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
+  address internal immutable ETH_LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
 
   uint256 public ethFork;
 //  uint256 public polFork;
@@ -133,5 +140,39 @@ contract BaseIntegrationTest is BaseTest {
     EncodedEnvelope memory encodedEnvelope = envelope.encode();
 
     return (envelope, encodedEnvelope);
+  }
+
+  function _registerExtendedTransaction(
+    uint256 _envelopeNonce,
+    uint256 _transactionNonce,
+    address _origin,
+    uint256 _originChainId,
+    address _destination,
+    uint256 _destinationChainId,
+    bytes memory _message
+  ) internal pure returns (ExtendedTransaction memory) {
+    ExtendedTransaction memory extendedTx;
+
+    extendedTx.envelope = Envelope({
+      nonce: _envelopeNonce,
+      origin: _origin,
+      destination: _destination,
+      originChainId: _originChainId,
+      destinationChainId: _destinationChainId,
+      message: _message
+    });
+    EncodedEnvelope memory encodedEnvelope = extendedTx.envelope.encode();
+    extendedTx.envelopeEncoded = encodedEnvelope.data;
+    extendedTx.envelopeId = encodedEnvelope.id;
+
+    extendedTx.transaction = Transaction({
+      nonce: _transactionNonce,
+      encodedEnvelope: extendedTx.envelopeEncoded
+    });
+    EncodedTransaction memory encodedTransaction = extendedTx.transaction.encode();
+    extendedTx.transactionEncoded = encodedTransaction.data;
+    extendedTx.transactionId = encodedTransaction.id;
+
+    return extendedTx;
   }
 }

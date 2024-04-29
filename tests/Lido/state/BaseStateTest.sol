@@ -10,10 +10,10 @@ import {Ownable} from "solidity-utils/contracts/oz-common/Ownable.sol";
 import {OwnableWithGuardian} from "solidity-utils/contracts/access-control/OwnableWithGuardian.sol";
 import {IRescuable} from "solidity-utils/contracts/utils/interfaces/IRescuable.sol";
 
-import {IBaseCrossChainController} from "../../../../src/contracts/interfaces/IBaseCrossChainController.sol";
-import {ICrossChainForwarder} from "../../../../src/contracts/interfaces/ICrossChainForwarder.sol";
-import {ICrossChainReceiver} from "../../../../src/contracts/interfaces/ICrossChainReceiver.sol";
-import {IBaseAdapter} from "../../../../src/contracts/adapters/IBaseAdapter.sol";
+import {IBaseCrossChainController} from "../../../src/contracts/interfaces/IBaseCrossChainController.sol";
+import {ICrossChainForwarder} from "../../../src/contracts/interfaces/ICrossChainForwarder.sol";
+import {ICrossChainReceiver} from "../../../src/contracts/interfaces/ICrossChainReceiver.sol";
+import {IBaseAdapter} from "../../../src/contracts/adapters/IBaseAdapter.sol";
 
 import {BaseIntegrationTest} from "../BaseIntegrationTest.sol";
 

@@ -1,6 +1,7 @@
 pragma solidity ^0.8.19;
 
 import 'forge-std/console2.sol';
+import 'forge-std/Vm.sol';
 
 import {BaseIntegrationTest} from "../BaseIntegrationTest.sol";
 
@@ -8,6 +9,8 @@ import {MockDestination} from "../utils/MockDestination.sol";
 
 import {ICrossChainController} from "../../../src/contracts/interfaces/ICrossChainController.sol";
 import {Envelope, EncodedEnvelope} from '../../../src/contracts/libs/EncodingUtils.sol';
+import {CrossChainController} from "../../../src/contracts/CrossChainController.sol";
+import {IExecutorBase} from "../../../src/Lido/contracts/interfaces/IExecutorBase.sol";
 
 interface IERC20 {
   function transfer(address recipient, uint256 amount) external returns (bool);
@@ -15,21 +18,14 @@ interface IERC20 {
 
 contract CrossChainControllerStateTest is BaseIntegrationTest {
 
-//  address public mockPolDestination;
   address public mockBscDestination;
 
-//  uint256 private immutable POLYGON_CHAIN_ID = 137;
-  uint256 private immutable BINANCE_CHAIN_ID = 56;
-
-  address private immutable ETH_LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-  address private immutable ETH_LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
-
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
+  event TestWorked(string message);
 
   function setUp() override public {
     super.setUp();
 
-//    mockPolDestination = address(new MockDestination(crossChainAddresses.pol.executor));
     mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
 
     vm.selectFork(ethFork);
@@ -37,22 +33,10 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     getLinkTokens();
   }
 
-//  function test_HappyPath_WithMockDestination_OnPolygon() public {
-//    _happy_path_with_mock_destination(
-//      polFork,
-//      mockPolDestination,
-//      POLYGON_CHAIN_ID,
-//      getMessage(
-//        mockPolDestination,
-//        "Happy path with mock destination on Polygon"
-//      )
-//    );
-//  }
-
   function test_HappyPath_WithMockDestination_OnBinance() public {
     _happy_path_with_mock_destination(
       bnbFork,
-      mockBscDestination,
+      crossChainAddresses.bnb.executor,
       BINANCE_CHAIN_ID,
       getMessage(
         mockBscDestination,
@@ -74,26 +58,91 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
     assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT), true);
 
-    vm.expectEmit(true, true, false, false);
-
-    (Envelope memory envelope, EncodedEnvelope memory encodedEnvelope) = _registerEnvelope(
+    ExtendedTransaction memory extendedTx = _registerExtendedTransaction(
       crossChainController.getCurrentEnvelopeNonce(),
+      crossChainController.getCurrentTransactionNonce(),
       LIDO_DAO_AGENT,
-      crossChainAddresses.eth.chainId,
+      ETHEREUM_CHAIN_ID,
       _destination,
       _destinationChainId,
       _message
     );
 
-    emit EnvelopeRegistered(encodedEnvelope.id, envelope);
-
     vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.recordLogs();
+
     crossChainController.forwardMessage(
       _destinationChainId,
       _destination,
       getGasLimit(),
       _message
     );
+
+    // Check that the transaction failed on all the adapters
+    bytes32 signature = keccak256("TransactionForwardingAttempted(bytes32,bytes32,bytes,uint256,address,address,bool,bytes)");
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+
+    uint256 count = 0;
+    for (uint256 i = 0; i < entries.length; i++) {
+      if (entries[i].topics[0] == signature && entries[i].topics[3] == bytes32(uint(1))) {
+        count++;
+      }
+    }
+
+    assertEq(count, 4); // all adapters should succeed
+
+    // Switch to the target fork
+
+    vm.selectFork(_targetForkId);
+
+    // CrossChainController should receive the messages from the adapters
+
+    ICrossChainController targetCrossChainController = ICrossChainController(
+      crossChainAddresses.bnb.crossChainController
+    );
+
+    address[] memory addresses = new address[](4);
+    addresses[0] = crossChainAddresses.bnb.ccipAdapter;
+    addresses[1] = crossChainAddresses.bnb.lzAdapter;
+    addresses[2] = crossChainAddresses.bnb.hlAdapter;
+    addresses[3] = crossChainAddresses.bnb.wormholeAdapter;
+
+    vm.recordLogs();
+
+    for (uint256 i = 0; i < addresses.length; i++) {
+      vm.prank(addresses[i], ZERO_ADDRESS);
+      targetCrossChainController.receiveCrossChainMessage(
+        extendedTx.transactionEncoded,
+        extendedTx.envelope.originChainId
+      );
+    }
+
+    entries = vm.getRecordedLogs();
+
+    signature = keccak256("ActionsSetQueued(uint256,address[],uint256[],string[],bytes[],bool[],uint256)");
+    count = 0;
+    uint256 actionId;
+
+    for (uint256 i = 0; i < entries.length; i++) {
+      if (entries[i].topics[0] == signature) {
+        count++;
+        actionId = uint256(entries[i].topics[1]);
+      }
+    }
+
+    assertEq(count, 1); // action should be queued
+
+    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executor);
+
+    vm.expectEmit();
+
+    emit TestWorked("Happy path with mock destination on Binance");
+
+    executor.execute(actionId);
+
+    MockDestination mockDestination = MockDestination(mockBscDestination);
+
+    assertEq(mockDestination.message(), "Happy path with mock destination on Binance");
   }
 
   // Helpers

@@ -20,13 +20,6 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
 //  address public mockPolDestination;
   address public mockBscDestination;
 
-  uint256 private immutable ETHEREUM_CHAIN_ID = 1;
-//  uint256 private immutable POLYGON_CHAIN_ID = 137;
-  uint256 private immutable BINANCE_CHAIN_ID = 56;
-
-  address private immutable ETH_LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-  address private immutable ETH_LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
-
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
 
   function setUp() override public {
@@ -42,18 +35,10 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
     assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT), true);
 
+    bytes memory message = getMessage(crossChainAddresses.bnb.executor, "No funds on CrossChainController");
+
     // Reset the balance of the CrossChainController
     vm.deal(address(crossChainAddresses.eth.crossChainController), 0);
-
-    vm.recordLogs();
-
-    // Expect that envelope will register
-    vm.expectEmit(true, true, false, false);
-
-    bytes memory message = getMessage(
-      crossChainAddresses.bnb.executor,
-      "No funds on CrossChainController"
-    );
 
     (Envelope memory envelope, EncodedEnvelope memory encodedEnvelope) = _registerEnvelope(
       crossChainController.getCurrentEnvelopeNonce(),
@@ -64,9 +49,13 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
       message
     );
 
+    // Expect that envelope will register
+    vm.expectEmit(true, true, false, false);
     emit EnvelopeRegistered(encodedEnvelope.id, envelope);
 
     vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.recordLogs();
+
     (bytes32 envelopeId, bytes32 transactionId) = crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
       crossChainAddresses.bnb.executor,
