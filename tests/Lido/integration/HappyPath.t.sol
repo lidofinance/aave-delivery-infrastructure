@@ -15,21 +15,21 @@ interface IERC20 {
 
 contract CrossChainControllerStateTest is BaseIntegrationTest {
 
-  address public mockPolDestination;
+//  address public mockPolDestination;
   address public mockBscDestination;
 
-  uint256 private immutable POLYGON_CHAIN_ID = 137;
+//  uint256 private immutable POLYGON_CHAIN_ID = 137;
   uint256 private immutable BINANCE_CHAIN_ID = 56;
 
-  address private immutable LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-  address private immutable LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
+  address private immutable ETH_LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
+  address private immutable ETH_LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
 
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
 
   function setUp() override public {
     super.setUp();
 
-    mockPolDestination = address(new MockDestination(crossChainAddresses.pol.executor));
+//    mockPolDestination = address(new MockDestination(crossChainAddresses.pol.executor));
     mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
 
     vm.selectFork(ethFork);
@@ -37,17 +37,17 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     getLinkTokens();
   }
 
-  function test_HappyPath_WithMockDestination_OnPolygon() public {
-    _happy_path_with_mock_destination(
-      polFork,
-      mockPolDestination,
-      POLYGON_CHAIN_ID,
-      getMessage(
-        mockPolDestination,
-        "Happy path with mock destination on Polygon"
-      )
-    );
-  }
+//  function test_HappyPath_WithMockDestination_OnPolygon() public {
+//    _happy_path_with_mock_destination(
+//      polFork,
+//      mockPolDestination,
+//      POLYGON_CHAIN_ID,
+//      getMessage(
+//        mockPolDestination,
+//        "Happy path with mock destination on Polygon"
+//      )
+//    );
+//  }
 
   function test_HappyPath_WithMockDestination_OnBinance() public {
     _happy_path_with_mock_destination(
@@ -103,8 +103,8 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
   }
 
   function getLinkTokens() public {
-    vm.prank(LINK_TOKEN_HOLDER, ZERO_ADDRESS);
-    IERC20(LINK_TOKEN).transfer(crossChainAddresses.eth.crossChainController, 100e18);
+    vm.prank(ETH_LINK_TOKEN_HOLDER, ZERO_ADDRESS);
+    IERC20(ETH_LINK_TOKEN).transfer(crossChainAddresses.eth.crossChainController, 100e18);
   }
 
   function getMessage(

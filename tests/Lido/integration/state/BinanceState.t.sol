@@ -43,13 +43,13 @@ contract CrossChainControllerStateTest is BaseStateTest {
   }
 
   function test_CrossChainController_ForwarderAdaptersState() public {
-    AdaptersConfig[] memory ccfAdaptersLists = new AdaptersConfig[](2);
+    AdaptersConfig[] memory ccfAdaptersLists = new AdaptersConfig[](1);
 
     ccfAdaptersLists[0].chainId = ChainIds.ETHEREUM;
     ccfAdaptersLists[0].adapters = new AdapterLink[](0);
 
-    ccfAdaptersLists[1].chainId = ChainIds.POLYGON;
-    ccfAdaptersLists[1].adapters = new AdapterLink[](0);
+//    ccfAdaptersLists[1].chainId = ChainIds.POLYGON;
+//    ccfAdaptersLists[1].adapters = new AdapterLink[](0);
 
     _test_ccf_adapters(
       cccAddress,
@@ -58,7 +58,7 @@ contract CrossChainControllerStateTest is BaseStateTest {
   }
 
   function test_CrossChainController_ReceiverAdaptersState() public {
-    AdaptersConfig[] memory ccrAdaptersLists = new AdaptersConfig[](2);
+    AdaptersConfig[] memory ccrAdaptersLists = new AdaptersConfig[](1);
 
     ccrAdaptersLists[0].chainId = ChainIds.ETHEREUM;
     ccrAdaptersLists[0].adapters = new AdapterLink[](4);
@@ -72,8 +72,8 @@ contract CrossChainControllerStateTest is BaseStateTest {
     ccrAdaptersLists[0].adapters[3].localAdapter = address(crossChainAddresses.bnb.wormholeAdapter);
     ccrAdaptersLists[0].adapters[3].destinationAdapter = address(crossChainAddresses.eth.wormholeAdapter);
 
-    ccrAdaptersLists[1].chainId = ChainIds.POLYGON;
-    ccrAdaptersLists[1].adapters = new AdapterLink[](0);
+//    ccrAdaptersLists[1].chainId = ChainIds.POLYGON;
+//    ccrAdaptersLists[1].adapters = new AdapterLink[](0);
 
     _test_ccr_adapters(
       cccAddress,

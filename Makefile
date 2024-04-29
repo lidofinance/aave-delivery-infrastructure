@@ -347,7 +347,7 @@ deploy-lido-local:
 	make finalize-lido-local
 
 test-lido-state-local:
-	ENV=local forge test -vv --match-path "tests/Lido/integration/state/**/*.sol"
+	ENV=local forge test -v --match-path "tests/Lido/integration/state/**/*.sol"
 
 test-lido-scenarios-local:
 	ENV=local forge test -vvv --match-path "tests/Lido/integration/*.sol"

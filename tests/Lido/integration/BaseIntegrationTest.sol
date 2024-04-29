@@ -14,7 +14,7 @@ contract BaseIntegrationTest is BaseTest {
   string ENV = vm.envString('ENV');
 
   uint256 public ethFork;
-  uint256 public polFork;
+//  uint256 public polFork;
   uint256 public bnbFork;
 
   address constant LIDO_DAO_AGENT = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
@@ -31,7 +31,7 @@ contract BaseIntegrationTest is BaseTest {
     address lzAdapter;
     address mockDestination;
     address owner;
-    address polAdapter;
+//    address polAdapter;
     address proxyAdmin;
     address proxyFactory;
     address wormholeAdapter;
@@ -40,13 +40,13 @@ contract BaseIntegrationTest is BaseTest {
 
   struct CrossChainAddresses {
     Addresses eth;
-    Addresses pol;
+//    Addresses pol;
     Addresses bnb;
   }
 
   struct CrossChainAddressFiles {
     string eth;
-    string pol;
+//    string pol;
     string bnb;
   }
 
@@ -56,7 +56,7 @@ contract BaseIntegrationTest is BaseTest {
     if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("local"))) {
       return CrossChainAddressFiles({
         eth: './deployments/cc/local/eth.json',
-        pol: './deployments/cc/local/pol.json',
+//        pol: './deployments/cc/local/pol.json',
         bnb: './deployments/cc/local/bnb.json'
       });
     }
@@ -64,14 +64,14 @@ contract BaseIntegrationTest is BaseTest {
     if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("testnet"))) {
       return CrossChainAddressFiles({
         eth: './deployments/cc/testnet/sep.json',
-        pol: './deployments/cc/testnet/mum.json',
+//        pol: './deployments/cc/testnet/mum.json',
         bnb: './deployments/cc/testnet/bnb_test.json'
       });
     }
 
     return CrossChainAddressFiles({
       eth: './deployments/cc/mainnet/eth.json',
-      pol: './deployments/cc/mainnet/pol.json',
+//      pol: './deployments/cc/mainnet/pol.json',
       bnb: './deployments/cc/mainnet/bnb.json'
     });
   }
@@ -93,7 +93,7 @@ contract BaseIntegrationTest is BaseTest {
       chainId: abi.decode(persistedJson.parseRaw('.chainId'), (uint256)),
       lzAdapter: abi.decode(persistedJson.parseRaw('.lzAdapter'), (address)),
       hlAdapter: abi.decode(persistedJson.parseRaw('.hlAdapter'), (address)),
-      polAdapter: abi.decode(persistedJson.parseRaw('.polAdapter'), (address)),
+//      polAdapter: abi.decode(persistedJson.parseRaw('.polAdapter'), (address)),
       mockDestination: abi.decode(persistedJson.parseRaw('.mockDestination'), (address)),
       wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
       executor: abi.decode(persistedJson.parseRaw('.executor'), (address))
@@ -105,11 +105,11 @@ contract BaseIntegrationTest is BaseTest {
   function setUp() virtual public {
     CrossChainAddressFiles memory files = _getDeploymentFiles();
     crossChainAddresses.eth = _decodeJson(files.eth, vm);
-    crossChainAddresses.pol = _decodeJson(files.pol, vm);
+//    crossChainAddresses.pol = _decodeJson(files.pol, vm);
     crossChainAddresses.bnb = _decodeJson(files.bnb, vm);
 
     ethFork = vm.createFork('ethereum-local');
-    polFork = vm.createFork('polygon-local');
+//    polFork = vm.createFork('polygon-local');
     bnbFork = vm.createFork('binance-local');
   }
 
