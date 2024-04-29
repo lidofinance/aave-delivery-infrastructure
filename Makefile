@@ -284,32 +284,28 @@ endef
 
 start-local-blockchain-forks:
 	anvil --fork-url fork-source-mainnet --chain-id 1 -p 8545 & \
-	anvil --fork-url fork-source-polygon --chain-id 137 -p 8546 & \
-	anvil --fork-url fork-source-binance --chain-id 56 -p 8547 &
+	anvil --fork-url fork-source-binance --chain-id 56 -p 8546 & \
 
 stop-local-blockchain-forks:
 	killall anvil || true
 
 deploy-lido-cross-chain-infra-local:
-	$(call deploy_local_fn,Lido/CCC/Deploy_CCC,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/CCC/Deploy_CCC,ethereum binance)
 
 deploy-lido-ccip-bridge-adapters-local:
-	$(call deploy_local_fn,Lido/Adapters/Deploy_CCIP,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/Adapters/Deploy_CCIP,ethereum binance)
 
 deploy-lido-lz-bridge-adapters-local:
-	$(call deploy_local_fn,Lido/Adapters/Deploy_LZ,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/Adapters/Deploy_LZ,ethereum binance)
 
 deploy-lido-hl-bridge-adapters-local:
-	$(call deploy_local_fn,Lido/Adapters/Deploy_HL,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/Adapters/Deploy_HL,ethereum binance)
 
 deploy-lido-wormhole-adapters-local:
 	$(call deploy_local_fn,Lido/Adapters/Deploy_Wormhole,ethereum binance)
 
-deploy-lido-polygon-adapters-local:
-	$(call deploy_local_fn,Lido/Adapters/Deploy_Polygon,ethereum polygon)
-
 deploy-lido-cross-chain-executor-local:
-	$(call deploy_local_fn,Lido/CCC/Deploy_CCE,polygon binance)
+	$(call deploy_local_fn,Lido/CCC/Deploy_CCE,binance)
 
 set-lido-ccf-approved-senders-local:
 	$(call deploy_local_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
@@ -318,23 +314,22 @@ set-lido-ccf-sender-adapters-local:
 	$(call deploy_local_fn,Lido/CCC/Set_CCF_Sender_Adapters,ethereum)
 
 set-lido-ccr-receiver-adapters-local:
-	$(call deploy_local_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/CCC/Set_CCR_Receivers_Adapters,ethereum binance)
 
 set-lido-ccr-confirmations-local:
-	$(call deploy_local_fn,Lido/CCC/Set_CCR_Confirmations,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/CCC/Set_CCR_Confirmations,ethereum binance)
 
 fund-lido-crosschain-local:
 	$(call deploy_local_fn,Lido/CCC/Fund_CCC,ethereum)
 
 finalize-lido-local:
-	$(call deploy_local_fn,Lido/CCC/Finalize,ethereum polygon binance)
+	$(call deploy_local_fn,Lido/CCC/Finalize,ethereum binance)
 
 deploy-lido-bridge-adapters-local:
 	make deploy-lido-ccip-bridge-adapters-local
 	make deploy-lido-lz-bridge-adapters-local
 	make deploy-lido-hl-bridge-adapters-local
 	make deploy-lido-wormhole-adapters-local
-	make deploy-lido-polygon-adapters-local
 
 restart-local-blockchain-forks:
 	make stop-local-blockchain-forks
