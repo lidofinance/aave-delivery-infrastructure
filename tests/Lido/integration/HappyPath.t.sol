@@ -2,9 +2,9 @@ pragma solidity ^0.8.19;
 
 import 'forge-std/console2.sol';
 
-import {BaseIntegrationTest} from "./BaseIntegrationTest.sol";
+import {BaseIntegrationTest} from "../BaseIntegrationTest.sol";
 
-import {MockDestination} from "./utils/MockDestination.sol";
+import {MockDestination} from "../utils/MockDestination.sol";
 
 import {ICrossChainController} from "../../../src/contracts/interfaces/ICrossChainController.sol";
 import {Envelope, EncodedEnvelope} from '../../../src/contracts/libs/EncodingUtils.sol';

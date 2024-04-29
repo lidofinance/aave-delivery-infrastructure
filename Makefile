@@ -350,7 +350,7 @@ test-lido-state-local:
 	ENV=local forge test -v --match-path "tests/Lido/integration/state/**/*.sol"
 
 test-lido-scenarios-local:
-	ENV=local forge test -vvv --match-path "tests/Lido/integration/*.sol"
+	ENV=local forge test -v --match-path "tests/Lido/integration/*.sol"
 
 test-lido-local:
 	make test-lido-state-local

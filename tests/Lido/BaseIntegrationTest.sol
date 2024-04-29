@@ -4,9 +4,9 @@ import 'forge-std/console2.sol';
 import 'forge-std/Vm.sol';
 import 'forge-std/StdJson.sol';
 
-import {BaseTest} from "../../BaseTest.sol";
+import {BaseTest} from "../BaseTest.sol";
 
-import {Envelope, EncodedEnvelope} from '../../../src/contracts/libs/EncodingUtils.sol';
+import {Envelope, EncodedEnvelope} from '../../src/contracts/libs/EncodingUtils.sol';
 
 contract BaseIntegrationTest is BaseTest {
   using stdJson for string;
