@@ -139,6 +139,12 @@ contract BaseTestHelpers is BaseTest {
     assertEq(count, _expectedCount); // expected count of adapters should succeed
   }
 
+  /**
+    * @notice Validates that the action was queued
+    *
+    * @param _entries The logs to validate
+    * @return actionId The ID of the action that was queued
+    */
   function _getActionsSetQueued(
     Vm.Log[] memory _entries
   ) internal returns (uint256) {
