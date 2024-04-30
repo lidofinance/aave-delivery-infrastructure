@@ -126,11 +126,10 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
   }
 
   function test_NoFunds_FundsOnCrossChainControllerAreOK() public {
-    ICrossChainController crossChainController = ICrossChainController(
-      crossChainAddresses.eth.crossChainController
-    );
+    address cccAddress = crossChainAddresses.eth.crossChainController;
 
-    getLinkTokens();
+    ICrossChainController crossChainController = ICrossChainController(cccAddress);
+    transferLinkTokens(cccAddress);
 
     bytes memory message = getMessage(crossChainAddresses.bnb.executor, "Funds are in place on CrossChainController");
 
@@ -158,15 +157,6 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
   }
 
   // Helpers
-
-  function getGasLimit() public view virtual returns (uint256) {
-    return 300_000;
-  }
-
-  function getLinkTokens() public {
-    vm.prank(ETH_LINK_TOKEN_HOLDER, ZERO_ADDRESS);
-    IERC20(ETH_LINK_TOKEN).transfer(crossChainAddresses.eth.crossChainController, 100e18);
-  }
 
   function getMessage(
     address _address,

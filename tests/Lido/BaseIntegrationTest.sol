@@ -9,24 +9,15 @@ import {BaseTest} from "../BaseTest.sol";
 import {Envelope, EncodedEnvelope, Transaction, EncodedTransaction} from '../../src/contracts/libs/EncodingUtils.sol';
 import {ICrossChainController} from "../../src/contracts/interfaces/ICrossChainController.sol";
 
-contract BaseIntegrationTest is BaseTest {
+import {BaseTestHelpers} from "./BaseTestHelpers.sol";
+
+contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
   using stdJson for string;
 
   string ENV = vm.envString('ENV');
 
-  uint256 internal immutable ETHEREUM_CHAIN_ID = 1;
-  uint256 internal immutable BINANCE_CHAIN_ID = 56;
-
-  address internal immutable ETH_LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-  address internal immutable ETH_LINK_TOKEN_HOLDER = 0x5Eab1966D5F61E52C22D0279F06f175e36A7181E;
-
   uint256 public ethFork;
-//  uint256 public polFork;
   uint256 public bnbFork;
-
-  address constant LIDO_DAO_AGENT = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
-  address constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-  address constant ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
 
   struct Addresses {
     address ccipAdapter;
@@ -38,7 +29,6 @@ contract BaseIntegrationTest is BaseTest {
     address lzAdapter;
     address mockDestination;
     address owner;
-//    address polAdapter;
     address proxyAdmin;
     address proxyFactory;
     address wormholeAdapter;
@@ -47,13 +37,11 @@ contract BaseIntegrationTest is BaseTest {
 
   struct CrossChainAddresses {
     Addresses eth;
-//    Addresses pol;
     Addresses bnb;
   }
 
   struct CrossChainAddressFiles {
     string eth;
-//    string pol;
     string bnb;
   }
 
@@ -63,7 +51,6 @@ contract BaseIntegrationTest is BaseTest {
     if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("local"))) {
       return CrossChainAddressFiles({
         eth: './deployments/cc/local/eth.json',
-//        pol: './deployments/cc/local/pol.json',
         bnb: './deployments/cc/local/bnb.json'
       });
     }
@@ -71,14 +58,12 @@ contract BaseIntegrationTest is BaseTest {
     if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("testnet"))) {
       return CrossChainAddressFiles({
         eth: './deployments/cc/testnet/sep.json',
-//        pol: './deployments/cc/testnet/mum.json',
         bnb: './deployments/cc/testnet/bnb_test.json'
       });
     }
 
     return CrossChainAddressFiles({
       eth: './deployments/cc/mainnet/eth.json',
-//      pol: './deployments/cc/mainnet/pol.json',
       bnb: './deployments/cc/mainnet/bnb.json'
     });
   }
@@ -100,7 +85,6 @@ contract BaseIntegrationTest is BaseTest {
       chainId: abi.decode(persistedJson.parseRaw('.chainId'), (uint256)),
       lzAdapter: abi.decode(persistedJson.parseRaw('.lzAdapter'), (address)),
       hlAdapter: abi.decode(persistedJson.parseRaw('.hlAdapter'), (address)),
-//      polAdapter: abi.decode(persistedJson.parseRaw('.polAdapter'), (address)),
       mockDestination: abi.decode(persistedJson.parseRaw('.mockDestination'), (address)),
       wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
       executor: abi.decode(persistedJson.parseRaw('.executor'), (address))
@@ -112,67 +96,68 @@ contract BaseIntegrationTest is BaseTest {
   function setUp() virtual public {
     CrossChainAddressFiles memory files = _getDeploymentFiles();
     crossChainAddresses.eth = _decodeJson(files.eth, vm);
-//    crossChainAddresses.pol = _decodeJson(files.pol, vm);
     crossChainAddresses.bnb = _decodeJson(files.bnb, vm);
 
     ethFork = vm.createFork('ethereum-local');
-//    polFork = vm.createFork('polygon-local');
     bnbFork = vm.createFork('binance-local');
   }
 
-  function _registerEnvelope(
-    uint256 _nonce,
-    address _origin,
-    uint256 _originChainId,
+  /**
+    * @notice Send a message with the specified destination and message via a.DI
+    * @param _crossChainController The address of the cross chain controller
+    * @param _destination The destination address of the message
+    * @param _destinationChainId The destination chain ID of the message
+    * @param _message The message of the envelope
+    */
+  function _sendCrossChainTransactionAsDao(
+    address _crossChainController,
     address _destination,
     uint256 _destinationChainId,
     bytes memory _message
-  ) internal pure returns (Envelope memory, EncodedEnvelope memory) {
-    Envelope memory envelope = Envelope({
-      nonce: _nonce,
-      origin: _origin,
-      destination: _destination,
-      originChainId: _originChainId,
-      destinationChainId: _destinationChainId,
-      message: _message
-    });
+  ) internal returns (ExtendedTransaction memory) {
+    ICrossChainController crossChainController = ICrossChainController(_crossChainController);
 
-    EncodedEnvelope memory encodedEnvelope = envelope.encode();
+    assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
+    assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT), true);
 
-    return (envelope, encodedEnvelope);
-  }
+    ExtendedTransaction memory extendedTx = _registerExtendedTransaction(
+      crossChainController.getCurrentEnvelopeNonce(),
+      crossChainController.getCurrentTransactionNonce(),
+      LIDO_DAO_AGENT,
+      ETHEREUM_CHAIN_ID,
+      _destination,
+      _destinationChainId,
+      _message
+    );
 
-  function _registerExtendedTransaction(
-    uint256 _envelopeNonce,
-    uint256 _transactionNonce,
-    address _origin,
-    uint256 _originChainId,
-    address _destination,
-    uint256 _destinationChainId,
-    bytes memory _message
-  ) internal pure returns (ExtendedTransaction memory) {
-    ExtendedTransaction memory extendedTx;
+    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.recordLogs();
 
-    extendedTx.envelope = Envelope({
-      nonce: _envelopeNonce,
-      origin: _origin,
-      destination: _destination,
-      originChainId: _originChainId,
-      destinationChainId: _destinationChainId,
-      message: _message
-    });
-    EncodedEnvelope memory encodedEnvelope = extendedTx.envelope.encode();
-    extendedTx.envelopeEncoded = encodedEnvelope.data;
-    extendedTx.envelopeId = encodedEnvelope.id;
-
-    extendedTx.transaction = Transaction({
-      nonce: _transactionNonce,
-      encodedEnvelope: extendedTx.envelopeEncoded
-    });
-    EncodedTransaction memory encodedTransaction = extendedTx.transaction.encode();
-    extendedTx.transactionEncoded = encodedTransaction.data;
-    extendedTx.transactionId = encodedTransaction.id;
+    crossChainController.forwardMessage(
+      _destinationChainId,
+      _destination,
+      getGasLimit(),
+      _message
+    );
 
     return extendedTx;
+  }
+
+  function _receiveDaoCrossChainMessage(
+    address _crossChainController,
+    address[] memory adapters,
+    ExtendedTransaction memory originalExtendedTx
+  ) internal {
+    ICrossChainController targetCrossChainController = ICrossChainController(_crossChainController);
+
+    vm.recordLogs();
+
+    for (uint256 i = 0; i < adapters.length; i++) {
+      vm.prank(adapters[i], ZERO_ADDRESS);
+      targetCrossChainController.receiveCrossChainMessage(
+        originalExtendedTx.transactionEncoded,
+        originalExtendedTx.envelope.originChainId
+      );
+    }
   }
 }
