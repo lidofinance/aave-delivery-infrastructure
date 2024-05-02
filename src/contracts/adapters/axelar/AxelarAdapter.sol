@@ -43,12 +43,12 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   function axelarToInfraChainId(
     string calldata axelarChainId
   ) public pure virtual override returns (uint256) {
-    if (Strings.equal(axelarChainId, 'fantom')) return ChainIds.FANTOM;
-    if (Strings.equal(axelarChainId, 'polygon')) return ChainIds.POLYGON;
-    if (Strings.equal(axelarChainId, 'avalanche')) return ChainIds.AVALANCHE;
+    if (Strings.equal(axelarChainId, 'Fantom')) return ChainIds.FANTOM;
+    if (Strings.equal(axelarChainId, 'Polygon')) return ChainIds.POLYGON;
+    if (Strings.equal(axelarChainId, 'Avalanche')) return ChainIds.AVALANCHE;
     if (Strings.equal(axelarChainId, 'arbitrum')) return ChainIds.ARBITRUM;
     if (Strings.equal(axelarChainId, 'optimism')) return ChainIds.OPTIMISM;
-    if (Strings.equal(axelarChainId, 'ethereum')) return ChainIds.ETHEREUM;
+    if (Strings.equal(axelarChainId, 'Ethereum')) return ChainIds.ETHEREUM;
     if (Strings.equal(axelarChainId, 'celo')) return ChainIds.CELO;
     if (Strings.equal(axelarChainId, 'binance')) return ChainIds.BNB;
     if (Strings.equal(axelarChainId, 'base')) return ChainIds.BASE;
@@ -62,12 +62,12 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   function infraToAxelarChainId(
     uint256 infraChainId
   ) public pure virtual override returns (string memory) {
-    if (infraChainId == ChainIds.FANTOM) return 'fantom';
-    if (infraChainId == ChainIds.POLYGON) return 'polygon';
-    if (infraChainId == ChainIds.AVALANCHE) return 'avalanche';
+    if (infraChainId == ChainIds.FANTOM) return 'Fantom';
+    if (infraChainId == ChainIds.POLYGON) return 'Polygon';
+    if (infraChainId == ChainIds.AVALANCHE) return 'Avalanche';
     if (infraChainId == ChainIds.ARBITRUM) return 'arbitrum';
     if (infraChainId == ChainIds.OPTIMISM) return 'optimism';
-    if (infraChainId == ChainIds.ETHEREUM) return 'ethereum';
+    if (infraChainId == ChainIds.ETHEREUM) return 'Ethereum';
     if (infraChainId == ChainIds.CELO) return 'celo';
     if (infraChainId == ChainIds.BNB) return 'binance';
     if (infraChainId == ChainIds.BASE) return 'base';

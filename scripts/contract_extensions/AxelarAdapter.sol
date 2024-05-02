@@ -20,9 +20,9 @@ contract AxelarAdapterTestnet is AxelarAdapter {
   function axelarToInfraChainId(
     string calldata axelarChainId
   ) public pure override returns (uint256) {
-    if (Strings.equal(axelarChainId, 'fantom')) return TestNetChainIds.FANTOM_TESTNET;
-    if (Strings.equal(axelarChainId, 'polygon')) return TestNetChainIds.POLYGON_MUMBAI;
-    if (Strings.equal(axelarChainId, 'avalanche')) return TestNetChainIds.AVALANCHE_FUJI;
+    if (Strings.equal(axelarChainId, 'Fantom')) return TestNetChainIds.FANTOM_TESTNET;
+    if (Strings.equal(axelarChainId, 'Polygon')) return TestNetChainIds.POLYGON_MUMBAI;
+    if (Strings.equal(axelarChainId, 'Avalanche')) return TestNetChainIds.AVALANCHE_FUJI;
     if (Strings.equal(axelarChainId, 'arbitrum-sepolia')) return TestNetChainIds.ARBITRUM_SEPOLIA;
     if (Strings.equal(axelarChainId, 'optimism-sepolia')) return TestNetChainIds.OPTIMISM_SEPOLIA;
     if (Strings.equal(axelarChainId, 'ethereum-sepolia')) return TestNetChainIds.ETHEREUM_SEPOLIA;
@@ -37,9 +37,9 @@ contract AxelarAdapterTestnet is AxelarAdapter {
   /// @inheritdoc BaseAxelarAdapter
   // @dev this function is used to convert the infra chain id to the axelar chain id
   function infraToAxelarChainId(uint256 infraChainId) public pure override returns (string memory) {
-    if (infraChainId == TestNetChainIds.FANTOM_TESTNET) return 'fantom';
-    if (infraChainId == TestNetChainIds.POLYGON_MUMBAI) return 'polygon';
-    if (infraChainId == TestNetChainIds.AVALANCHE_FUJI) return 'avalanche';
+    if (infraChainId == TestNetChainIds.FANTOM_TESTNET) return 'Fantom';
+    if (infraChainId == TestNetChainIds.POLYGON_MUMBAI) return 'Polygon';
+    if (infraChainId == TestNetChainIds.AVALANCHE_FUJI) return 'Avalanche';
     if (infraChainId == TestNetChainIds.ARBITRUM_SEPOLIA) return 'arbitrum-sepolia';
     if (infraChainId == TestNetChainIds.OPTIMISM_SEPOLIA) return 'optimism-sepolia';
     if (infraChainId == TestNetChainIds.ETHEREUM_SEPOLIA) return 'ethereum-sepolia';
