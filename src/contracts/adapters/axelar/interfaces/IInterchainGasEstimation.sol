@@ -10,22 +10,6 @@ import {GasEstimationType, GasInfo} from '../libs/GasEstimationTypes.sol';
  * which allows for estimating gas fees for cross-chain communication on the Axelar network.
  */
 interface IInterchainGasEstimation {
-  error UnsupportedEstimationType(GasEstimationType gasEstimationType);
-
-  /**
-   * @notice Event emitted when the gas price for a specific chain is updated.
-   * @param chain The name of the chain
-   * @param info The gas info for the chain
-   */
-  event GasInfoUpdated(string chain, GasInfo info);
-
-  /**
-   * @notice Returns the gas price for a specific chain.
-   * @param chain The name of the chain
-   * @return gasInfo The gas info for the chain
-   */
-  function getGasInfo(string calldata chain) external view returns (GasInfo memory);
-
   /**
    * @notice Estimates the gas fee for a cross-chain contract call.
    * @param destinationChain Axelar registered name of the destination chain
