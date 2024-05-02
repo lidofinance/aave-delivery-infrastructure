@@ -81,6 +81,9 @@ deploy-optimism-adapters:
 deploy-arbitrum-adapters:
 	$(call deploy_fn,Adapters/DeployArbAdapter,ethereum arbitrum)
 
+deploy-axelar-adapters:
+  $(call deploy_fn,Adapters/DeployAxelarAdapter,ethereum binance)
+
 deploy-metis-adapters:
 	$(call deploy_fn,Adapters/DeployMetisAdapter,ethereum metis)
 
@@ -126,6 +129,7 @@ deploy-full:
 		make deploy-proxy-factory
 		make deploy-cross-chain-infra
 		make deploy-ccip-bridge-adapters
+    make deploy-axelar-adapters
 		make deploy-lz-bridge-adapters
 		make deploy-hl-bridge-adapters
 		make deploy-same-chain-adapters
@@ -175,6 +179,9 @@ deploy-scroll-adapters-test:
 deploy-wormhole-adapters-test:
 	$(call deploy_fn,Adapters/DeployWormholeAdapter,ethereum celo)
 
+deploy-axelar-adapters-test:
+  $(call deploy_fn,Adapters/DeployAxelarAdapter,ethereum binance)
+
 ## Set sender bridge dapters. Only eth pol avax are needed as other networks will only receive
 set-ccf-sender-adapters-test:
 	$(call deploy_fn,CCC/Set_CCF_Sender_Adapters,ethereum polygon)
@@ -196,6 +203,7 @@ deploy-full-test:
 		#make deploy-proxy-factory-test
 		make deploy-cross-chain-infra-test
 		make deploy-ccip-bridge-adapters-test
+    make deploy-axelar-adapters-test
 		make deploy-lz-bridge-adapters-test
 		make deploy-hl-bridge-adapters-test
 		make deploy-same-chain-adapters-test
@@ -222,6 +230,9 @@ deploy-lido-hl-bridge-adapters-test:
 
 deploy-lido-wormhole-adapters-test:
 	$(call deploy_fn,Lido/Adapters/Deploy_Wormhole,ethereum binance)
+
+deploy-lido-axelar-adapters-test:
+  $(call deploy_fn,Lido/Adapters/Deploy_Axelar,ethereum binance)
 
 #deploy-lido-polygon-adapters-test:
 	#$(call deploy_fn,Lido/Adapters/Deploy_Polygon,ethereum poplygon)
@@ -254,6 +265,7 @@ deploy-lido-bridge-adapters-test:
 	make deploy-lido-lz-bridge-adapters-test
 	make deploy-lido-hl-bridge-adapters-test
 	make deploy-lido-wormhole-adapters-test
+  make deploy-lido-axelar-adapters-test
 	# make deploy-lido-polygon-adapters-test
 
 deploy-lido-testnet:

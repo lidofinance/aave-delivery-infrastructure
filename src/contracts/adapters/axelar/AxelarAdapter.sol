@@ -1,0 +1,148 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {BaseAdapter, IBaseAdapter} from '../BaseAdapter.sol';
+import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
+import {AxelarGMPExecutable} from './libs/AxelarGMPExecutable.sol';
+import {BaseAxelarAdapter} from './libs/BaseAxelarAdapter.sol';
+import {IAxelarGasService} from './interfaces/IAxelarGasService.sol';
+import {IAxelarGMPGateway} from './interfaces/IAxelarGMPGateway.sol';
+import {Errors} from '../../libs/Errors.sol';
+import {ChainIds} from '../../libs/ChainIds.sol';
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {StringToAddress, AddressToString} from './libs/AddressString.sol';
+import {AxelarMainnetChainIds} from './libs/AxelarChainIds.sol';
+
+contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
+  IAxelarGasService public gasService;
+  address public refundAddress;
+
+  /**
+   * @param crossChainController address of the cross chain controller that will use this bridge adapter
+   * @param _gateway address of the axelar gateway contract
+   * @param _gasService address of the gas service contract
+   */
+  constructor(
+    address crossChainController,
+    address _gateway,
+    address _gasService,
+    address _refundAddress,
+    TrustedRemotesConfig[] memory trustedRemotes
+  )
+    AxelarGMPExecutable(_gateway)
+    BaseAdapter(crossChainController, 0, 'Axelar adapter', trustedRemotes)
+  {
+    require(_gasService != address(0), Errors.INVALID_AXELAR_GAS_SERVICE);
+    require(_refundAddress != address(0), Errors.INVALID_AXELAR_REFUND_ADDRESS);
+
+    gasService = IAxelarGasService(_gasService);
+    refundAddress = _refundAddress;
+  }
+
+  /// @inheritdoc BaseAxelarAdapter
+  // @dev this function is used to convert the axelar chain id to the infra chain id
+  function axelarToInfraChainId(
+    string calldata axelarChainId
+  ) public pure virtual override returns (uint256) {
+    bytes32 axelarChainIdHash = keccak256(abi.encodePacked(axelarChainId));
+
+    if (axelarChainIdHash == AxelarMainnetChainIds.FANTOM) return ChainIds.FANTOM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.POLYGON) return ChainIds.POLYGON;
+    if (axelarChainIdHash == AxelarMainnetChainIds.AVALANCHE) return ChainIds.AVALANCHE;
+    if (axelarChainIdHash == AxelarMainnetChainIds.ARBITRUM) return ChainIds.ARBITRUM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.OPTIMISM) return ChainIds.OPTIMISM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.ETHEREUM) return ChainIds.ETHEREUM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.CELO) return ChainIds.CELO;
+    if (axelarChainIdHash == AxelarMainnetChainIds.BINANCE) return ChainIds.BNB;
+    if (axelarChainIdHash == AxelarMainnetChainIds.BASE) return ChainIds.BASE;
+    if (axelarChainIdHash == AxelarMainnetChainIds.SCROLL) return ChainIds.SCROLL;
+
+    return 0;
+  }
+
+  /// @inheritdoc BaseAxelarAdapter
+  // @dev this function is used to convert the infra chain id to the axelar chain id
+  function infraToAxelarChainId(
+    uint256 infraChainId
+  ) public pure virtual override returns (string memory) {
+    if (infraChainId == ChainIds.FANTOM) return 'Fantom';
+    if (infraChainId == ChainIds.POLYGON) return 'Polygon';
+    if (infraChainId == ChainIds.AVALANCHE) return 'Avalanche';
+    if (infraChainId == ChainIds.ARBITRUM) return 'arbitrum';
+    if (infraChainId == ChainIds.OPTIMISM) return 'optimism';
+    if (infraChainId == ChainIds.ETHEREUM) return 'Ethereum';
+    if (infraChainId == ChainIds.CELO) return 'celo';
+    if (infraChainId == ChainIds.BNB) return 'binance';
+    if (infraChainId == ChainIds.BASE) return 'base';
+    if (infraChainId == ChainIds.SCROLL) return 'scroll';
+
+    return '';
+  }
+
+  /// @inheritdoc IBaseAdapter
+  /**
+   * @dev This function is used to forward a message to the destination chain
+   * @param receiver - destination adapter contract address
+   * @param executionGasLimit - gas limit for the contract call at the destination chain
+   * @param destinationChainId - destination chain id
+   * @param message - message to be sent to the destination chain
+   * @return (address, uint256) - address of the gateway contract and message id
+   */
+  function forwardMessage(
+    address receiver,
+    uint256 executionGasLimit,
+    uint256 destinationChainId,
+    bytes calldata message
+  ) external override returns (address, uint256) {
+    // Retrieve axelar-compatible chain id
+    string memory destinationChain = infraToAxelarChainId(destinationChainId);
+    require(bytes(destinationChain).length > 0, Errors.DESTINATION_CHAIN_ID_NOT_SUPPORTED);
+    require(receiver != address(0), Errors.RECEIVER_NOT_SET);
+
+    string memory stringReceiver = AddressToString.toString(receiver);
+
+    // Get estimated gas fee from AxelarGasService contract
+    uint256 gasFee = gasService.estimateGasFee(
+      destinationChain,
+      stringReceiver,
+      message,
+      executionGasLimit,
+      '0x'
+    );
+
+    // Pay gas to AxelarGasService contract
+    gasService.payNativeGasForContractCall{value: gasFee}(
+      msg.sender,
+      destinationChain,
+      stringReceiver,
+      message,
+      refundAddress
+    );
+
+    // Forward message to AxelarGateway contract
+    IAxelarGMPGateway(gatewayAddress).callContract(destinationChain, stringReceiver, message);
+
+    return (gatewayAddress, 0);
+  }
+
+  // @inheritdoc AxelarGMPExecutable
+  // @dev the cross-chain message receiver for Axelar GMP call
+  function _execute(
+    bytes32,
+    string calldata sourceChain,
+    string calldata sourceAddress,
+    bytes calldata message
+  ) internal override {
+    uint256 originChainId = axelarToInfraChainId(sourceChain);
+    address trustedSourceAddress = this.getTrustedRemoteByChainId(originChainId);
+
+    if (
+      StringToAddress.toAddress(sourceAddress) != trustedSourceAddress ||
+      trustedSourceAddress == address(0)
+    ) {
+      revert(Errors.REMOTE_NOT_TRUSTED);
+    }
+
+    _registerReceivedMessage(message, originChainId);
+  }
+}

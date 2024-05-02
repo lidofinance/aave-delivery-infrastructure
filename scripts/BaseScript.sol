@@ -17,6 +17,7 @@ library DeployerHelpers {
 
   struct Addresses {
     address arbAdapter;
+    address axelarAdapter;
     address baseAdapter;
     address ccipAdapter;
     uint256 chainId;
@@ -116,6 +117,7 @@ library DeployerHelpers {
       sameChainAdapter: abi.decode(persistedJson.parseRaw('.sameChainAdapter'), (address)),
       chainId: abi.decode(persistedJson.parseRaw('.chainId'), (uint256)),
       emergencyRegistry: abi.decode(persistedJson.parseRaw('.emergencyRegistry'), (address)),
+      axelarAdapter: abi.decode(persistedJson.parseRaw('.axelarAdapter'), (address)),
       lzAdapter: abi.decode(persistedJson.parseRaw('.lzAdapter'), (address)),
       hlAdapter: abi.decode(persistedJson.parseRaw('.hlAdapter'), (address)),
       opAdapter: abi.decode(persistedJson.parseRaw('.opAdapter'), (address)),
