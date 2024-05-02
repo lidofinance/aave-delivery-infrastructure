@@ -119,7 +119,7 @@ contract AxelarAdapterTest is BaseAdapterTest {
       originChainId
     )
   {
-    assertEq(axelarAdapter.axelarToInfraChainId('ethereum'), ChainIds.ETHEREUM);
+    assertEq(axelarAdapter.axelarToInfraChainId('Ethereum'), ChainIds.ETHEREUM);
     assertEq(axelarAdapter.axelarToInfraChainId('binance'), ChainIds.BNB);
   }
 
@@ -139,7 +139,7 @@ contract AxelarAdapterTest is BaseAdapterTest {
       originChainId
     )
   {
-    assertEq(axelarAdapter.infraToAxelarChainId(ChainIds.ETHEREUM), 'ethereum');
+    assertEq(axelarAdapter.infraToAxelarChainId(ChainIds.ETHEREUM), 'Ethereum');
     assertEq(axelarAdapter.infraToAxelarChainId(ChainIds.BNB), 'binance');
   }
 

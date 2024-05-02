@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {AxelarAdapter} from '../../src/contracts/adapters/axelar/AxelarAdapter.sol';
 import {BaseAxelarAdapter} from '../../src/contracts/adapters/axelar/libs/BaseAxelarAdapter.sol';
+import {AxelarTestnetChainIds} from '../../src/contracts/adapters/axelar/libs/AxelarChainIds.sol';
 import {TestNetChainIds} from './TestNetChainIds.sol';
 import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 
@@ -20,16 +21,21 @@ contract AxelarAdapterTestnet is AxelarAdapter {
   function axelarToInfraChainId(
     string calldata axelarChainId
   ) public pure override returns (uint256) {
-    if (Strings.equal(axelarChainId, 'Fantom')) return TestNetChainIds.FANTOM_TESTNET;
-    if (Strings.equal(axelarChainId, 'Polygon')) return TestNetChainIds.POLYGON_MUMBAI;
-    if (Strings.equal(axelarChainId, 'Avalanche')) return TestNetChainIds.AVALANCHE_FUJI;
-    if (Strings.equal(axelarChainId, 'arbitrum-sepolia')) return TestNetChainIds.ARBITRUM_SEPOLIA;
-    if (Strings.equal(axelarChainId, 'optimism-sepolia')) return TestNetChainIds.OPTIMISM_SEPOLIA;
-    if (Strings.equal(axelarChainId, 'ethereum-sepolia')) return TestNetChainIds.ETHEREUM_SEPOLIA;
-    if (Strings.equal(axelarChainId, 'base-sepolia')) return TestNetChainIds.BASE_SEPOLIA;
-    if (Strings.equal(axelarChainId, 'celo')) return TestNetChainIds.CELO_ALFAJORES;
-    if (Strings.equal(axelarChainId, 'binance')) return TestNetChainIds.BNB_TESTNET;
-    if (Strings.equal(axelarChainId, 'scroll')) return TestNetChainIds.SCROLL_SEPOLIA;
+    bytes32 axelarChainIdHash = keccak256(abi.encodePacked(axelarChainId));
+
+    if (axelarChainIdHash == AxelarTestnetChainIds.FANTOM) return TestNetChainIds.FANTOM_TESTNET;
+    if (axelarChainIdHash == AxelarTestnetChainIds.POLYGON) return TestNetChainIds.POLYGON_MUMBAI;
+    if (axelarChainIdHash == AxelarTestnetChainIds.AVALANCHE) return TestNetChainIds.AVALANCHE_FUJI;
+    if (axelarChainIdHash == AxelarTestnetChainIds.ARBITRUM)
+      return TestNetChainIds.ARBITRUM_SEPOLIA;
+    if (axelarChainIdHash == AxelarTestnetChainIds.OPTIMISM)
+      return TestNetChainIds.OPTIMISM_SEPOLIA;
+    if (axelarChainIdHash == AxelarTestnetChainIds.ETHEREUM)
+      return TestNetChainIds.ETHEREUM_SEPOLIA;
+    if (axelarChainIdHash == AxelarTestnetChainIds.CELO) return TestNetChainIds.CELO_ALFAJORES;
+    if (axelarChainIdHash == AxelarTestnetChainIds.BINANCE) return TestNetChainIds.BNB_TESTNET;
+    if (axelarChainIdHash == AxelarTestnetChainIds.BASE) return TestNetChainIds.BASE_SEPOLIA;
+    if (axelarChainIdHash == AxelarTestnetChainIds.SCROLL) return TestNetChainIds.SCROLL_SEPOLIA;
 
     return 0;
   }

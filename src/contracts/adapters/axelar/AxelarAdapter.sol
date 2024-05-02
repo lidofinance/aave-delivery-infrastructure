@@ -11,6 +11,7 @@ import {Errors} from '../../libs/Errors.sol';
 import {ChainIds} from '../../libs/ChainIds.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {StringToAddress, AddressToString} from './libs/AddressString.sol';
+import {AxelarMainnetChainIds} from './libs/AxelarChainIds.sol';
 
 contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   IAxelarGasService public gasService;
@@ -43,16 +44,18 @@ contract AxelarAdapter is Ownable, BaseAxelarAdapter, AxelarGMPExecutable {
   function axelarToInfraChainId(
     string calldata axelarChainId
   ) public pure virtual override returns (uint256) {
-    if (Strings.equal(axelarChainId, 'Fantom')) return ChainIds.FANTOM;
-    if (Strings.equal(axelarChainId, 'Polygon')) return ChainIds.POLYGON;
-    if (Strings.equal(axelarChainId, 'Avalanche')) return ChainIds.AVALANCHE;
-    if (Strings.equal(axelarChainId, 'arbitrum')) return ChainIds.ARBITRUM;
-    if (Strings.equal(axelarChainId, 'optimism')) return ChainIds.OPTIMISM;
-    if (Strings.equal(axelarChainId, 'Ethereum')) return ChainIds.ETHEREUM;
-    if (Strings.equal(axelarChainId, 'celo')) return ChainIds.CELO;
-    if (Strings.equal(axelarChainId, 'binance')) return ChainIds.BNB;
-    if (Strings.equal(axelarChainId, 'base')) return ChainIds.BASE;
-    if (Strings.equal(axelarChainId, 'scroll')) return ChainIds.SCROLL;
+    bytes32 axelarChainIdHash = keccak256(abi.encodePacked(axelarChainId));
+
+    if (axelarChainIdHash == AxelarMainnetChainIds.FANTOM) return ChainIds.FANTOM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.POLYGON) return ChainIds.POLYGON;
+    if (axelarChainIdHash == AxelarMainnetChainIds.AVALANCHE) return ChainIds.AVALANCHE;
+    if (axelarChainIdHash == AxelarMainnetChainIds.ARBITRUM) return ChainIds.ARBITRUM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.OPTIMISM) return ChainIds.OPTIMISM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.ETHEREUM) return ChainIds.ETHEREUM;
+    if (axelarChainIdHash == AxelarMainnetChainIds.CELO) return ChainIds.CELO;
+    if (axelarChainIdHash == AxelarMainnetChainIds.BINANCE) return ChainIds.BNB;
+    if (axelarChainIdHash == AxelarMainnetChainIds.BASE) return ChainIds.BASE;
+    if (axelarChainIdHash == AxelarMainnetChainIds.SCROLL) return ChainIds.SCROLL;
 
     return 0;
   }
