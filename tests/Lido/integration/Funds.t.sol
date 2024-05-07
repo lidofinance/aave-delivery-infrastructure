@@ -17,15 +17,9 @@ interface IERC20 {
 
 contract FundsIntegrationTest is BaseIntegrationTest {
 
-//  address public mockPolDestination;
   address public mockBscDestination;
 
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
-
-  function setUp() override public {
-    super.setUp();
-    vm.selectFork(ethFork);
-  }
 
   function test_NoFunds_NoEtherOnCrossChainController() public {
     ICrossChainController crossChainController = ICrossChainController(
@@ -35,7 +29,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
     assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT_FAKE), true);
 
-    bytes memory message = getMessage(crossChainAddresses.bnb.executor, "No funds on CrossChainController");
+    bytes memory message = getMockMessage(crossChainAddresses.bnb.executor, "No funds on CrossChainController");
 
     // Reset the balance of the CrossChainController
     vm.deal(address(crossChainAddresses.eth.crossChainController), 0);
@@ -100,7 +94,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
       crossChainAddresses.eth.crossChainController
     );
 
-    bytes memory message = getMessage(crossChainAddresses.bnb.executor, "No LINK tokens on CrossChainController");
+    bytes memory message = getMockMessage(crossChainAddresses.bnb.executor, "No LINK tokens on CrossChainController");
 
     vm.recordLogs();
     vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
@@ -131,7 +125,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     ICrossChainController crossChainController = ICrossChainController(cccAddress);
     transferLinkTokens(cccAddress);
 
-    bytes memory message = getMessage(crossChainAddresses.bnb.executor, "Funds are in place on CrossChainController");
+    bytes memory message = getMockMessage(crossChainAddresses.bnb.executor, "Funds are in place on CrossChainController");
 
     vm.recordLogs();
     vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
@@ -158,7 +152,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
 
   // Helpers
 
-  function getMessage(
+  function getMockMessage(
     address _address,
     string memory _message
   ) public pure returns (bytes memory) {

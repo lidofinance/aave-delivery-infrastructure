@@ -51,6 +51,9 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
 
   event TestWorked(string message);
 
+  address public ethCCCAddress;
+  address[] public bnbAdapters = new address[](4);
+
   function _getDeploymentFiles() internal view returns (CrossChainAddressFiles memory) {
     if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("local"))) {
       return CrossChainAddressFiles({
@@ -103,6 +106,15 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
 
     ethFork = vm.createFork('ethereum-local');
     bnbFork = vm.createFork('binance-local');
+
+    bnbAdapters[0] = crossChainAddresses.bnb.ccipAdapter;
+    bnbAdapters[1] = crossChainAddresses.bnb.lzAdapter;
+    bnbAdapters[2] = crossChainAddresses.bnb.hlAdapter;
+    bnbAdapters[3] = crossChainAddresses.bnb.wormholeAdapter;
+
+    ethCCCAddress = crossChainAddresses.eth.crossChainController;
+
+    vm.selectFork(ethFork);
   }
 
   /**
@@ -113,6 +125,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     * @param _message The message of the envelope
     */
   function _sendCrossChainTransactionAsDao(
+    address _daoAgent,
     address _crossChainController,
     address _destination,
     uint256 _destinationChainId,
@@ -120,20 +133,19 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
   ) internal returns (ExtendedTransaction memory) {
     ICrossChainController crossChainController = ICrossChainController(_crossChainController);
 
-    assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
-    assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT_FAKE), true);
+    assertEq(crossChainController.isSenderApproved(_daoAgent), true);
 
     ExtendedTransaction memory extendedTx = _registerExtendedTransaction(
       crossChainController.getCurrentEnvelopeNonce(),
       crossChainController.getCurrentTransactionNonce(),
-      LIDO_DAO_AGENT_FAKE,
+      _daoAgent,
       ETHEREUM_CHAIN_ID,
       _destination,
       _destinationChainId,
       _message
     );
 
-    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
+    vm.prank(_daoAgent, ZERO_ADDRESS);
     vm.recordLogs();
 
     crossChainController.forwardMessage(
@@ -164,30 +176,26 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     }
   }
 
-  /**
-    * @notice Update the mock destination with the specified message
-    * @param _targetForkId The target fork ID
-    * @param _originCrossChainController The origin cross chain controller
-    * @param _destination The destination address
-    * @param _destinationChainId The destination chain ID
-    * @param _message The message to send
-    */
-  function _run_mock_update(
+  function _transferMessage(
     uint256 _targetForkId,
+    address _daoAgent,
     address _originCrossChainController,
     address _destination,
     uint256 _destinationChainId,
-    address _mockAddress,
-    string memory _message
-  ) internal {
+    address[] memory _adapters,
+    bytes memory _message
+  ) internal returns (uint256) {
+    vm.selectFork(ethFork);
+
     vm.recordLogs();
 
     // Send DAO motion to the destination executor
     (ExtendedTransaction memory extendedTx) = _sendCrossChainTransactionAsDao(
+      _daoAgent,
       _originCrossChainController,
       _destination,
       _destinationChainId,
-      _buildMockUpgradeMotion(_mockAddress, _message)
+      _message
     );
 
     _validateTransactionForwardingSuccess(vm.getRecordedLogs(), 4);
@@ -196,21 +204,44 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
 
     vm.selectFork(_targetForkId);
 
-    address[] memory adapters = new address[](4);
-    adapters[0] = crossChainAddresses.bnb.ccipAdapter;
-    adapters[1] = crossChainAddresses.bnb.lzAdapter;
-    adapters[2] = crossChainAddresses.bnb.hlAdapter;
-    adapters[3] = crossChainAddresses.bnb.wormholeAdapter;
-
     vm.recordLogs();
 
-    _receiveDaoCrossChainMessage(crossChainAddresses.bnb.crossChainController, adapters, extendedTx);
+    _receiveDaoCrossChainMessage(crossChainAddresses.bnb.crossChainController, _adapters, extendedTx);
 
     // Check that the message was received and passed to the executor
-    uint256 actionId = _getActionsSetQueued(vm.getRecordedLogs());
+    return _getActionsSetQueued(vm.getRecordedLogs());
+  }
+
+  /**
+    * @notice Update the mock destination with the specified message
+    * @param _targetForkId The target fork ID
+    * @param _originCrossChainController The origin cross chain controller
+    * @param _destination The destination address
+    * @param _destinationChainId The destination chain ID
+    * @param _message The message to send
+    */
+  function _runMockUpdate(
+    uint256 _targetForkId,
+    address _daoAgent,
+    address _originCrossChainController,
+    address _destination,
+    uint256 _destinationChainId,
+    address[] memory _adapters,
+    address _mockAddress,
+    string memory _message
+  ) internal {
+    uint256 actionId = _transferMessage(
+      _targetForkId,
+      _daoAgent,
+      _originCrossChainController,
+      _destination,
+      _destinationChainId,
+      _adapters,
+      _buildMockUpgradeMotion(_mockAddress, _message)
+    );
 
     // Execute the action received via a.DI
-    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executor);
+    IExecutorBase executor = IExecutorBase(_destination);
 
     vm.expectEmit();
     emit TestWorked(_message);
@@ -225,7 +256,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
   function _buildMockUpgradeMotion(
     address _address,
     string memory _message
-  ) private pure returns (bytes memory) {
+  ) internal pure returns (bytes memory) {
     address[] memory addresses = new address[](1);
     addresses[0] = _address;
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {IOwnable} from "solidity-utils/contracts/transparent-proxy/interfaces/IOwnable.sol";
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 
 import "../BaseScript.sol";
 
@@ -19,10 +19,10 @@ abstract contract FinalizeScript is BaseScript {
       : DAO_AGENT();
 
     // Transfer CrossChainController ownership to the DAO
-    IOwnable(addresses.crossChainController).transferOwnership(daoAgentAddress);
+    Ownable(addresses.crossChainController).transferOwnership(daoAgentAddress);
 
     // Transfer proxy admin ownership to the DAO
-    IOwnable(addresses.proxyAdmin).transferOwnership(daoAgentAddress);
+    Ownable(addresses.proxyAdmin).transferOwnership(daoAgentAddress);
   }
 }
 

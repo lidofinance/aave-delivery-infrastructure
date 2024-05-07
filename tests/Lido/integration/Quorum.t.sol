@@ -38,23 +38,25 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
   function setUp() override public {
     super.setUp();
 
-    mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
-    cccEthAddress = crossChainAddresses.eth.crossChainController;
-
     vm.selectFork(ethFork);
+    transferLinkTokens(ethCCCAddress);
 
-    transferLinkTokens(cccEthAddress);
+    vm.selectFork(bnbFork);
+    mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
   }
 
   function test_Quorum() public {
+    vm.selectFork(ethFork);
+
     vm.recordLogs();
 
     // Send DAO motion to the destination executor
     (ExtendedTransaction memory extendedTx) = _sendCrossChainTransactionAsDao(
-      cccEthAddress,
+      LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
+      ethCCCAddress,
       crossChainAddresses.bnb.executor,
       BINANCE_CHAIN_ID,
-      _buildMockUpgradeMotion(mockBscDestination)
+      _buildMockUpgradeMotion(mockBscDestination, messageToMock)
     );
 
     _validateTransactionForwardingSuccess(vm.getRecordedLogs(), 4);
@@ -158,26 +160,5 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
     );
 
     assertEq(targetExecutor.getActionsSetCount(), 1); // should not change
-  }
-
-  function _buildMockUpgradeMotion(
-    address _address
-  ) public view returns (bytes memory) {
-    address[] memory addresses = new address[](1);
-    addresses[0] = _address;
-
-    uint256[] memory values = new uint256[](1);
-    values[0] = uint256(0);
-
-    string[] memory signatures = new string[](1);
-    signatures[0] = 'test(string)';
-
-    bytes[] memory calldatas = new bytes[](1);
-    calldatas[0] = abi.encode(messageToMock);
-
-    bool[] memory withDelegatecalls = new bool[](1);
-    withDelegatecalls[0] = false;
-
-    return abi.encode(addresses, values, signatures, calldatas, withDelegatecalls);
   }
 }
