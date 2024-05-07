@@ -25,7 +25,8 @@ contract Ethereum is BaseSetCCFApprovedSenders {
     address[] memory senders = new address[](1);
 
     // https://docs.lido.fi/deployed-contracts/#dao-contracts - Aragon Agent
-    senders[0] = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+    // senders[0] = Constants.LIDO_DAO_AGENT;
+    senders[0] = Constants.LIDO_DAO_AGENT_FAKE;
 
     return senders;
   }

@@ -29,7 +29,8 @@ abstract contract FinalizeScript is BaseScript {
 contract Ethereum is FinalizeScript {
   // https://docs.lido.fi/deployed-contracts/#dao-contracts Aragon Agent
   function DAO_AGENT() public view virtual override returns (address) {
-    return 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+    // return Constants.LIDO_DAO_AGENT;
+    return Constants.LIDO_DAO_AGENT_FAKE;
   }
 
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {

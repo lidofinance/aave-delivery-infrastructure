@@ -31,7 +31,8 @@ abstract contract BaseExecutor is BaseScript {
 abstract contract MainnetExecutor is BaseExecutor {
   // https://docs.lido.fi/deployed-contracts/#dao-contracts Aragon Agent
   function getEthereumGovernanceExecutorAddress() public view virtual override returns (address) {
-    return 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+    // return Constants.LIDO_DAO_AGENT;
+    return Constants.LIDO_DAO_AGENT_FAKE;
   }
 
   function getEthereumGovernanceChainId() public view virtual override returns (uint256) {

@@ -14,12 +14,11 @@ import {CrossChainController} from "../../../src/contracts/CrossChainController.
 import {IExecutorBase} from "../../../src/Lido/contracts/interfaces/IExecutorBase.sol";
 import {Transaction} from '../../../src/contracts/libs/EncodingUtils.sol';
 
-contract CrossChainControllerStateTest is BaseIntegrationTest {
+contract QuorumIntegrationTest is BaseIntegrationTest {
 
   address public mockBscDestination;
   address public cccEthAddress;
 
-  event TestWorked(string message);
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
   event ConfirmationsUpdated(uint8 newConfirmations, uint256 indexed chainId);
 

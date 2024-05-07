@@ -26,7 +26,7 @@ abstract contract BaseCCCNetworkDeployment is BaseScript {
 
     address proxyAdmin = address(new ProxyAdmin());
 
-    emit ProxyAdminCreated(proxyAdmin, addresses.owner);
+    emit ProxyAdminCreated(proxyAdmin, msg.sender);
 
     addresses.proxyAdmin = proxyAdmin;
 
@@ -44,7 +44,7 @@ abstract contract BaseCCCNetworkDeployment is BaseScript {
       addresses.proxyAdmin,
       abi.encodeWithSelector(
         CrossChainController.initialize.selector,
-        addresses.owner,
+        msg.sender,
         address(0),
         new ICrossChainController.ConfirmationInput[](0),
         new ICrossChainController.ReceiverBridgeAdapterConfigInput[](0),

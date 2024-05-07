@@ -15,7 +15,7 @@ interface IERC20 {
   function transfer(address recipient, uint256 amount) external returns (bool);
 }
 
-contract CrossChainControllerStateTest is BaseIntegrationTest {
+contract FundsIntegrationTest is BaseIntegrationTest {
 
 //  address public mockPolDestination;
   address public mockBscDestination;
@@ -33,7 +33,7 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     );
 
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
-    assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT), true);
+    assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT_FAKE), true);
 
     bytes memory message = getMessage(crossChainAddresses.bnb.executor, "No funds on CrossChainController");
 
@@ -42,7 +42,7 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
 
     (Envelope memory envelope, EncodedEnvelope memory encodedEnvelope) = _registerEnvelope(
       crossChainController.getCurrentEnvelopeNonce(),
-      LIDO_DAO_AGENT,
+      LIDO_DAO_AGENT_FAKE,
       ETHEREUM_CHAIN_ID,
       crossChainAddresses.bnb.executor,
       BINANCE_CHAIN_ID,
@@ -53,7 +53,7 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     vm.expectEmit(true, true, false, false);
     emit EnvelopeRegistered(encodedEnvelope.id, envelope);
 
-    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     vm.recordLogs();
 
     (bytes32 envelopeId, bytes32 transactionId) = crossChainController.forwardMessage(
@@ -88,7 +88,7 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     crossChainController.retryEnvelope(envelope, getGasLimit());
 
     // Retry the transaction
-    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     (bytes32 newTransactionId) = crossChainController.retryEnvelope(envelope, getGasLimit());
 
     // Check that the transaction is new
@@ -103,7 +103,7 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     bytes memory message = getMessage(crossChainAddresses.bnb.executor, "No LINK tokens on CrossChainController");
 
     vm.recordLogs();
-    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
       crossChainAddresses.bnb.executor,
@@ -134,7 +134,7 @@ contract CrossChainControllerStateTest is BaseIntegrationTest {
     bytes memory message = getMessage(crossChainAddresses.bnb.executor, "Funds are in place on CrossChainController");
 
     vm.recordLogs();
-    vm.prank(LIDO_DAO_AGENT, ZERO_ADDRESS);
+    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
       crossChainAddresses.bnb.executor,
