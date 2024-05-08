@@ -57,6 +57,10 @@ contract Binance is BaseFundCrossChainController {
 }
 
 contract Binance_testnet is BaseFundCrossChainController {
+  function getAmountToFund() public view override returns (uint256) {
+    return 100000000000000000;
+  }
+  
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return TestNetChainIds.BNB_TESTNET;
   }

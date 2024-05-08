@@ -222,9 +222,6 @@ deploy-lido-hl-bridge-adapters-test:
 deploy-lido-wormhole-adapters-test:
 	$(call deploy_fn,Lido/Adapters/Deploy_Wormhole,ethereum binance)
 
-#deploy-lido-polygon-adapters-test:
-	#$(call deploy_fn,Lido/Adapters/Deploy_Polygon,ethereum poplygon)
-
 deploy-lido-cross-chain-executor-test:
 	$(call deploy_fn,Lido/CCC/Deploy_CCE,binance)
 
@@ -253,7 +250,6 @@ deploy-lido-bridge-adapters-test:
 	make deploy-lido-lz-bridge-adapters-test
 	make deploy-lido-hl-bridge-adapters-test
 	make deploy-lido-wormhole-adapters-test
-	# make deploy-lido-polygon-adapters-test
 
 deploy-lido-testnet:
 	make deploy-lido-cross-chain-infra-test
@@ -264,8 +260,8 @@ deploy-lido-testnet:
 	make set-lido-ccr-receiver-adapters-test
 	make set-lido-ccr-confirmations-test
 	make fund-lido-crosschain-test
-	make write-lido-json-addresses-test
 	make finalize-lido-testnet
+	make write-lido-json-addresses-test	
 
 
 # ----------------------------------------------------------------------------------------------------------------------
