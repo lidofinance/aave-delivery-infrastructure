@@ -49,11 +49,7 @@ contract Ethereum_testnet is BaseHLAdapter {
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](1);
-
-    remoteNetworks[0] = TestNetChainIds.BNB_TESTNET;
-    // remoteNetworks[1] = TestNetChainIds.POLYGON_MUMBAI;
-
+    uint256[] memory remoteNetworks = new uint256[](0);
     return remoteNetworks;
   }
 }
@@ -75,7 +71,6 @@ contract Polygon is BaseHLAdapter {
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
     uint256[] memory remoteNetworks = new uint256[](1);
-
     remoteNetworks[0] = ChainIds.ETHEREUM;
 
     return remoteNetworks;
@@ -93,7 +88,6 @@ contract Polygon_testnet is BaseHLAdapter {
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
     uint256[] memory remoteNetworks = new uint256[](1);
-
     remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
 
     return remoteNetworks;
@@ -117,7 +111,6 @@ contract Binance is BaseHLAdapter {
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
     uint256[] memory remoteNetworks = new uint256[](1);
-
     remoteNetworks[0] = ChainIds.ETHEREUM;
 
     return remoteNetworks;
@@ -135,7 +128,6 @@ contract Binance_testnet is BaseHLAdapter {
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
     uint256[] memory remoteNetworks = new uint256[](1);
-
     remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
 
     return remoteNetworks;

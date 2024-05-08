@@ -57,8 +57,7 @@ contract Ethereum_testnet is Ethereum {
   }
 
   function getChainIds() public pure override returns (uint256[] memory) {
-    uint256[] memory chainIds = new uint256[](2);
-
+    uint256[] memory chainIds = new uint256[](0);
     return chainIds;
   }
 
@@ -85,6 +84,7 @@ contract Ethereum_local is BaseSetCCRAdapters {
     DeployerHelpers.Addresses memory addresses
   ) public pure virtual override returns (address[] memory) {
     address[] memory receiverBridgeAdaptersToAllow = new address[](0);
+    
     return receiverBridgeAdaptersToAllow;
   }
 
