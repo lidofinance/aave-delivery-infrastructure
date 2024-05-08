@@ -56,19 +56,17 @@ contract WriteDeployedAddresses is Script {
       DeployerHelpers.Addresses memory addresses = DeployerHelpers.decodeJson(networks[i].path, vm);
       string memory json = networks[i].name;
 
-      json.serialize('ccipAdapter', addresses.ccipAdapter);
       json.serialize('chainId', addresses.chainId);
-      json.serialize('clEmergencyOracle', addresses.clEmergencyOracle);
+      json.serialize('proxyAdmin', addresses.proxyAdmin);
       json.serialize('crossChainController', addresses.crossChainController);
       json.serialize('crossChainControllerImpl', addresses.crossChainControllerImpl);
-      json.serialize('emergencyRegistry', addresses.emergencyRegistry);
-      json.serialize('guardian', addresses.guardian);
-      json.serialize('lzAdapter', addresses.lzAdapter);
-      json.serialize('mockDestination', addresses.mockDestination);
-      json.serialize('polAdapter', addresses.polAdapter);
-      json.serialize('proxyAdmin', addresses.proxyAdmin);
       json.serialize('executor', addresses.executor);
-      json = json.serialize('proxyFactory', addresses.proxyFactory);
+      json.serialize('guardian', addresses.guardian);
+      json.serialize('ccipAdapter', addresses.ccipAdapter);
+      json.serialize('hlAdapter', addresses.hlAdapter);
+      json.serialize('lzAdapter', addresses.lzAdapter);
+      json.serialize('wormholeAdapter', addresses.wormholeAdapter);
+      json = json.serialize('mockDestination', addresses.mockDestination);
 
       if (i == networks.length - 1) {
         deployedJson = deployedJson.serialize(networks[i].name, json);
