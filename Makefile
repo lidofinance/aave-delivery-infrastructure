@@ -261,7 +261,7 @@ deploy-lido-testnet:
 	make set-lido-ccr-confirmations-test
 	make fund-lido-crosschain-test
 	make finalize-lido-testnet
-	make write-lido-json-addresses-test	
+	make write-lido-json-addresses-test
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ deploy-lido-testnet:
 define deploy_local_single_fn
 forge script \
  scripts/$(1).s.sol:$(if $(3),$(3),$(shell UP=$(2)_local; echo $${UP} | perl -nE 'say ucfirst')) \
- --rpc-url $(2)-local --broadcast --slow -vvvv $(BASE_KEY_LOCAL)
+ --rpc-url $(2)-local --legacy --broadcast --slow -vvvv $(BASE_KEY_LOCAL)
  $(custom_$(if $(PROD),$(2),$(2)-local))
 endef
 
