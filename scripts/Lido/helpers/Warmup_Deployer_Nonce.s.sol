@@ -7,8 +7,8 @@ import '../BaseScript.sol';
 
 abstract contract WarmUpDeployer is BaseScript {
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    uint8 attempts = 30;
-    for (uint256 i = 0; i < attempts; i++) {
+    uint8 skipping = 20;
+    for (uint256 i = 0; i < skipping; i++) {
       msg.sender.call{value: 0}(new bytes(0));
     }
   }
