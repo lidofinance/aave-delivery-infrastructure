@@ -45,7 +45,7 @@ abstract contract BaseCCCNetworkDeployment is BaseScript {
       abi.encodeWithSelector(
         CrossChainController.initialize.selector,
         msg.sender,
-        address(0),
+        Constants.ZERO,
         new ICrossChainController.ConfirmationInput[](0),
         new ICrossChainController.ReceiverBridgeAdapterConfigInput[](0),
         new ICrossChainController.ForwarderBridgeAdapterConfigInput[](0),

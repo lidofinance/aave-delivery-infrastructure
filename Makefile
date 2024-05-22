@@ -205,6 +205,69 @@ deploy-full-test:
 		make write-json-addresses
 
 # ----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------- LIDO MAINNER DEPLOYMENT SCRIPTS --------------------------------------------
+
+deploy-lido-cross-chain-infra:
+	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)
+
+deploy-lido-ccip-bridge-adapters:
+	$(call deploy_fn,Lido/Adapters/Deploy_CCIP,ethereum binance)
+
+deploy-lido-lz-bridge-adapters:
+	$(call deploy_fn,Lido/Adapters/Deploy_LZ,ethereum binance)
+
+deploy-lido-hl-bridge-adapters:
+	$(call deploy_fn,Lido/Adapters/Deploy_HL,ethereum binance)
+
+deploy-lido-wormhole-adapters:
+	$(call deploy_fn,Lido/Adapters/Deploy_Wormhole,ethereum binance)
+
+deploy-lido-cross-chain-executor:
+	$(call deploy_fn,Lido/CCC/Deploy_CCE,binance)
+
+set-lido-ccf-approved-senders:
+	$(call deploy_fn,Lido/CCC/Set_CCF_Approved_Senders,ethereum)
+
+set-lido-ccf-sender-adapters:
+	$(call deploy_fn,Lido/CCC/Set_CCF_Sender_Adapters,ethereum)
+
+set-lido-ccr-receiver-adapters:
+	$(call deploy_fn,Lido/CCC/Set_CCR_Receivers_Adapters,binance)
+
+set-lido-ccr-confirmations:
+	$(call deploy_fn,Lido/CCC/Set_CCR_Confirmations,binance)
+
+fund-lido-cross-chain:
+	$(call deploy_fn,Lido/CCC/Fund_CCC,ethereum)
+
+finalize-lido:
+	$(call deploy_fn,Lido/CCC/Finalize,ethereum binance)
+
+deploy-lido-bridge-adapters:
+	make deploy-lido-ccip-bridge-adapters
+	make deploy-lido-lz-bridge-adapters
+	make deploy-lido-hl-bridge-adapters
+	make deploy-lido-wormhole-adapters
+
+set-lido-ccf:
+	make set-lido-ccf-approved-senders
+	make set-lido-ccf-sender-adapters
+
+set-lido-ccr:
+	make set-lido-ccr-receiver-adapters
+	make set-lido-ccr-confirmations
+
+deploy-lido-full:
+	make deploy-lido-cross-chain-infra
+	make deploy-lido-bridge-adapters
+	make deploy-lido-cross-chain-executor
+	make set-lido-ccf
+	make set-lido-ccr
+	make fund-lido-cross-chain
+	make finalize-lido
+#	make write-lido-json-addresses
+
+# ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
 
 deploy-lido-cross-chain-infra-test:

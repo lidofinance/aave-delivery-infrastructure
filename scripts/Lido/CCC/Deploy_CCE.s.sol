@@ -5,7 +5,7 @@ import {CrossChainExecutor} from "../../../src/Lido/contracts/CrossChainExecutor
 
 import '../BaseScript.sol';
 
-abstract contract BaseExecutor is BaseScript {
+abstract contract BaseExecutorDeployment is BaseScript {
   function getEthereumGovernanceExecutorAddress() public view virtual returns (address) {
     return address(0);
   }
@@ -19,16 +19,16 @@ abstract contract BaseExecutor is BaseScript {
       addresses.crossChainController,
       getEthereumGovernanceExecutorAddress(),
       getEthereumGovernanceChainId(),
-      0,          // delay
-      86400,      // gracePeriod
-      0,          // minimumDelay
-      1,          // maximumDelay
-      address(0)  // guardian
+      0,              // delay
+      86400,          // gracePeriod
+      0,              // minimumDelay
+      1,              // maximumDelay
+      Constants.ZERO  // guardian
     ));
   }
 }
 
-abstract contract MainnetExecutor is BaseExecutor {
+abstract contract MainnetExecutor is BaseExecutorDeployment {
   // https://docs.lido.fi/deployed-contracts/#dao-contracts Aragon Agent
   function getEthereumGovernanceExecutorAddress() public view virtual override returns (address) {
     // return Constants.LIDO_DAO_AGENT;
@@ -52,7 +52,7 @@ contract Binance is MainnetExecutor {
   }
 }
 
-abstract contract TestnetExecutor is BaseExecutor {
+abstract contract TestnetExecutor is BaseExecutorDeployment {
   // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts Aragon Agent
   function getEthereumGovernanceExecutorAddress() public view virtual override returns (address) {
     return 0x32A0E5828B62AAb932362a4816ae03b860b65e83;

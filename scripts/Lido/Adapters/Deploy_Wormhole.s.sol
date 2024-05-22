@@ -110,7 +110,7 @@ contract Binance is BaseWormholeAdapter {
   }
 
   function DESTINATION_CCC() public pure override returns (address) {
-    return address(0);
+    return Constants.ZERO;
   }
 
   function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
