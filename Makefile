@@ -207,6 +207,9 @@ deploy-full-test:
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO MAINNER DEPLOYMENT SCRIPTS --------------------------------------------
 
+deploy-warmup-deployer-nonce:
+	$(call deploy_fn,Lido/helpers/Warmup_Deployer_Nonce,ethereum)
+
 deploy-lido-cross-chain-infra:
 	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)
 
@@ -260,6 +263,7 @@ set-lido-ccr:
 	make set-lido-ccr-confirmations
 
 deploy-lido-full:
+	make deploy-warmup-deployer-nonce
 	make deploy-lido-cross-chain-infra
 	make deploy-lido-bridge-adapters
 	make deploy-lido-cross-chain-executor
@@ -350,6 +354,9 @@ start-local-blockchain-forks:
 stop-local-blockchain-forks:
 	killall anvil || true
 
+deploy-warmup-deployer-nonce-local:
+	$(call deploy_local_fn,Lido/helpers/Warmup_Deployer_Nonce,ethereum)
+
 deploy-lido-cross-chain-infra-local:
 	$(call deploy_local_fn,Lido/CCC/Deploy_CCC,ethereum binance)
 
@@ -397,6 +404,7 @@ restart-local-blockchain-forks:
 	make start-local-blockchain-forks
 
 deploy-lido-local:
+	make deploy-warmup-deployer-nonce-local
 	make deploy-lido-cross-chain-infra-local
 	make deploy-lido-bridge-adapters-local
 	make deploy-lido-cross-chain-executor-local
