@@ -7,34 +7,30 @@ contract WriteDeployedAddresses is Script {
   using stdJson for string;
 
   function run() public {
-    Network[] memory networks = new Network[](3);
+    Network[] memory networks = new Network[](2);
     // mainnets
-    // networks[0] = Network({
-    //   path: DeployerHelpers.getPathByChainId(ChainIds.ETHEREUM),
-    //   name: 'ethereum'
-    // });
-    // networks[1] = Network({
-    //   path: DeployerHelpers.getPathByChainId(ChainIds.POLYGON),
-    //   name: 'polygon'
-    // });
-    // networks[2] = Network({
-    //   path: DeployerHelpers.getPathByChainId(ChainIds.BNB),
-    //   name: 'binance'
-    // });
+     networks[0] = Network({
+       path: DeployerHelpers.getPathByChainId(ChainIds.ETHEREUM, false),
+       name: 'ethereum'
+     });
+     networks[1] = Network({
+       path: DeployerHelpers.getPathByChainId(ChainIds.BNB, false),
+       name: 'binance'
+     });
 
     // testnets
-    networks[0] = Network({
-      path: DeployerHelpers.getPathByChainId(TestNetChainIds.ETHEREUM_SEPOLIA, false),
-      name: 'sepolia'
-    });
-    networks[1] = Network({
-      path: DeployerHelpers.getPathByChainId(TestNetChainIds.POLYGON_MUMBAI, false),
-      name: 'mumbai'
-    });
-    networks[2] = Network({
-      path: DeployerHelpers.getPathByChainId(TestNetChainIds.BNB_TESTNET, false),
-      name: 'bnbTestnet'
-    });
+    // networks[0] = Network({
+    //   path: DeployerHelpers.getPathByChainId(TestNetChainIds.ETHEREUM_SEPOLIA, false),
+    //   name: 'sepolia'
+    // });
+    // networks[1] = Network({
+    //   path: DeployerHelpers.getPathByChainId(TestNetChainIds.POLYGON_MUMBAI, false),
+    //   name: 'mumbai'
+    // });
+    // networks[2] = Network({
+    //   path: DeployerHelpers.getPathByChainId(TestNetChainIds.BNB_TESTNET, false),
+    //   name: 'bnbTestnet'
+    // });
 
     // local forks
     // networks[3] = Network({

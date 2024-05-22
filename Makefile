@@ -243,6 +243,8 @@ fund-lido-cross-chain:
 finalize-lido:
 	$(call deploy_fn,Lido/CCC/Finalize,ethereum binance)
 
+write-lido-json-addresses :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
+
 deploy-lido-bridge-adapters:
 	make deploy-lido-ccip-bridge-adapters
 	make deploy-lido-lz-bridge-adapters
@@ -265,7 +267,7 @@ deploy-lido-full:
 	make set-lido-ccr
 	make fund-lido-cross-chain
 	make finalize-lido
-#	make write-lido-json-addresses
+	make write-lido-json-addresses
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
