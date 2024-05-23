@@ -207,8 +207,8 @@ deploy-full-test:
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO MAINNER DEPLOYMENT SCRIPTS --------------------------------------------
 
-deploy-warmup-deployer-nonce:
-	$(call deploy_fn,Lido/helpers/Warmup_Deployer_Nonce,ethereum)
+burn-deployer-nonce:
+	$(call deploy_fn,Lido/helpers/Burn_Deployer_Nonce,ethereum)
 
 deploy-lido-cross-chain-infra:
 	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)
@@ -263,7 +263,7 @@ set-lido-ccr:
 	make set-lido-ccr-confirmations
 
 deploy-lido-full:
-	make deploy-warmup-deployer-nonce
+	make burn-deployer-nonce
 	make deploy-lido-cross-chain-infra
 	make deploy-lido-bridge-adapters
 	make deploy-lido-cross-chain-executor
@@ -272,6 +272,16 @@ deploy-lido-full:
 	make fund-lido-cross-chain
 	make finalize-lido
 	make write-lido-json-addresses
+
+test-lido-state:
+	ENV=prod forge test -v --match-path "tests/Lido/state/**/*.sol"
+
+test-lido-integration:
+	ENV=prod forge test -v --match-path "tests/Lido/integration/**/*.sol"
+
+test-lido:
+	make test-lido-state-local
+	make test-lido-integration-local
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
@@ -354,8 +364,8 @@ start-local-blockchain-forks:
 stop-local-blockchain-forks:
 	killall anvil || true
 
-deploy-warmup-deployer-nonce-local:
-	$(call deploy_local_fn,Lido/helpers/Warmup_Deployer_Nonce,ethereum)
+burn-deployer-nonce-local:
+	$(call deploy_local_fn,Lido/helpers/Burn_Deployer_Nonce,ethereum)
 
 deploy-lido-cross-chain-infra-local:
 	$(call deploy_local_fn,Lido/CCC/Deploy_CCC,ethereum binance)
@@ -404,7 +414,7 @@ restart-local-blockchain-forks:
 	make start-local-blockchain-forks
 
 deploy-lido-local:
-	make deploy-warmup-deployer-nonce-local
+	make burn-deployer-nonce-local
 	make deploy-lido-cross-chain-infra-local
 	make deploy-lido-bridge-adapters-local
 	make deploy-lido-cross-chain-executor-local

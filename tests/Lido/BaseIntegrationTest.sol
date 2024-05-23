@@ -104,8 +104,16 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     crossChainAddresses.eth = _decodeJson(files.eth, vm);
     crossChainAddresses.bnb = _decodeJson(files.bnb, vm);
 
-    ethFork = vm.createFork('ethereum-local');
-    bnbFork = vm.createFork('binance-local');
+    string memory ethForkName = 'ethereum';
+    string memory bnbForkName = 'binance';
+
+    if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("local"))) {
+      ethForkName = 'ethereum-local';
+      bnbForkName = 'binance-local';
+    }
+
+    ethFork = vm.createFork(ethForkName);
+    bnbFork = vm.createFork(bnbForkName);
 
     bnbAdapters[0] = crossChainAddresses.bnb.ccipAdapter;
     bnbAdapters[1] = crossChainAddresses.bnb.lzAdapter;
