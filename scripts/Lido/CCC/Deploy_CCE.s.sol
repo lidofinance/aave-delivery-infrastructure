@@ -30,7 +30,7 @@ abstract contract BaseExecutorDeployment is BaseScript {
       Constants.ZERO  // guardian
     ));
 
-    addresses.executorLido = address(new CrossChainExecutor(
+    addresses.executorProd = address(new CrossChainExecutor(
       addresses.crossChainController,
       getEthereumGovernanceExecutorAddress(),
       getEthereumGovernanceChainId(),

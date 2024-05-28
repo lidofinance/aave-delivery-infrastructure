@@ -34,7 +34,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     address proxyAdmin;
     address wormholeAdapter;
     address executorMock;
-    address executorLido;
+    address executorProd;
   }
 
   struct CrossChainAddresses {
@@ -93,7 +93,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
       mockDestination: abi.decode(persistedJson.parseRaw('.mockDestination'), (address)),
       wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
       executorMock: abi.decode(persistedJson.parseRaw('.executorMock'), (address)),
-      executorLido: abi.decode(persistedJson.parseRaw('.executorLido'), (address))
+      executorProd: abi.decode(persistedJson.parseRaw('.executorProd'), (address))
     });
 
     return addresses;

@@ -57,7 +57,7 @@ contract WriteDeployedAddresses is Script {
       json.serialize('crossChainController', addresses.crossChainController);
       json.serialize('crossChainControllerImpl', addresses.crossChainControllerImpl);
       json.serialize('executorMock', addresses.executorMock);
-      json.serialize('executorLido', addresses.executorLido);
+      json.serialize('executorProd', addresses.executorProd);
       json.serialize('guardian', addresses.guardian);
       json.serialize('ccipAdapter', addresses.ccipAdapter);
       json.serialize('hlAdapter', addresses.hlAdapter);

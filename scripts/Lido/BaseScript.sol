@@ -28,7 +28,7 @@ library DeployerHelpers {
     address proxyAdmin;
     address wormholeAdapter;
     address executorMock;
-    address executorLido;
+    address executorProd;
   }
 
   function getPathByChainId(uint256 chainId, bool isLocalFork) internal pure returns (string memory) {
@@ -66,7 +66,7 @@ library DeployerHelpers {
       wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
       mockDestination: abi.decode(persistedJson.parseRaw('.mockDestination'), (address)),
       executorMock: abi.decode(persistedJson.parseRaw('.executorMock'), (address)),
-      executorLido: abi.decode(persistedJson.parseRaw('.executorLido'), (address))
+      executorProd: abi.decode(persistedJson.parseRaw('.executorProd'), (address))
     });
 
     return addresses;
@@ -85,7 +85,7 @@ library DeployerHelpers {
     json.serialize('wormholeAdapter', addresses.wormholeAdapter);
     json.serialize('proxyAdmin', addresses.proxyAdmin);
     json.serialize('executorMock', addresses.executorMock);
-    json = json.serialize('executorLido', addresses.executorLido);
+    json = json.serialize('executorProd', addresses.executorProd);
     vm.writeJson(json, path);
   }
 }

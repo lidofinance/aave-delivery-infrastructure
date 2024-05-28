@@ -5,8 +5,8 @@ import '../BaseScript.sol';
 
 abstract contract BurnDeployerNonce is BaseScript {
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    uint8 skipping = 20;
-    for (uint256 i = 0; i < skipping; i++) {
+    uint8 txAmount = 20;
+    for (uint256 i = 0; i < txAmount; i++) {
       msg.sender.call{value: 0}(new bytes(0));
     }
   }

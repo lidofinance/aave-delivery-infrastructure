@@ -152,8 +152,8 @@ abstract contract VoteAgentChangeScript is BaseScript {
     signatures[1] = 'transferOwnership(address)';
 
     bytes[] memory calldatas = new bytes[](2);
-    calldatas[0] = abi.encode(bnbAddresses.executorLido);
-    calldatas[1] = abi.encode(bnbAddresses.executorLido);
+    calldatas[0] = abi.encode(bnbAddresses.executorProd);
+    calldatas[1] = abi.encode(bnbAddresses.executorProd);
 
     bool[] memory withDelegatecalls = new bool[](2);
     withDelegatecalls[0] = false;
