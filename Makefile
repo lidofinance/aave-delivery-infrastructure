@@ -284,6 +284,9 @@ test-lido:
 	make test-lido-state-local
 	make test-lido-integration-local
 
+vote-lido-agent-change:
+	$(call deploy_fn,Lido/e2e/Vote_Agent_Change,ethereum)
+
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------- LIDO TESTNET DEPLOYMENT SCRIPTS ---------------------------------------------
 
@@ -403,6 +406,9 @@ fund-lido-crosschain-local:
 
 finalize-lido-local:
 	$(call deploy_local_fn,Lido/CCC/Finalize,ethereum binance)
+
+fund-deployer-local:
+	$(call deploy_local_fn,Lido/helpers/Fund_Deployer,ethereum binance)
 
 deploy-lido-bridge-adapters-local:
 	make deploy-lido-ccip-bridge-adapters-local
