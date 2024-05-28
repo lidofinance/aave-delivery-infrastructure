@@ -66,40 +66,6 @@ contract Ethereum_local is Ethereum {
 }
 
 // 3/4 consensus
-contract Polygon is BaseSetCCRConfirmations {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-
-  function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
-    ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
-    chainIds[0] = ConfirmationsByChain({chainId: ChainIds.ETHEREUM, confirmations: 3});
-
-    return chainIds;
-  }
-}
-
-// 2/3 consensus: HL, LZ and CCIP
-contract Polygon_testnet is Polygon {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return TestNetChainIds.POLYGON_MUMBAI;
-  }
-
-  function getConfirmationsByChainIds() public virtual override returns (ConfirmationsByChain[] memory) {
-    ConfirmationsByChain[] memory chainIds = new ConfirmationsByChain[](1);
-    chainIds[0] = ConfirmationsByChain({chainId: TestNetChainIds.ETHEREUM_SEPOLIA, confirmations: 2});
-
-    return chainIds;
-  }
-}
-
-contract Polygon_local is Polygon {
-  function isLocalFork() public pure virtual override returns (bool) {
-    return true;
-  }
-}
-
-// 3/4 consensus
 contract Binance is BaseSetCCRConfirmations {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
     return ChainIds.BNB;

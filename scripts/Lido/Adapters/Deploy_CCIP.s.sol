@@ -95,61 +95,6 @@ contract Ethereum_local is Ethereum {
   }
 }
 
-// https://docs.chain.link/ccip/supported-networks/v1_2_0/mainnet#polygon-mainnet
-contract Polygon is BaseCCIPAdapter {
-  function CCIP_ROUTER() public pure override returns (address) {
-    return 0x849c5ED5a80F5B408Dd4969b78c2C8fdf0565Bfe;
-  }
-
-  function LINK_TOKEN() public pure override returns (address) {
-    return 0xb0897686c545045aFc77CF20eC7A532E3120E0F1;
-  }
-
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-
-  function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](1);
-    remoteNetworks[0] = ChainIds.ETHEREUM;
-
-    return remoteNetworks;
-  }
-}
-
-// https://docs.chain.link/ccip/supported-networks/v1_2_0/testnet#polygon-mumbai
-contract Polygon_testnet is BaseCCIPAdapter {
-  function CCIP_ROUTER() public pure override returns (address) {
-    return 0x1035CabC275068e0F4b745A29CEDf38E13aF41b1;
-  }
-
-  function LINK_TOKEN() public pure override returns (address) {
-    return 0x326C977E6efc84E512bB9C30f76E30c160eD06FB;
-  }
-
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return TestNetChainIds.POLYGON_MUMBAI;
-  }
-
-  function isTestNet() public pure override returns (bool) {
-    return true;
-  }
-
-  function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](1);
-    remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
-
-    return remoteNetworks;
-  }
-}
-
-// Copy of Polygon mainnet
-contract Polygon_local is Polygon {
-  function isLocalFork() public pure override returns (bool) {
-    return true;
-  }
-}
-
 // https://docs.chain.link/ccip/supported-networks/v1_2_0/mainnet#bnb-mainnet
 contract Binance is BaseCCIPAdapter {
   function CCIP_ROUTER() public pure override returns (address) {

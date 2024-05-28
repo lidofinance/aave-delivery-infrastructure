@@ -83,24 +83,6 @@ contract Ethereum_local is Ethereum {
   }
 }
 
-contract Polygon is BaseCCCNetworkDeployment {
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-}
-
-contract Polygon_testnet is BaseCCCNetworkDeployment {
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return TestNetChainIds.POLYGON_MUMBAI;
-  }
-}
-
-contract Polygon_local is Polygon {
-  function isLocalFork() public pure override returns (bool) {
-    return true;
-  }
-}
-
 contract Binance is BaseCCCNetworkDeployment {
   function TRANSACTION_NETWORK() public pure override returns (uint256) {
     return ChainIds.BNB;

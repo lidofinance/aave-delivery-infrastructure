@@ -13,9 +13,9 @@ abstract contract FinalizeScript is BaseScript {
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
 
-    // If no DAO_AGENT is set, use the executor as the DAO_AGENT for the network
+    // If no DAO_AGENT is set, use the executorMock as the DAO_AGENT for the network
     address daoAgentAddress = DAO_AGENT() == address(0)
-      ? addresses.executor
+      ? addresses.executorMock
       : DAO_AGENT();
 
     // Transfer CrossChainController ownership to the DAO
@@ -50,24 +50,6 @@ contract Ethereum_testnet is FinalizeScript {
 }
 
 contract Ethereum_local is Ethereum {
-  function isLocalFork() public pure virtual override returns (bool) {
-    return true;
-  }
-}
-
-contract Polygon is FinalizeScript {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-}
-
-contract Polygon_testnet is FinalizeScript {
-  function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return TestNetChainIds.POLYGON_MUMBAI;
-  }
-}
-
-contract Polygon_local is Polygon {
   function isLocalFork() public pure virtual override returns (bool) {
     return true;
   }

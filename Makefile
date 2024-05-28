@@ -16,8 +16,9 @@ BASE_LEDGER = --legacy --mnemonics foo --ledger --mnemonic-indexes $(MNEMONIC_IN
 BASE_KEY = --private-key ${PRIVATE_KEY}
 BASE_KEY_LOCAL = --private-key ${PRIVATE_KEY_LOCAL}
 
-custom_ethereum := --with-gas-price 10000000000 # 53 gwei
-custom_polygon :=  --with-gas-price 100000000000 # 560 gwei
+custom_ethereum := --with-gas-price 45000000000 # 53 gwei
+custom_polygon := --with-gas-price 190000000000 # 560 gwei
+custom_binance := --with-gas-price 45000000000 # 53 gwei
 custom_avalanche := --with-gas-price 27000000000 # 27 gwei
 custom_metis-testnet := --legacy --verifier-url https://goerli.explorer.metisdevops.link/api/
 custom_metis := --verifier-url  https://api.routescan.io/v2/network/mainnet/evm/1088/etherscan
@@ -350,7 +351,7 @@ define deploy_local_single_fn
 forge script \
  scripts/$(1).s.sol:$(if $(3),$(3),$(shell UP=$(2)_local; echo $${UP} | perl -nE 'say ucfirst')) \
  --rpc-url $(2)-local --legacy --broadcast --slow -vvvv $(BASE_KEY_LOCAL)
- $(custom_$(if $(PROD),$(2),$(2)-local))
+
 endef
 
 define deploy_local_fn

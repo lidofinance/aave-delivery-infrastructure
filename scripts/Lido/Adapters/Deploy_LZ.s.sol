@@ -86,53 +86,6 @@ contract Ethereum_local is Ethereum {
   }
 }
 
-// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#polygon
-contract Polygon is BaseLZAdapter {
-  function LZ_ENDPOINT() public pure override returns (address) {
-    return 0x1a44076050125825900e736c501f859c50fE728c;
-  }
-
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return ChainIds.POLYGON;
-  }
-
-  function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](1);
-    remoteNetworks[0] = ChainIds.ETHEREUM;
-
-    return remoteNetworks;
-  }
-}
-
-// https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#mumbai-polygon-testnet
-contract Polygon_testnet is BaseLZAdapter {
-  function LZ_ENDPOINT() public pure override returns (address) {
-    return 0x6EDCE65403992e310A62460808c4b910D972f10f;
-  }
-
-  function TRANSACTION_NETWORK() public pure override returns (uint256) {
-    return TestNetChainIds.POLYGON_MUMBAI;
-  }
-
-  function isTestNet() public pure override returns (bool) {
-    return true;
-  }
-
-  function REMOTE_NETWORKS() public pure override returns (uint256[] memory) {
-    uint256[] memory remoteNetworks = new uint256[](1);
-    remoteNetworks[0] = TestNetChainIds.ETHEREUM_SEPOLIA;
-
-    return remoteNetworks;
-  }
-}
-
-// Copy of Polygon mainnet
-contract Polygon_local is Polygon {
-  function isLocalFork() public pure override returns (bool) {
-    return true;
-  }
-}
-
 // https://docs.layerzero.network/v2/developers/evm/technical-reference/endpoints#bnb-chain
 contract Binance is BaseLZAdapter {
   function LZ_ENDPOINT() public pure override returns (address) {
