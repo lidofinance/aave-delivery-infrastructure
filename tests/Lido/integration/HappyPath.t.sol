@@ -31,7 +31,7 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
     transferLinkTokens(ethCCCAddress);
 
     vm.selectFork(bnbFork);
-    mockDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
+    mockDestination = address(new MockDestination(crossChainAddresses.bnb.executorMock));
   }
 
   function test_HappyPath_WithMockDestination_OnBinance() public {
@@ -39,7 +39,7 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
       bnbFork,
       LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
       ethCCCAddress,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       bnbAdapters,
       mockDestination,
@@ -58,7 +58,7 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
       bnbFork,
       LIDO_DAO_AGENT_FAKE,
       ethCCCAddress,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       bnbAdapters,
       motion
@@ -72,7 +72,7 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
     assertEq(configuration.requiredConfirmation, 3);
 
     // Run the motion
-    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executor);
+    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executorMock);
 
     vm.expectEmit();
     emit ConfirmationsUpdated(newConfirmations, ETHEREUM_CHAIN_ID);

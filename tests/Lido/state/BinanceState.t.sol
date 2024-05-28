@@ -24,7 +24,7 @@ contract CrossChainControllerStateTest is BaseStateTest {
     cccAddress = address(crossChainAddresses.bnb.crossChainController);
     cccImplAddress = address(crossChainAddresses.bnb.crossChainControllerImpl);
 
-    BINANCE_LIDO_DAO_AGENT = crossChainAddresses.bnb.executor;
+    BINANCE_LIDO_DAO_AGENT = crossChainAddresses.bnb.executorMock;
 
     console2.log("Binance DAO Agent (CrossChainExecutor): %s", BINANCE_LIDO_DAO_AGENT);
   }

@@ -29,7 +29,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
     assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT_FAKE), true);
 
-    bytes memory message = getMockMessage(crossChainAddresses.bnb.executor, "No funds on CrossChainController");
+    bytes memory message = getMockMessage(crossChainAddresses.bnb.executorMock, "No funds on CrossChainController");
 
     // Reset the balance of the CrossChainController
     vm.deal(address(crossChainAddresses.eth.crossChainController), 0);
@@ -38,7 +38,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
       crossChainController.getCurrentEnvelopeNonce(),
       LIDO_DAO_AGENT_FAKE,
       ETHEREUM_CHAIN_ID,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       message
     );
@@ -52,7 +52,7 @@ contract FundsIntegrationTest is BaseIntegrationTest {
 
     (bytes32 envelopeId, bytes32 transactionId) = crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       getGasLimit(),
       message
     );
@@ -94,13 +94,13 @@ contract FundsIntegrationTest is BaseIntegrationTest {
       crossChainAddresses.eth.crossChainController
     );
 
-    bytes memory message = getMockMessage(crossChainAddresses.bnb.executor, "No LINK tokens on CrossChainController");
+    bytes memory message = getMockMessage(crossChainAddresses.bnb.executorMock, "No LINK tokens on CrossChainController");
 
     vm.recordLogs();
     vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       getGasLimit(),
       message
     );
@@ -125,13 +125,13 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     ICrossChainController crossChainController = ICrossChainController(cccAddress);
     transferLinkTokens(cccAddress);
 
-    bytes memory message = getMockMessage(crossChainAddresses.bnb.executor, "Funds are in place on CrossChainController");
+    bytes memory message = getMockMessage(crossChainAddresses.bnb.executorMock, "Funds are in place on CrossChainController");
 
     vm.recordLogs();
     vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       getGasLimit(),
       message
     );

@@ -6,7 +6,12 @@ import '../BaseScript.sol';
 abstract contract FundDeployer is BaseScript {
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
     uint256 value = 10 ether;
+
+    // Deployer
     payable(0x77d302662a84c0924a8290f72200e1F43D28430F).call{value: value}(new bytes(0));
+
+    // Voter
+    payable(0x6666652521e95a1b0A46EE682Ac89e2E54cfCcEd).call{value: value}(new bytes(0));
   }
 }
 

@@ -32,9 +32,9 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     address lzAdapter;
     address mockDestination;
     address proxyAdmin;
-    address proxyFactory;
     address wormholeAdapter;
-    address executor;
+    address executorMock;
+    address executorLido;
   }
 
   struct CrossChainAddresses {
@@ -80,7 +80,6 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
 
     Addresses memory addresses = Addresses({
       proxyAdmin: abi.decode(persistedJson.parseRaw('.proxyAdmin'), (address)),
-      proxyFactory: abi.decode(persistedJson.parseRaw('.proxyFactory'), (address)),
       guardian: abi.decode(persistedJson.parseRaw('.guardian'), (address)),
       crossChainController: abi.decode(persistedJson.parseRaw('.crossChainController'), (address)),
       crossChainControllerImpl: abi.decode(
@@ -93,7 +92,8 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
       hlAdapter: abi.decode(persistedJson.parseRaw('.hlAdapter'), (address)),
       mockDestination: abi.decode(persistedJson.parseRaw('.mockDestination'), (address)),
       wormholeAdapter: abi.decode(persistedJson.parseRaw('.wormholeAdapter'), (address)),
-      executor: abi.decode(persistedJson.parseRaw('.executor'), (address))
+      executorMock: abi.decode(persistedJson.parseRaw('.executorMock'), (address)),
+      executorLido: abi.decode(persistedJson.parseRaw('.executorLido'), (address))
     });
 
     return addresses;

@@ -45,7 +45,7 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     transferLinkTokens(ethCCCAddress);
 
     vm.selectFork(bnbFork);
-    originalMockDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
+    originalMockDestination = address(new MockDestination(crossChainAddresses.bnb.executorMock));
   }
 
   function test_ChangeAgent_OnBinance() public {
@@ -53,7 +53,7 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
       bnbFork,
       LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
       ethCCCAddress,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       bnbAdapters,
       originalMockDestination,
@@ -63,7 +63,7 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     _runUnauthorizedUpdate(
       LIDO_DAO_AGENT, // DAO Agent 2 - the real one
       ethCCCAddress,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       originalMockDestination,
       messageToMock
@@ -90,7 +90,7 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     _runUnauthorizedUpdate(
       LIDO_DAO_AGENT_FAKE,
       ethCCCAddress,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       originalMockDestination,
       messageToMock
@@ -135,7 +135,7 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
       bnbFork,
       LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
       ethCCCAddress,
-      crossChainAddresses.bnb.executor, // The original executor
+      crossChainAddresses.bnb.executorMock, // The original executor
       BINANCE_CHAIN_ID,
       bnbAdapters,
       motion
@@ -145,10 +145,10 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
 
     // Validate that the ProxyAdmin owner is the original executor
     address proxyAdminOwner = Ownable(crossChainAddresses.bnb.proxyAdmin).owner();
-    assertEq(proxyAdminOwner, crossChainAddresses.bnb.executor, "ProxyAdmin owner should be set to original executor");
+    assertEq(proxyAdminOwner, crossChainAddresses.bnb.executorMock, "ProxyAdmin owner should be set to original executor");
 
     // Run the motion
-    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executor);
+    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executorMock);
     executor.execute(actionId);
 
     // Validate that the ownership was transferred

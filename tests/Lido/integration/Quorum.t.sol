@@ -42,7 +42,7 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
     transferLinkTokens(ethCCCAddress);
 
     vm.selectFork(bnbFork);
-    mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executor));
+    mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executorMock));
   }
 
   function test_Quorum() public {
@@ -54,7 +54,7 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
     (ExtendedTransaction memory extendedTx) = _sendCrossChainTransactionAsDao(
       LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
       ethCCCAddress,
-      crossChainAddresses.bnb.executor,
+      crossChainAddresses.bnb.executorMock,
       BINANCE_CHAIN_ID,
       _buildMockUpgradeMotion(mockBscDestination, messageToMock)
     );
@@ -65,7 +65,7 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
 
     vm.selectFork(bnbFork);
 
-    IExecutorBase targetExecutor = IExecutorBase(crossChainAddresses.bnb.executor);
+    IExecutorBase targetExecutor = IExecutorBase(crossChainAddresses.bnb.executorMock);
     ICrossChainController targetCrossChainController = ICrossChainController(crossChainAddresses.bnb.crossChainController);
 
     vm.expectEmit();
