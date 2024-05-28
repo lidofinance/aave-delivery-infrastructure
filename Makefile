@@ -209,7 +209,7 @@ deploy-full-test:
 # ----------------------------------------- LIDO MAINNER DEPLOYMENT SCRIPTS --------------------------------------------
 
 burn-deployer-nonce:
-	$(call deploy_fn,Lido/helpers/Burn_Deployer_Nonce,ethereum)
+	$(call deploy_fn,Lido/helpers/Burn_Deployer_Nonce,binance)
 
 deploy-lido-cross-chain-infra:
 	$(call deploy_fn,Lido/CCC/Deploy_CCC,ethereum binance)

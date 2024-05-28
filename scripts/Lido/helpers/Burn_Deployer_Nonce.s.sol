@@ -12,19 +12,19 @@ abstract contract BurnDeployerNonce is BaseScript {
   }
 }
 
-contract Ethereum is BurnDeployerNonce {
+contract Binance is BurnDeployerNonce {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return ChainIds.ETHEREUM;
+    return ChainIds.BNB;
   }
 }
 
-contract Ethereum_testnet is BurnDeployerNonce {
+contract Binance_testnet is BurnDeployerNonce {
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {
-    return TestNetChainIds.ETHEREUM_SEPOLIA;
+    return TestNetChainIds.BNB_TESTNET;
   }
 }
 
-contract Ethereum_local is Ethereum {
+contract Binance_local is Binance {
   function isLocalFork() public pure virtual override returns (bool) {
     return true;
   }
