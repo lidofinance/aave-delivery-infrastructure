@@ -48,9 +48,6 @@ contract CrossChainControllerStateTest is BaseStateTest {
     ccfAdaptersLists[0].chainId = ChainIds.ETHEREUM;
     ccfAdaptersLists[0].adapters = new AdapterLink[](0);
 
-//    ccfAdaptersLists[1].chainId = ChainIds.POLYGON;
-//    ccfAdaptersLists[1].adapters = new AdapterLink[](0);
-
     _test_ccf_adapters(
       cccAddress,
       ccfAdaptersLists
@@ -71,9 +68,6 @@ contract CrossChainControllerStateTest is BaseStateTest {
     ccrAdaptersLists[0].adapters[2].destinationAdapter = address(crossChainAddresses.eth.hlAdapter);
     ccrAdaptersLists[0].adapters[3].localAdapter = address(crossChainAddresses.bnb.wormholeAdapter);
     ccrAdaptersLists[0].adapters[3].destinationAdapter = address(crossChainAddresses.eth.wormholeAdapter);
-
-//    ccrAdaptersLists[1].chainId = ChainIds.POLYGON;
-//    ccrAdaptersLists[1].adapters = new AdapterLink[](0);
 
     _test_ccr_adapters(
       cccAddress,

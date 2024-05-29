@@ -275,10 +275,10 @@ deploy-lido-full:
 	make write-lido-json-addresses
 
 test-lido-state:
-	ENV=prod forge test -v --match-path "tests/Lido/state/**/*.sol"
+	ENV=prod forge test -vv --match-path "tests/Lido/state/**/*.sol"
 
 test-lido-integration:
-	ENV=prod forge test -v --match-path "tests/Lido/integration/**/*.sol"
+	ENV=prod forge test -vv --match-path "tests/Lido/integration/**/*.sol"
 
 test-lido:
 	make test-lido-state-local

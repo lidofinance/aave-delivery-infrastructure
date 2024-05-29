@@ -38,6 +38,7 @@ abstract contract VoteAgentChangeScript is BaseScript {
 
     AragonVotingInterface(FAKE_DAO_VOTING).vote(voteId, true, false);
 
+    // @dev checking locally that voting works
     vm.warp(block.timestamp + 1260); // 21 minutes to pass the voting period
 
     AragonVotingInterface(FAKE_DAO_VOTING).executeVote(voteId);
@@ -138,7 +139,7 @@ abstract contract VoteAgentChangeScript is BaseScript {
     return _encodeCallScript(actions);
   }
 
-  function _buildBinanceOwnershipTransferMotion(DeployerHelpers.Addresses memory bnbAddresses) internal view returns (bytes memory) {
+  function _buildBinanceOwnershipTransferMotion(DeployerHelpers.Addresses memory bnbAddresses) internal pure returns (bytes memory) {
     address[] memory addresses = new address[](2);
     addresses[0] = bnbAddresses.crossChainController;
     addresses[1] = bnbAddresses.proxyAdmin;

@@ -7,7 +7,7 @@ import '../BaseScript.sol';
 
 abstract contract BaseMockDestination is BaseScript {
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
-    addresses.mockDestination = address(new MockDestination(addresses.executor));
+    addresses.mockDestination = address(new MockDestination(addresses.executorMock));
   }
 }
 

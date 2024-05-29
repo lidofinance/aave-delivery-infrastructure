@@ -11,7 +11,7 @@ abstract contract BaseSendMessageToExecutor is BaseScript {
   function DESTINATION_NETWORK() public view virtual returns (uint256);
 
   function getDestinationAddress() public view virtual returns (address) {
-    return _getAddresses(DESTINATION_NETWORK()).executor;
+    return _getAddresses(DESTINATION_NETWORK()).executorMock;
   }
 
   function getGasLimit() public view virtual returns (uint256) {
