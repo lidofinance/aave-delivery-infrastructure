@@ -328,6 +328,9 @@ finalize-lido-testnet:
 
 write-lido-json-addresses-test :; forge script scripts/Lido/WriteAddresses.s.sol:WriteDeployedAddresses -vvvv
 
+vote-mock-update-test:
+	$(call deploy_fn,Lido/e2e/Vote_Mock_Update,ethereum)
+
 deploy-lido-bridge-adapters-test:
 	make deploy-lido-ccip-bridge-adapters-test
 	make deploy-lido-lz-bridge-adapters-test
