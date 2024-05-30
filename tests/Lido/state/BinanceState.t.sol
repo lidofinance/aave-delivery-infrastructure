@@ -13,7 +13,7 @@ contract CrossChainControllerStateTest is BaseStateTest {
   address public cccAddress;
   address public cccImplAddress;
 
-  address public BINANCE_LIDO_DAO_AGENT;
+  address public DAO_AGENT;
 
   function setUp() override public {
     super.setUp();
@@ -24,9 +24,13 @@ contract CrossChainControllerStateTest is BaseStateTest {
     cccAddress = address(crossChainAddresses.bnb.crossChainController);
     cccImplAddress = address(crossChainAddresses.bnb.crossChainControllerImpl);
 
-    BINANCE_LIDO_DAO_AGENT = crossChainAddresses.bnb.executorMock;
 
-    console2.log("Binance DAO Agent (CrossChainExecutor): %s", BINANCE_LIDO_DAO_AGENT);
+    DAO_AGENT = crossChainAddresses.bnb.executorMock;
+    if (isRealDaoAgent) {
+      DAO_AGENT = crossChainAddresses.bnb.executorProd;
+    }
+
+    console2.log("Binance DAO Agent (CrossChainExecutor): %s", DAO_AGENT);
   }
 
   function test_CorrectFork() public {
@@ -34,11 +38,11 @@ contract CrossChainControllerStateTest is BaseStateTest {
   }
 
   function test_ProxyAdminState() public {
-    _test_proxy_admin(proxyAdmin, cccAddress, cccImplAddress, BINANCE_LIDO_DAO_AGENT);
+    _test_proxy_admin(proxyAdmin, cccAddress, cccImplAddress, DAO_AGENT);
   }
 
   function test_CrossChainControllerState() public {
-    _test_ccc_owners(cccAddress, BINANCE_LIDO_DAO_AGENT);
+    _test_ccc_owners(cccAddress, DAO_AGENT);
     _test_ccc_funds(cccAddress, 0);
   }
 

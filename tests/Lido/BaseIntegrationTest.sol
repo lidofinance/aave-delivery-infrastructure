@@ -18,6 +18,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
   using stdJson for string;
 
   string ENV = vm.envString('ENV');
+  string REAL_DAO = vm.envString('REAL_DAO');
 
   uint256 public ethFork;
   uint256 public bnbFork;
@@ -53,6 +54,8 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
 
   address public ethCCCAddress;
   address[] public bnbAdapters = new address[](4);
+
+  bool public isRealDaoAgent = false;
 
   function _getDeploymentFiles() internal view returns (CrossChainAddressFiles memory) {
     if (keccak256(abi.encodePacked(ENV)) == keccak256(abi.encodePacked("local"))) {
@@ -112,6 +115,10 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
       bnbForkName = 'binance-local';
     }
 
+    if (keccak256(abi.encodePacked(REAL_DAO)) == keccak256(abi.encodePacked("true"))) {
+      isRealDaoAgent = true;
+    }
+
     ethFork = vm.createFork(ethForkName);
     bnbFork = vm.createFork(bnbForkName);
 
@@ -153,9 +160,8 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
       _message
     );
 
-    vm.prank(_daoAgent, ZERO_ADDRESS);
     vm.recordLogs();
-
+    vm.prank(_daoAgent);
     crossChainController.forwardMessage(
       _destinationChainId,
       _destination,
@@ -188,6 +194,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     uint256 _targetForkId,
     address _daoAgent,
     address _originCrossChainController,
+    address _destinationCrossChainController,
     address _destination,
     uint256 _destinationChainId,
     address[] memory _adapters,
@@ -213,8 +220,7 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     vm.selectFork(_targetForkId);
 
     vm.recordLogs();
-
-    _receiveDaoCrossChainMessage(crossChainAddresses.bnb.crossChainController, _adapters, extendedTx);
+    _receiveDaoCrossChainMessage(_destinationCrossChainController, _adapters, extendedTx);
 
     // Check that the message was received and passed to the executor
     return _getActionsSetQueued(vm.getRecordedLogs());
@@ -232,16 +238,19 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     uint256 _targetForkId,
     address _daoAgent,
     address _originCrossChainController,
+    address _destinationCrossChainController,
     address _destination,
     uint256 _destinationChainId,
     address[] memory _adapters,
     address _mockAddress,
     string memory _message
   ) internal {
+
     uint256 actionId = _transferMessage(
       _targetForkId,
       _daoAgent,
       _originCrossChainController,
+      _destinationCrossChainController,
       _destination,
       _destinationChainId,
       _adapters,

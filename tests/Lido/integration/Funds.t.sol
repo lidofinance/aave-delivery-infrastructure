@@ -17,28 +17,30 @@ interface IERC20 {
 
 contract FundsIntegrationTest is BaseIntegrationTest {
 
-  address public mockBscDestination;
-
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
 
   function test_NoFunds_NoEtherOnCrossChainController() public {
+    address DAO_AGENT = isRealDaoAgent ? LIDO_DAO_AGENT : LIDO_DAO_AGENT_FAKE;
+    address BINANCE_DAO_AGENT = isRealDaoAgent ? crossChainAddresses.bnb.executorProd : crossChainAddresses.bnb.executorMock;
+
+    vm.selectFork(ethFork);
     ICrossChainController crossChainController = ICrossChainController(
       crossChainAddresses.eth.crossChainController
     );
 
     assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
-    assertEq(crossChainController.isSenderApproved(LIDO_DAO_AGENT_FAKE), true);
+    assertEq(crossChainController.isSenderApproved(DAO_AGENT), true);
 
-    bytes memory message = getMockMessage(crossChainAddresses.bnb.executorMock, "No funds on CrossChainController");
+    bytes memory message = getMockMessage(address(0), "No funds on CrossChainController");
 
     // Reset the balance of the CrossChainController
-    vm.deal(address(crossChainAddresses.eth.crossChainController), 0);
+    vm.deal(crossChainAddresses.eth.crossChainController, 0);
 
     (Envelope memory envelope, EncodedEnvelope memory encodedEnvelope) = _registerEnvelope(
       crossChainController.getCurrentEnvelopeNonce(),
-      LIDO_DAO_AGENT_FAKE,
+      DAO_AGENT,
       ETHEREUM_CHAIN_ID,
-      crossChainAddresses.bnb.executorMock,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
       message
     );
@@ -47,12 +49,11 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     vm.expectEmit(true, true, false, false);
     emit EnvelopeRegistered(encodedEnvelope.id, envelope);
 
-    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
     vm.recordLogs();
-
+    vm.prank(DAO_AGENT);
     (bytes32 envelopeId, bytes32 transactionId) = crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
-      crossChainAddresses.bnb.executorMock,
+      BINANCE_DAO_AGENT,
       getGasLimit(),
       message
     );
@@ -77,12 +78,12 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     // Add funds to the CrossChainController
     vm.deal(crossChainAddresses.eth.crossChainController, 100 ether);
 
-    // Can't be send by anyone
-    vm.expectRevert();
-    crossChainController.retryEnvelope(envelope, getGasLimit());
+    vm.prank(DAO_AGENT);
+    (bytes32 newEnvelopeTransactionId) = crossChainController.retryEnvelope(envelope, getGasLimit());
+    assertNotEq(newEnvelopeTransactionId, transactionId);
 
     // Retry the transaction
-    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
+    vm.prank(DAO_AGENT);
     (bytes32 newTransactionId) = crossChainController.retryEnvelope(envelope, getGasLimit());
 
     // Check that the transaction is new
@@ -90,17 +91,20 @@ contract FundsIntegrationTest is BaseIntegrationTest {
   }
 
   function test_NoFunds_NoLinkTokensOnCrossChainController() public {
+    address DAO_AGENT = isRealDaoAgent ? LIDO_DAO_AGENT : LIDO_DAO_AGENT_FAKE;
+    address BINANCE_DAO_AGENT = isRealDaoAgent ? crossChainAddresses.bnb.executorProd : crossChainAddresses.bnb.executorMock;
+
     ICrossChainController crossChainController = ICrossChainController(
       crossChainAddresses.eth.crossChainController
     );
 
-    bytes memory message = getMockMessage(crossChainAddresses.bnb.executorMock, "No LINK tokens on CrossChainController");
+    bytes memory message = getMockMessage(address(0), "No LINK tokens on CrossChainController");
 
     vm.recordLogs();
-    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
+    vm.prank(DAO_AGENT);
     crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
-      crossChainAddresses.bnb.executorMock,
+      BINANCE_DAO_AGENT,
       getGasLimit(),
       message
     );
@@ -120,18 +124,19 @@ contract FundsIntegrationTest is BaseIntegrationTest {
   }
 
   function test_NoFunds_FundsOnCrossChainControllerAreOK() public {
-    address cccAddress = crossChainAddresses.eth.crossChainController;
+    address DAO_AGENT = isRealDaoAgent ? LIDO_DAO_AGENT : LIDO_DAO_AGENT_FAKE;
+    address BINANCE_DAO_AGENT = isRealDaoAgent ? crossChainAddresses.bnb.executorProd : crossChainAddresses.bnb.executorMock;
 
-    ICrossChainController crossChainController = ICrossChainController(cccAddress);
-    transferLinkTokens(cccAddress);
+    ICrossChainController crossChainController = ICrossChainController(crossChainAddresses.eth.crossChainController);
+    transferLinkTokens(crossChainAddresses.eth.crossChainController);
 
-    bytes memory message = getMockMessage(crossChainAddresses.bnb.executorMock, "Funds are in place on CrossChainController");
+    bytes memory message = getMockMessage(address(0), "Funds are in place on CrossChainController");
 
     vm.recordLogs();
-    vm.prank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
+    vm.prank(DAO_AGENT);
     crossChainController.forwardMessage(
       BINANCE_CHAIN_ID,
-      crossChainAddresses.bnb.executorMock,
+      BINANCE_DAO_AGENT,
       getGasLimit(),
       message
     );

@@ -13,6 +13,8 @@ contract EthereumStateTest is BaseStateTest {
   address public cccAddress;
   address public cccImplAddress;
 
+  address public DAO_AGENT;
+
   function setUp() override public {
     super.setUp();
 
@@ -22,7 +24,12 @@ contract EthereumStateTest is BaseStateTest {
     cccAddress = address(crossChainAddresses.eth.crossChainController);
     cccImplAddress = address(crossChainAddresses.eth.crossChainControllerImpl);
 
-    console2.log("Ethereum DAO Agent: %s", LIDO_DAO_AGENT_FAKE);
+    DAO_AGENT = LIDO_DAO_AGENT_FAKE;
+    if (isRealDaoAgent) {
+      DAO_AGENT = LIDO_DAO_AGENT;
+    }
+
+    console2.log("Ethereum DAO Agent: %s", DAO_AGENT);
   }
 
   function test_CorrectFork() public {
@@ -30,11 +37,11 @@ contract EthereumStateTest is BaseStateTest {
   }
 
   function test_ProxyAdminState() public {
-    _test_proxy_admin(proxyAdmin, cccAddress, cccImplAddress, LIDO_DAO_AGENT_FAKE);
+    _test_proxy_admin(proxyAdmin, cccAddress, cccImplAddress, DAO_AGENT);
   }
 
   function test_CrossChainControllerState() public {
-    _test_ccc_owners(cccAddress, LIDO_DAO_AGENT_FAKE);
+    _test_ccc_owners(cccAddress, DAO_AGENT);
     _test_ccc_funds(cccAddress, 5e17); // 0.5 ETH
   }
 

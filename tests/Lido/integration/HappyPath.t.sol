@@ -15,6 +15,8 @@ import {MockDestination} from "../utils/MockDestination.sol";
 
 contract HappyPathIntegrationTest is BaseIntegrationTest {
 
+  address public DAO_AGENT;
+  address public BINANCE_DAO_AGENT;
   address public mockDestination;
 
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
@@ -30,16 +32,20 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
     vm.selectFork(ethFork);
     transferLinkTokens(ethCCCAddress);
 
+    DAO_AGENT = isRealDaoAgent ? LIDO_DAO_AGENT : LIDO_DAO_AGENT_FAKE;
+    BINANCE_DAO_AGENT = isRealDaoAgent ? crossChainAddresses.bnb.executorProd : crossChainAddresses.bnb.executorMock;
+
     vm.selectFork(bnbFork);
-    mockDestination = address(new MockDestination(crossChainAddresses.bnb.executorMock));
+    mockDestination = address(new MockDestination(BINANCE_DAO_AGENT));
   }
 
   function test_HappyPath_WithMockDestination_OnBinance() public {
     _runMockUpdate(
       bnbFork,
-      LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
+      DAO_AGENT,
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock,
+      crossChainAddresses.bnb.crossChainController,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
       bnbAdapters,
       mockDestination,
@@ -56,9 +62,10 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
 
     uint256 actionId = _transferMessage(
       bnbFork,
-      LIDO_DAO_AGENT_FAKE,
+      DAO_AGENT,
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock,
+      crossChainAddresses.bnb.crossChainController,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
       bnbAdapters,
       motion
@@ -72,7 +79,7 @@ contract HappyPathIntegrationTest is BaseIntegrationTest {
     assertEq(configuration.requiredConfirmation, 3);
 
     // Run the motion
-    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executorMock);
+    IExecutorBase executor = IExecutorBase(BINANCE_DAO_AGENT);
 
     vm.expectEmit();
     emit ConfirmationsUpdated(newConfirmations, ETHEREUM_CHAIN_ID);

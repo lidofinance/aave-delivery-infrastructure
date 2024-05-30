@@ -16,7 +16,6 @@ import {Transaction} from '../../../src/contracts/libs/EncodingUtils.sol';
 
 contract QuorumIntegrationTest is BaseIntegrationTest {
 
-  address public mockBscDestination;
   address public cccEthAddress;
 
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
@@ -35,6 +34,8 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
 
   string private messageToMock = "This is a message to mock";
 
+  address public BINANCE_DAO_AGENT;
+
   function setUp() override public {
     super.setUp();
 
@@ -42,19 +43,23 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
     transferLinkTokens(ethCCCAddress);
 
     vm.selectFork(bnbFork);
-    mockBscDestination = address(new MockDestination(crossChainAddresses.bnb.executorMock));
+    BINANCE_DAO_AGENT = isRealDaoAgent ? crossChainAddresses.bnb.executorProd : crossChainAddresses.bnb.executorMock;
   }
 
   function test_Quorum() public {
-    vm.selectFork(ethFork);
+    vm.selectFork(bnbFork);
+    address mockBscDestination = address(new MockDestination(BINANCE_DAO_AGENT));
 
+    vm.selectFork(ethFork);
     vm.recordLogs();
+
+    address AGENT = isRealDaoAgent ? LIDO_DAO_AGENT : LIDO_DAO_AGENT_FAKE;
 
     // Send DAO motion to the destination executor
     (ExtendedTransaction memory extendedTx) = _sendCrossChainTransactionAsDao(
-      LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
+      AGENT, // DAO Agent - the one after deploy
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
       _buildMockUpgradeMotion(mockBscDestination, messageToMock)
     );
@@ -65,7 +70,7 @@ contract QuorumIntegrationTest is BaseIntegrationTest {
 
     vm.selectFork(bnbFork);
 
-    IExecutorBase targetExecutor = IExecutorBase(crossChainAddresses.bnb.executorMock);
+    IExecutorBase targetExecutor = IExecutorBase(BINANCE_DAO_AGENT);
     ICrossChainController targetCrossChainController = ICrossChainController(crossChainAddresses.bnb.crossChainController);
 
     vm.expectEmit();

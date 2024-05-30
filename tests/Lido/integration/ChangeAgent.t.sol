@@ -26,10 +26,7 @@ import {CrossChainExecutor} from "../../../src/Lido/contracts/CrossChainExecutor
 import {MockDestination} from "../utils/MockDestination.sol";
 
 contract ChangeAgentIntegrationTest is BaseIntegrationTest {
-
-  address public originalMockDestination;
-  address public upgradedExecutorBnbAddress;
-  address public upgradedMockDestination;
+  address public BINANCE_DAO_AGENT;
 
   event EnvelopeRegistered(bytes32 indexed envelopeId, Envelope envelope);
   event ConfirmationsUpdated(uint8 newConfirmations, uint256 indexed chainId);
@@ -44,76 +41,85 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     vm.selectFork(ethFork);
     transferLinkTokens(ethCCCAddress);
 
-    vm.selectFork(bnbFork);
-    originalMockDestination = address(new MockDestination(crossChainAddresses.bnb.executorMock));
+    BINANCE_DAO_AGENT = isRealDaoAgent ? crossChainAddresses.bnb.executorProd : crossChainAddresses.bnb.executorMock;
   }
 
   function test_ChangeAgent_OnBinance() public {
+    address AGENT_1 = isRealDaoAgent ? LIDO_DAO_AGENT : LIDO_DAO_AGENT_FAKE;
+    address AGENT_2 = isRealDaoAgent ? LIDO_DAO_AGENT_FAKE : LIDO_DAO_AGENT;
+
+    vm.selectFork(bnbFork);
+    address oldMockDestination = address(new MockDestination(BINANCE_DAO_AGENT));
+    (address newBinanceExecutor, address newMockDestination) = _deployNewBinanceExecutorAndMock(AGENT_2);
+
+    vm.selectFork(ethFork);
     _runMockUpdate(
       bnbFork,
-      LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
+      AGENT_1, // DAO Agent 1 - the one after deploy
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock,
+      crossChainAddresses.bnb.crossChainController,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
       bnbAdapters,
-      originalMockDestination,
+      oldMockDestination,
       messageToMock
     );
 
     _runUnauthorizedUpdate(
-      LIDO_DAO_AGENT, // DAO Agent 2 - the real one
+      AGENT_2, // DAO Agent 2 - the real one
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
-      originalMockDestination,
+      oldMockDestination,
       messageToMock
     );
 
-    _deployNewBinanceExecutorAndMock();
+    _transferOwnershipOnBinance(AGENT_1, newBinanceExecutor);
 
-    _transferOwnershipOnBinance();
-
-    _transferOwnershipOnEthereum();
+    _transferOwnershipOnEthereum(AGENT_1, AGENT_2);
 
     _runMockUpdate(
       bnbFork,
-      LIDO_DAO_AGENT, // DAO Agent 2 - the real one
+      AGENT_2,
       ethCCCAddress,
-      upgradedExecutorBnbAddress,
+      crossChainAddresses.bnb.crossChainController,
+      newBinanceExecutor,
       BINANCE_CHAIN_ID,
       bnbAdapters,
-      upgradedMockDestination,
+      newMockDestination,
       messageToMock
     );
 
     // Validate that old sender is not approved
     _runUnauthorizedUpdate(
-      LIDO_DAO_AGENT_FAKE,
+      AGENT_1,
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock,
+      newBinanceExecutor,
       BINANCE_CHAIN_ID,
-      originalMockDestination,
+      newMockDestination,
       messageToMock
     );
 
     // Validate that old sender can't utilize the old executor
     _runUnauthorizedUpdate(
-      LIDO_DAO_AGENT_FAKE,
+      AGENT_1,
       ethCCCAddress,
-      upgradedExecutorBnbAddress,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
-      upgradedMockDestination,
+      oldMockDestination,
       messageToMock
     );
   }
 
-  function _deployNewBinanceExecutorAndMock() internal {
+  function _deployNewBinanceExecutorAndMock(
+    address _newDaoAgent
+  ) internal returns (address upgradedExecutorBnbAddress, address upgradedMockDestination) {
     vm.selectFork(bnbFork);
 
     // Deploy new BSC side executor for the new DAO agent
     upgradedExecutorBnbAddress = address(new CrossChainExecutor(
       crossChainAddresses.bnb.crossChainController,
-      LIDO_DAO_AGENT,
+      _newDaoAgent,
       ETHEREUM_CHAIN_ID,
       0,          // delay
       86400,      // gracePeriod
@@ -123,19 +129,25 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     ));
 
     upgradedMockDestination = address(new MockDestination(upgradedExecutorBnbAddress));
+
+    return (upgradedExecutorBnbAddress, upgradedMockDestination);
   }
 
   /**
     * @notice Run a an a.DI setup upgrade to pass ownership to the new DAO agent
     */
-  function _transferOwnershipOnBinance() internal {
-    bytes memory motion = _buildBnbOwnershipTransferMotion();
+  function _transferOwnershipOnBinance(
+    address _daoAgent,
+    address _newExecutorBnbAddress
+  ) internal {
+    bytes memory motion = _buildBnbOwnershipTransferMotion(_newExecutorBnbAddress);
 
     uint256 actionId = _transferMessage(
       bnbFork,
-      LIDO_DAO_AGENT_FAKE, // DAO Agent 1 - the one after deploy
+      _daoAgent,
       ethCCCAddress,
-      crossChainAddresses.bnb.executorMock, // The original executor
+      crossChainAddresses.bnb.crossChainController,
+      BINANCE_DAO_AGENT,
       BINANCE_CHAIN_ID,
       bnbAdapters,
       motion
@@ -145,10 +157,13 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
 
     // Validate that the ProxyAdmin owner is the original executor
     address proxyAdminOwner = Ownable(crossChainAddresses.bnb.proxyAdmin).owner();
-    assertEq(proxyAdminOwner, crossChainAddresses.bnb.executorMock, "ProxyAdmin owner should be set to original executor");
+    assertEq(proxyAdminOwner, BINANCE_DAO_AGENT, "ProxyAdmin owner should be set to original executor");
+
+    address cccOwner = Ownable(crossChainAddresses.bnb.crossChainController).owner();
+    assertEq(cccOwner, BINANCE_DAO_AGENT, "CrossChainController owner should be set to original executor");
 
     // Run the motion
-    IExecutorBase executor = IExecutorBase(crossChainAddresses.bnb.executorMock);
+    IExecutorBase executor = IExecutorBase(BINANCE_DAO_AGENT);
     executor.execute(actionId);
 
     // Validate that the ownership was transferred
@@ -159,29 +174,35 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     address proxyImp = proxyAdminContract.getProxyImplementation(cccProxy);
     address proxyAdminAddress = proxyAdminContract.getProxyAdmin(cccProxy);
 
-    assertEq(proxyAdminOwner, upgradedExecutorBnbAddress, "ProxyAdmin owner should be updated new executor");
+    cccOwner = Ownable(crossChainAddresses.bnb.crossChainController).owner();
+
+    assertEq(proxyAdminOwner, _newExecutorBnbAddress, "ProxyAdmin owner should be updated new executor");
+    assertEq(cccOwner, _newExecutorBnbAddress, "CrossChainController owner should be updated new executor");
     assertEq(proxyAdminAddress, crossChainAddresses.bnb.proxyAdmin, "ProxyAdmin for CrossChainController should be ProxyAdmin");
     assertEq(proxyImp, crossChainAddresses.bnb.crossChainControllerImpl, "CrossChainController implementation should be CrossChainControllerImpl");
   }
 
-  function _transferOwnershipOnEthereum() internal {
+  function _transferOwnershipOnEthereum(
+    address _daoAgent,
+    address _newDaoAgent
+  ) internal {
     vm.selectFork(ethFork);
-    vm.startPrank(LIDO_DAO_AGENT_FAKE, ZERO_ADDRESS);
+    vm.startPrank(_daoAgent);
 
     // Swap approved senders
     address[] memory sendersToApprove = new address[](1);
-    sendersToApprove[0] = LIDO_DAO_AGENT;
+    sendersToApprove[0] = _newDaoAgent;
 
     ICrossChainForwarder(ethCCCAddress).approveSenders(sendersToApprove);
 
     address[] memory sendersToRemove = new address[](1);
-    sendersToRemove[0] = LIDO_DAO_AGENT_FAKE;
+    sendersToRemove[0] = _daoAgent;
 
     ICrossChainForwarder(ethCCCAddress).removeSenders(sendersToRemove);
 
     // Transfer ownership of the CrossChainController and ProxyAdmin to the new DAO agent
-    Ownable(crossChainAddresses.eth.crossChainController).transferOwnership(LIDO_DAO_AGENT);
-    Ownable(crossChainAddresses.eth.proxyAdmin).transferOwnership(LIDO_DAO_AGENT);
+    Ownable(crossChainAddresses.eth.crossChainController).transferOwnership(_newDaoAgent);
+    Ownable(crossChainAddresses.eth.proxyAdmin).transferOwnership(_newDaoAgent);
 
     vm.stopPrank();
   }
@@ -219,7 +240,9 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     );
   }
 
-  function _buildBnbOwnershipTransferMotion() internal view returns (bytes memory) {
+  function _buildBnbOwnershipTransferMotion(
+    address _newExecutorBnbAddress
+  ) internal view returns (bytes memory) {
     address[] memory addresses = new address[](2);
     addresses[0] = crossChainAddresses.bnb.crossChainController;
     addresses[1] = crossChainAddresses.bnb.proxyAdmin;
@@ -233,8 +256,8 @@ contract ChangeAgentIntegrationTest is BaseIntegrationTest {
     signatures[1] = 'transferOwnership(address)';
 
     bytes[] memory calldatas = new bytes[](2);
-    calldatas[0] = abi.encode(upgradedExecutorBnbAddress);
-    calldatas[1] = abi.encode(upgradedExecutorBnbAddress);
+    calldatas[0] = abi.encode(_newExecutorBnbAddress);
+    calldatas[1] = abi.encode(_newExecutorBnbAddress);
 
     bool[] memory withDelegatecalls = new bool[](2);
     withDelegatecalls[0] = false;

@@ -9,7 +9,7 @@ import '../BaseScript.sol';
  * @notice This script needs to be implemented from where the senders are known
  */
 abstract contract BaseSetCCFApprovedSenders is BaseScript {
-  function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public pure virtual returns (address[] memory);
+  function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public view virtual returns (address[] memory);
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
     ICrossChainForwarder(addresses.crossChainController).approveSenders(getSendersToApprove(addresses));
@@ -21,12 +21,11 @@ contract Ethereum is BaseSetCCFApprovedSenders {
     return ChainIds.ETHEREUM;
   }
 
-  function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public pure override returns (address[] memory) {
+  function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public view override returns (address[] memory) {
     address[] memory senders = new address[](1);
 
     // https://docs.lido.fi/deployed-contracts/#dao-contracts - Aragon Agent
-    // senders[0] = Constants.LIDO_DAO_AGENT;
-    senders[0] = Constants.LIDO_DAO_AGENT_FAKE;
+    senders[0] = isRealDaoDeployed() ? Constants.LIDO_DAO_AGENT : Constants.LIDO_DAO_AGENT_FAKE;
 
     return senders;
   }
@@ -37,7 +36,7 @@ contract Ethereum_testnet is BaseSetCCFApprovedSenders {
     return TestNetChainIds.ETHEREUM_SEPOLIA;
   }
 
-  function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public pure override returns (address[] memory) {
+  function getSendersToApprove(DeployerHelpers.Addresses memory addresses) public view override returns (address[] memory) {
     address[] memory senders = new address[](1);
 
     // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts - Aragon Agent

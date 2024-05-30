@@ -12,10 +12,11 @@ abstract contract FinalizeScript is BaseScript {
   }
 
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
+    address executor = isRealDaoDeployed() ? addresses.executorProd : addresses.executorMock;
 
-    // If no DAO_AGENT is set, use the executorMock as the DAO_AGENT for the network
+    // If no DAO_AGENT is set, use the executor as the DAO_AGENT for the network
     address daoAgentAddress = DAO_AGENT() == address(0)
-      ? addresses.executorMock
+      ? executor
       : DAO_AGENT();
 
     // Transfer CrossChainController ownership to the DAO
@@ -29,8 +30,7 @@ abstract contract FinalizeScript is BaseScript {
 contract Ethereum is FinalizeScript {
   // https://docs.lido.fi/deployed-contracts/#dao-contracts Aragon Agent
   function DAO_AGENT() public view virtual override returns (address) {
-    // return Constants.LIDO_DAO_AGENT;
-    return Constants.LIDO_DAO_AGENT_FAKE;
+    return isRealDaoDeployed() ? Constants.LIDO_DAO_AGENT : Constants.LIDO_DAO_AGENT_FAKE;
   }
 
   function TRANSACTION_NETWORK() public pure virtual override returns (uint256) {

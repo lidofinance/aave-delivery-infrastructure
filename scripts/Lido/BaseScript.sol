@@ -91,7 +91,7 @@ library DeployerHelpers {
 }
 
 library Constants {
-  // https://docs.lido.fi/deployed-contracts/sepolia#dao-contracts - Aragon Agent
+  // https://docs.lido.fi/deployed-contracts/#dao-contracts - Aragon Agent
   address public constant LIDO_DAO_AGENT = 0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
   address public constant LIDO_DAO_AGENT_FAKE = 0x184d39300f2fA4419d04998e9C58Cb5De586d879;
   address public constant DEAD = 0x000000000000000000000000000000000000dEaD;
@@ -99,10 +99,16 @@ library Constants {
 }
 
 abstract contract BaseScript is Script {
+  string REAL_DAO = vm.envString('REAL_DAO');
+
   function TRANSACTION_NETWORK() public view virtual returns (uint256);
 
   function isLocalFork() public view virtual returns (bool) {
     return false;
+  }
+
+  function isRealDaoDeployed() public view returns (bool) {
+    return keccak256(abi.encodePacked(REAL_DAO)) == keccak256(abi.encodePacked('true'));
   }
 
   function getAddresses(
