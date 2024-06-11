@@ -1,0 +1,51 @@
+[
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/ProxyAdmin.sol/ProxyAdmin.json",
+    "sourcePath": "../aave-delivery-infrastructure/lib/openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol",
+    "name": "ProxyAdmin",
+    "address": "",
+    "txHash": ""
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json",
+    "sourcePath": "../aave-delivery-infrastructure/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+    "name": "TransparentUpgradeableProxy",
+    "address": "",
+    "txHash": ""
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CrossChainController.sol/CrossChainController.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/CrossChainController.sol",
+    "name": "CrossChainController",
+    "address": "",
+    "txHash": ""
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CCIPAdapter.sol/CCIPAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/ccip/CCIPAdapter.sol",
+    "name": "CCIPAdapter",
+    "address": "",
+    "txHash": ""
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/HyperLaneAdapter.sol/HyperLaneAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/hyperLane/HyperLaneAdapter.sol",
+    "name": "HyperLaneAdapter",
+    "address": "",
+    "txHash": ""
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/LayerZeroAdapter.sol/LayerZeroAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/layerZero/LayerZeroAdapter.sol",
+    "name": "LayerZeroAdapter",
+    "address": "",
+    "txHash": ""
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/WormholeAdapter.sol/WormholeAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/wormhole/WormholeAdapter.sol",
+    "name": "WormholeAdapter",
+    "address": "",
+    "txHash": ""
+  }
+]
