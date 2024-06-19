@@ -11,8 +11,8 @@ misc:
   - &ZERO_BYTES32 "0x0000000000000000000000000000000000000000000000000000000000000000"
   # Chains
   - &ETH_CHAIN_ID 1
-  - &ETH_CCC_ENVELOPE_NONCE 0
-  - &ETH_CCC_TRANSACTION_NONCE 0
+  - &ETH_CCC_ENVELOPE_NONCE 1
+  - &ETH_CCC_TRANSACTION_NONCE 1
   - &BNB_CHAIN_ID 56
   - &BNB_CONFIRMATIONS 3
   # Adapters
@@ -27,7 +27,7 @@ misc:
   - &BNB_CCE_GRACE_PERIOD 86400 # 1 day
   - &BNB_CCE_MINIMUM_DELAY 0
   - &BNB_CCE_MAXIMUM_DELAY 1
-  - &BNB_CCE_ACTIONS_SET_COUNT 0
+  - &BNB_CCE_ACTIONS_SET_COUNT 1
 
 deployed:
   # Newly deployed contracts
@@ -449,22 +449,8 @@ l2:
         getMaximumDelay: *BNB_CCE_MAXIMUM_DELAY
         getGuardian: *ZERO_ADDRESS
         getActionsSetCount: *BNB_CCE_ACTIONS_SET_COUNT
-        getActionsSetById:
-          - args: [ 0 ]
-            result: [
-              [ ],
-              [ ],
-              [ ],
-              [ ],
-              [ ],
-              0,
-              false,
-              false
-            ]
-        getCurrentState:
-          - args: [ 0 ]
-            result: 0
-            mustRevert: true
+        getActionsSetById: null # cant verify this because it containts time dependant date
+        getCurrentState: null # cant verify this because it containts time dependant date
         isActionQueued:
           - args: [ *ZERO_BYTES32 ] # want to skip this for now as it's too complex to verify and not worth it, tbh
             result: false
