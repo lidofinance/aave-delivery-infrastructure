@@ -19,6 +19,8 @@ interface AragonVotingInterface {
 
 abstract contract VoteAgentChangeScript is BaseScript {
 
+  bool immutable IS_FORK = false;
+
   uint32 immutable DEFAULT_EXECUTOR_ID = 1;
 
   address immutable FAKE_DAO_VOTING = 0x124208720f804A9ded96F0CD532018614b8aE28d;
@@ -39,9 +41,11 @@ abstract contract VoteAgentChangeScript is BaseScript {
     AragonVotingInterface(FAKE_DAO_VOTING).vote(voteId, true, false);
 
     // @dev checking locally that voting works
-    vm.warp(block.timestamp + 1260); // 21 minutes to pass the voting period
+    if (IS_FORK) {
+      vm.warp(block.timestamp + 1260); // 21 minutes to pass the voting period
 
-    AragonVotingInterface(FAKE_DAO_VOTING).executeVote(voteId);
+      AragonVotingInterface(FAKE_DAO_VOTING).executeVote(voteId);
+    }
   }
 
   function _agentExecute(address _agent, address _to, uint256 _value, bytes memory data) internal pure returns (Action memory) {
