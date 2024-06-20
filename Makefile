@@ -436,10 +436,10 @@ deploy-lido-local:
 	make finalize-lido-local
 
 test-lido-state-local:
-	ENV=local forge test -v --match-path "tests/Lido/state/**/*.sol"
+	ENV=local forge test -vv --match-path "tests/Lido/state/**/*.sol"
 
 test-lido-integration-local:
-	ENV=local forge test -v --match-path "tests/Lido/integration/**/*.sol"
+	ENV=local forge test -vv --match-path "tests/Lido/integration/**/*.sol"
 
 test-lido-local:
 	make test-lido-state-local

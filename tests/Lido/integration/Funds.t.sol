@@ -13,6 +13,7 @@ import {Errors} from '../../../src/contracts/libs/Errors.sol';
 
 interface IERC20 {
   function transfer(address recipient, uint256 amount) external returns (bool);
+  function balanceOf(address account) external view returns (uint256);
 }
 
 contract FundsIntegrationTest is BaseIntegrationTest {
@@ -33,8 +34,17 @@ contract FundsIntegrationTest is BaseIntegrationTest {
 
     bytes memory message = getMockMessage(address(0), "No funds on CrossChainController");
 
+    // burn all LINK tokens
+    uint256 linkBalance = IERC20(ETH_LINK_TOKEN).balanceOf(address(crossChainAddresses.eth.crossChainController));
+    vm.prank(crossChainAddresses.eth.crossChainController);
+    IERC20(ETH_LINK_TOKEN).transfer(DEAD_ADDRESS, linkBalance);
+    linkBalance = IERC20(ETH_LINK_TOKEN).balanceOf(address(crossChainAddresses.eth.crossChainController));
+
     // Reset the balance of the CrossChainController
     vm.deal(crossChainAddresses.eth.crossChainController, 0);
+
+    assertEq(address(crossChainAddresses.eth.crossChainController).balance, 0);
+    assertEq(linkBalance, 0);
 
     (Envelope memory envelope, EncodedEnvelope memory encodedEnvelope) = _registerEnvelope(
       crossChainController.getCurrentEnvelopeNonce(),
@@ -99,6 +109,14 @@ contract FundsIntegrationTest is BaseIntegrationTest {
     );
 
     bytes memory message = getMockMessage(address(0), "No LINK tokens on CrossChainController");
+
+    // burn all LINK tokens
+    uint256 linkBalance = IERC20(ETH_LINK_TOKEN).balanceOf(address(crossChainAddresses.eth.crossChainController));
+    vm.prank(crossChainAddresses.eth.crossChainController);
+    IERC20(ETH_LINK_TOKEN).transfer(DEAD_ADDRESS, linkBalance);
+    linkBalance = IERC20(ETH_LINK_TOKEN).balanceOf(address(crossChainAddresses.eth.crossChainController));
+
+    assertEq(linkBalance, 0);
 
     vm.recordLogs();
     vm.prank(DAO_AGENT);
