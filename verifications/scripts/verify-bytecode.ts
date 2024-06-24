@@ -17,7 +17,9 @@ import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import { exec } from 'child_process'
 import { createReadStream, createWriteStream } from 'node:fs'
+
 import chalk from "chalk";
+import cbor from 'cbor'
 
 // ---
 // SCRIPT REQUIRED VARIABLES
@@ -44,6 +46,15 @@ const SOLC_DIR = process.env['SOLC_DIR'] ?? 'solc'
 const USE_CACHED_SOLC = process.env['CACHE'] !== 'false'
 
 // ---
+// CONSOLE COLORS
+// ---
+const red = (text: any) => `\u001b[31m${text.toString()}\x1b[0m`
+const bgRed = (text: any) => `\u001b[37;41m${text.toString()}\x1b[0m`
+const green = (text: any) => `\u001b[32m${text.toString()}\x1b[0m`
+const bgGreen = (text: any) => `\u001b[37;42m${text.toString()}\x1b[0m`
+const bgYellow = (text: any) => `\u001b[37;43m${text.toString()}\x1b[0m`
+
+// ---
 // MAIN SCRIPT LOGIC
 // ---
 
@@ -64,7 +75,7 @@ async function main() {
   console.log(`${SUCCESS_MARK} Source code for contract ${chalk.yellow(code.name)} downloaded successfully\n`)
 
   console.log(
-    `Downloading the solc compiler ${code.compiler}. Allowed to use cached version: ${USE_CACHED_SOLC}.`
+    `Downloading the solc compiler ${chalk.magenta(code.compiler)}. Allowed to use cached version: ${chalk.yellow(USE_CACHED_SOLC)}.`
   )
 
   const [solcPath, cached] = await downloadSolcCompiler(
@@ -75,9 +86,9 @@ async function main() {
   )
 
   if (cached) {
-    console.log(`Solc compiler successfully downloaded: ${solcPath}\n`)
+    console.log(`Solc compiler successfully downloaded: ${chalk.yellow(solcPath)}\n`)
   } else {
-    console.log(`Solc compiler binary already exist at: ${solcPath}\n`)
+    console.log(`Solc compiler binary already exist at: ${chalk.yellow(solcPath)}\n`)
   }
 
   // enable generation of the immutable references for all files
@@ -118,7 +129,7 @@ async function main() {
     }
   }
 
-  console.log(`Retrieving the bytecode for contract ${CONTRACT} from the blockchain...`)
+  console.log(`Retrieving the bytecode for contract ${chalk.yellow(CONTRACT)} from the blockchain...`)
   const { result: actualBytecode } = JSON.parse(
     await requests.post(RPC_URL, {
       id: 1,
@@ -465,13 +476,40 @@ const OPCODES: Record<number, string> = {
   0xF5: 'CREATE2', 0xFA: 'STATICCALL', 0xFD: 'REVERT'  , 0xFE: 'INVALID', 0xFF: 'SELFDESTRUCT',
 }
 
+function trimSolidityMeta(
+  bytecode: string
+): { bytecode: string, metadata: string } {
+  // Last 4 chars of bytecode specify byte size of metadata component.
+  const metaSize = parseInt(bytecode.slice(-4), 16) * 2 + 4;
+  // When the length of metadata is not appended at the end, it will likely overshoot.
+  // There's no metadata to trim.
+  if (metaSize > bytecode.length) {
+    return { bytecode, metadata: '' }
+  }
+
+  return {
+    bytecode: bytecode.slice(0, -metaSize),
+    metadata: bytecode.slice(-metaSize),
+  }
+}
+
+function formatBytecodeMetadata(metadata: string): string {
+  const decoded = cbor.decodeAllSync(Buffer.from(metadata, "hex"))[0];
+  return JSON.stringify(Object.keys(decoded).reduce((acc, item) => {
+    return { ...acc, [item]: decoded[item].toString("hex") };
+  }, {}));
+}
+
 function match(
   actualBytecode: string,
   expectedBytecode: string,
   immutables: Record<number, number>
 ) {
-  const actualInstructions = parse(actualBytecode)
-  const expectedInstructions = parse(expectedBytecode)
+  const trimmedActualBytecode = trimSolidityMeta(actualBytecode)
+  const trimmedExpectedBytecode = trimSolidityMeta(expectedBytecode)
+
+  const actualInstructions = parse(trimmedActualBytecode.bytecode)
+  const expectedInstructions = parse(trimmedExpectedBytecode.bytecode)
   const maxInstructionsCount = Math.max(actualInstructions.length, expectedInstructions.length)
 
   // find the differences
@@ -488,8 +526,48 @@ function match(
 
   // print the differences
 
-  if (differences.length === 0) {
+  const hasDifferences = differences.length > 0
+  const hasDiffInMetadata = trimmedActualBytecode.metadata !== trimmedExpectedBytecode.metadata
+
+  if (!hasDifferences && !hasDiffInMetadata) {
     console.log(`${SUCCESS_MARK} Bytecodes are fully matched.`);
+    return
+  }
+
+  if (hasDiffInMetadata) {
+    console.log('---')
+    console.log(`${WARNING_MARK} Metadata differs.`);
+
+    console.log(`${bgYellow('0x0001')} - the actual bytecode differs`)
+    console.log(`${bgGreen('0x0002')} - the expected bytecode value when it doesn't match the actual one`)
+    console.log('---\n')
+
+    let expectedLine = '  Actual metadata bytecode: '
+    let actualLine = 'Expected metadata bytecode: '
+
+    // fill 2 lines of metadata with differences colorized
+    trimmedActualBytecode.metadata.split('').forEach((actual, index) => {
+      const expected = trimmedExpectedBytecode.metadata[index]
+      if (actual !== expected) {
+        expectedLine += `${bgGreen(expected)}`
+        actualLine += `${bgYellow(actual)}`
+      } else {
+        expectedLine += `${expected}`
+        actualLine += `${actual}`
+      }
+    })
+
+    console.log(expectedLine + chalk.grey('<end of bytecode>'))
+    console.log(actualLine + chalk.grey('<end of bytecode>'))
+
+    console.log('---')
+    console.log('  Actual metadata:', formatBytecodeMetadata(trimmedActualBytecode.metadata))
+    console.log('Expected metadata:', formatBytecodeMetadata(trimmedExpectedBytecode.metadata))
+
+    console.log('Use https://playground.sourcify.dev/ to inspect the metadata!')
+  }
+
+  if (!hasDifferences) {
     return
   }
 
@@ -517,11 +595,6 @@ function match(
   const hex = (index: number, padStart = 2) => {
     return `${index.toString(16).padStart(padStart, '0').toUpperCase()}`
   }
-  const red = (text: any) => `\u001b[31m${text.toString()}\x1b[0m`
-  const bgRed = (text: any) => `\u001b[37;41m${text.toString()}\x1b[0m`
-  const green = (text: any) => `\u001b[32m${text.toString()}\x1b[0m`
-  const bgGreen = (text: any) => `\u001b[37;42m${text.toString()}\x1b[0m`
-  const bgYellow = (text: any) => `\u001b[37;43m${text.toString()}\x1b[0m`
 
   // print preamble
   console.log('---')
