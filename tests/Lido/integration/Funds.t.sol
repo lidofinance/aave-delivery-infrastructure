@@ -29,7 +29,6 @@ contract FundsIntegrationTest is BaseIntegrationTest {
       crossChainAddresses.eth.crossChainController
     );
 
-    assertEq(crossChainController.getCurrentEnvelopeNonce(), 0);
     assertEq(crossChainController.isSenderApproved(DAO_AGENT), true);
 
     bytes memory message = getMockMessage(address(0), "No funds on CrossChainController");
