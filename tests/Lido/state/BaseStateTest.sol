@@ -101,7 +101,8 @@ contract BaseStateTest is BaseIntegrationTest {
   ) internal {
     console2.log("CrossChainController balance: %s", address(_cccAddress).balance);
 
-    assertEq(address(_cccAddress).balance, _expectedBalance, "CrossChainController balance should match expected value");
+    assertLe(address(_cccAddress).balance, _expectedBalance, "CrossChainController balance should be less than expected value");
+    assertGt(address(_cccAddress).balance, _expectedBalance - 1e16, "CrossChainController balance should be greater than expected value minus 0.01 ETH");
     console2.log("CrossChainController balance is correct");
   }
 

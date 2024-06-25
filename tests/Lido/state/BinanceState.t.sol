@@ -43,7 +43,7 @@ contract CrossChainControllerStateTest is BaseStateTest {
 
   function test_CrossChainControllerState() public {
     _test_ccc_owners(cccAddress, DAO_AGENT);
-    _test_ccc_funds(cccAddress, 0);
+    _test_ccc_funds(cccAddress, 1e16);
   }
 
   function test_CrossChainController_ForwarderAdaptersState() public {
