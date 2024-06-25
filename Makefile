@@ -413,6 +413,9 @@ finalize-lido-local:
 fund-deployer-local:
 	$(call deploy_local_fn,Lido/helpers/Fund_Deployer,ethereum binance)
 
+vote-lido-agent-change-local:
+	$(call deploy_local_fn,Lido/e2e/Vote_Agent_Change,ethereum)
+
 deploy-lido-bridge-adapters-local:
 	make deploy-lido-ccip-bridge-adapters-local
 	make deploy-lido-lz-bridge-adapters-local
