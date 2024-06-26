@@ -175,7 +175,8 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
   function _receiveDaoCrossChainMessage(
     address _crossChainController,
     address[] memory adapters,
-    ExtendedTransaction memory originalExtendedTx
+    bytes memory _encodedTransaction,
+    uint256 _originChainId
   ) internal {
     ICrossChainController targetCrossChainController = ICrossChainController(_crossChainController);
 
@@ -184,8 +185,8 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     for (uint256 i = 0; i < adapters.length; i++) {
       vm.prank(adapters[i], ZERO_ADDRESS);
       targetCrossChainController.receiveCrossChainMessage(
-        originalExtendedTx.transactionEncoded,
-        originalExtendedTx.envelope.originChainId
+        _encodedTransaction,
+        _originChainId
       );
     }
   }
@@ -220,7 +221,12 @@ contract BaseIntegrationTest is BaseTest, BaseTestHelpers {
     vm.selectFork(_targetForkId);
 
     vm.recordLogs();
-    _receiveDaoCrossChainMessage(_destinationCrossChainController, _adapters, extendedTx);
+    _receiveDaoCrossChainMessage(
+      _destinationCrossChainController,
+      _adapters,
+      extendedTx.transactionEncoded,
+      extendedTx.envelope.originChainId
+    );
 
     // Check that the message was received and passed to the executor
     return _getActionsSetQueued(vm.getRecordedLogs());

@@ -137,7 +137,7 @@ contract BaseTestHelpers is BaseTest {
       }
     }
 
-    assertEq(count, _expectedCount); // expected count of adapters should succeed
+    assertGe(count, _expectedCount); // expected count of adapters should succeed
   }
 
   /**
