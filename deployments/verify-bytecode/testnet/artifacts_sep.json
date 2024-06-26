@@ -1,0 +1,48 @@
+[
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/ProxyAdmin.sol/ProxyAdmin.json",
+    "sourcePath": "../aave-delivery-infrastructure/lib/openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol",
+    "name": "ProxyAdmin",
+    "address": "0x7BE89331452883D335C2556d1863CD2925E76afc"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json",
+    "sourcePath": "../aave-delivery-infrastructure/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+    "name": "TransparentUpgradeableProxy",
+    "address": "0x9d8548963Fa0a9BE7C434cA482dd5b79E8062d3A"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CrossChainController.sol/CrossChainController.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/CrossChainController.sol",
+    "name": "CrossChainController",
+    "address": "0x57B3C8DC50d1C881fCB384Da4d66f3d610671177"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CCIPAdapter.sol/CCIPAdapterTestnet.json",
+    "sourcePath": "../aave-delivery-infrastructure/scripts/contract_extensions/CCIPAdapter.sol",
+    "name": "CCIPAdapterTestnet",
+    "address": "0xA0362E6D6f399A3dca79a20cf6041807F7Bfd89e",
+    "txHash": "0x13e9ce04a3a47bbc7c8608d875887da6b5ad4c1fdac781a46edf685ad08d1887"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/HyperLaneAdapter.sol/HyperLaneAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/hl/HyperLaneAdapter.sol",
+    "name": "HyperLaneAdapter",
+    "address": "0x9aa88aD35da12C89F5514d04e3BBd8CD95fDf428",
+    "txHash": "0x9498b1bee2383ecd901c8b546c0c6849773dd98879c393b9f4faf232c6650f3e"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/LayerZeroAdapter.sol/LayerZeroAdapterTestnet.json",
+    "sourcePath": "../aave-delivery-infrastructure/scripts/contract_extensions/LayerZeroAdapter.sol",
+    "name": "LayerZeroAdapterTestnet",
+    "address": "0xFA3199330C9F33e5bA2D559574033D9cf3FCb609",
+    "txHash": "0xeaba24eccf8fca456f4191a071b460018666d6bb20b1060b661a5b89f397bee4"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/WormholeAdapter.sol/WormholeAdapterTestnet.json",
+    "sourcePath": "../aave-delivery-infrastructure/scripts/contract_extensions/WormholeAdapter.sol",
+    "name": "WormholeAdapterTestnet",
+    "address": "0x82C16B1e054fa94bf60b54A1Aa9FA74c5872899d",
+    "txHash": "0xc41275c307f97f1b137553ff75f389b62faa1ebf7fa8e30f80fd50f306302405"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/ProxyAdmin.sol/ProxyAdmin.json",
+    "sourcePath": "../aave-delivery-infrastructure/lib/openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol",
+    "name": "ProxyAdmin",
+    "address": "0x29E6817db339795766244B96aEf5Dc534a98518d",
+    "txHash": "0x531248048b6fa81143ea95e1a387b13cc97b5bd475e3e482dd188a04f14d5deb"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json",
+    "sourcePath": "../aave-delivery-infrastructure/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+    "name": "TransparentUpgradeableProxy",
+    "address": "0x40C4464fCa8caCd550C33B39d674fC257966022F",
+    "txHash": "0xda1572eb6360116ea0fbd9f898b1413823ba2ab4bb1cbb5e150cce42c68a687c"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CrossChainController.sol/CrossChainController.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/CrossChainController.sol",
+    "name": "CrossChainController",
+    "address": "0xB7Ba81dd07885ae7BFD18452B36D3404d7EDD8Ee",
+    "txHash": "0xe8a3d2f510831b66f8cc9dc3b5147a81d65a2154f15edd62c84041e1a5bf6722"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CrossChainExecutor.sol/CrossChainExecutor.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/Lido/contracts/CrossChainExecutor.sol",
+    "name": "CrossChainExecutor",
+    "address": "0x8E5175D17f74d1D512de59b2f5d5A5d8177A123d",
+    "txHash": "0x18bcbd2f5cca253c6bad3d550cf14abf3b27735c88eabc702c670a57c44a5c0b"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/CCIPAdapter.sol/CCIPAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/ccip/CCIPAdapter.sol",
+    "name": "CCIPAdapter",
+    "address": "0x15AD245133568c2498c7dA0cf2204A03b0e9b98A",
+    "txHash": "0xe9247ec5cdc471d90244631bff4cda29fe3e82a30e06a1bd23957e03addb1710"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/HyperLaneAdapter.sol/HyperLaneAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/hyperLane/HyperLaneAdapter.sol",
+    "name": "HyperLaneAdapter",
+    "address": "0xCd867B440c726461e5fAbe8d3a050b2f8701C230",
+    "txHash": "0xc6ae76b7af89108fe8a947dca249aa16638288c9bc4fa66125f8bab1990cc3e7"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/LayerZeroAdapter.sol/LayerZeroAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/layerZero/LayerZeroAdapter.sol",
+    "name": "LayerZeroAdapter",
+    "address": "0xc934433f4c433Cf80DE6fB65fd70C7a650D8a408",
+    "txHash": "0xea88eba675ce1250e982a1e3f41b11adef343ac0cbaeaedeace97cc05f6c75a9"
+  },
+  {
+    "artifactPath": "../aave-delivery-infrastructure/out/WormholeAdapter.sol/WormholeAdapter.json",
+    "sourcePath": "../aave-delivery-infrastructure/src/contracts/adapter/wormhole/WormholeAdapter.sol",
+    "name": "WormholeAdapter",
+    "address": "0xBb1E43408BbF2C767Ff3Bd5bBC34E183CC1Ef119",
+    "txHash": "0x986bfba0e53b5a5de910870f8b502c7d2a1ab6685227b546580bf91d64c082a0"
+  }
+]
