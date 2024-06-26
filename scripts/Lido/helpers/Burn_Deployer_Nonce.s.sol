@@ -7,7 +7,7 @@ abstract contract BurnDeployerNonce is BaseScript {
   function _execute(DeployerHelpers.Addresses memory addresses) internal override {
     uint8 txAmount = 20;
     for (uint256 i = 0; i < txAmount; i++) {
-      msg.sender.call{value: 0}(new bytes(0));
+      (bool success, ) = msg.sender.call{value: 0}(new bytes(0));
     }
   }
 }
